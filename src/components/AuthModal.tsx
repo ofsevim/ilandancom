@@ -24,10 +24,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
+        onClose();
       } else {
         await register(formData.name, formData.email, formData.password);
+        toast.success('Kayıt oluşturuldu. Lütfen e‑posta kutunuzu doğrulama için kontrol edin.');
+        onClose();
       }
-      onClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Bir hata oluştu');
     } finally {
