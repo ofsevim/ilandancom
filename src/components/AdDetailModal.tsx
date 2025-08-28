@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2 } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { adService } from '../services/api';
+import { adService, userService } from '../services/api';
 
 interface AdDetailModalProps {
   ad: Ad;
@@ -15,6 +15,32 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [seller, setSeller] = useState(ad.user);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    const loadSeller = async () => {
+      try {
+        if (!ad.userId) return;
+        const sellerData = await userService.getUserById(ad.userId);
+        if (!isMounted) return;
+        setSeller({
+          id: sellerData.id,
+          email: sellerData.email,
+          name: sellerData.name,
+          phone: sellerData.phone,
+          avatar: sellerData.avatar,
+          role: sellerData.role,
+          createdAt: sellerData.created_at,
+          isActive: sellerData.is_active
+        });
+      } catch {
+        // ignore, fallback ad.user
+      }
+    };
+    loadSeller();
+    return () => { isMounted = false; };
+  }, [ad.userId]);
 
   const isFavorite = favorites.includes(ad.id);
 
@@ -232,10 +258,10 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 </div>
                 <div>
                   <div className="font-medium text-gray-900 dark:text-white">
-                    {ad.user.name}
+                    {seller?.name || 'Satıcı'}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Üyelik: {formatDate(ad.user.createdAt)}
+                    Üyelik: {formatDate(seller?.createdAt || ad.createdAt)}
                   </div>
                 </div>
               </div>
@@ -255,25 +281,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                       <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
                         <Phone size={18} />
                         <span className="font-medium">
-                          {ad.user.phone || '+90 5XX XXX XX XX'}
+                          {seller?.phone || '+90 5XX XXX XX XX'}
                         </span>
                       </div>
-                      {ad.user.phone && (
-                        <a href={`tel:${ad.user.phone}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline">Ara</a>
+                      {seller?.phone && (
+                        <a href={`tel:${seller.phone}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline">Ara</a>
                       )}
                     </div>
-                    {ad.user.email && (
+                    {seller?.email && (
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
                           <MessageCircle size={18} />
-                          <span className="font-medium">{ad.user.email}</span>
+                          <span className="font-medium">{seller.email}</span>
                         </div>
-                        <a href={`mailto:${ad.user.email}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline">E‑posta</a>
+                        <a href={`mailto:${seller.email}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline">E‑posta</a>
                       </div>
                     )}
-                    {ad.user.phone && (
+                    {seller?.phone && (
                       <a
-                        href={`https://wa.me/${ad.user.phone.replace(/\D/g,'')}`}
+                        href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center text-green-700 dark:text-green-300 text-sm font-medium hover:underline"
