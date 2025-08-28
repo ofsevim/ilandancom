@@ -143,6 +143,10 @@ export const adService = {
       query = query.eq('city', filters.city);
     }
 
+    if (filters?.district) {
+      query = query.eq('district', filters.district);
+    }
+
     if (filters?.minPrice !== undefined) {
       query = query.gte('price', filters.minPrice);
     }

@@ -46,6 +46,7 @@ export interface SearchFilters {
   minPrice?: number;
   maxPrice?: number;
   city?: string;
+  district?: string;
   sortBy: 'newest' | 'oldest' | 'price_low' | 'price_high' | 'most_viewed';
 }
 

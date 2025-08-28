@@ -18,4 +18,18 @@ export const districtsMap: Record<string, string[]> = {
   'Manisa': ['Ahmetli','Akhisar','Alaşehir','Demirci','Gölmarmara','Gördes','Kırkağaç','Köprübaşı','Kula','Salihli','Sarıgöl','Saruhanlı','Selendi','Soma','Şehzadeler','Turgutlu','Yunusemre'],
   'Adana': ['Aladağ','Ceyhan','Çukurova','Feke','İmamoğlu','Karaisalı','Karataş','Kozan','Pozantı','Saimbeyli','Sarıçam','Seyhan','Tufanbeyli','Yumurtalık','Yüreğir'],
   'Balıkesir': ['Altıeylül','Karesi','Ayvalık','Bandırma','Bigadiç','Burhaniye','Dursunbey','Edremit','Erdek','Gönen','Havran','İvrindi','Kepsut','Manyas','Marmara','Savaştepe','Sindırgı','Susurluk','Balya']
+  ,
+  'Kahramanmaraş': [
+    'Onikişubat',
+    'Dulkadiroğlu',
+    'Afşin',
+    'Andırın',
+    'Çağlayancerit',
+    'Ekinözü',
+    'Elbistan',
+    'Göksun',
+    'Nurhak',
+    'Pazarcık',
+    'Türkoğlu'
+  ]
 };
