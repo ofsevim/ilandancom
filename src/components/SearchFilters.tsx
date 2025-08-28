@@ -30,17 +30,17 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange 
   ).length;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-md shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-800 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700 text-xs">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm"
+          className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-xs"
         >
-          <Filter size={18} />
+          <Filter size={16} />
           <span className="font-medium">Filtreler</span>
           {activeFiltersCount > 0 && (
-            <span className="bg-blue-600 text-white px-1.5 py-0.5 rounded-full text-[10px]">
+            <span className="bg-blue-600 text-white px-1 py-0 rounded-full text-[9px]">
               {activeFiltersCount}
             </span>
           )}
@@ -49,7 +49,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange 
         {activeFiltersCount > 0 && (
           <button
             onClick={clearFilters}
-            className="text-red-500 hover:text-red-600 text-xs font-medium"
+            className="text-red-500 hover:text-red-600 text-[11px] font-medium"
           >
             Temizle
           </button>
@@ -58,17 +58,17 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange 
 
       {/* Filters Content */}
       {isOpen && (
-        <div className="p-3 space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="p-2 space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             {/* Category */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-[11px] font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Kategori
               </label>
               <select
                 value={filters.category || ''}
                 onChange={(e) => handleFilterChange('category', e.target.value || undefined)}
-                className="w-full px-2 py-1.5 h-9 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-2 py-1 h-8 text-xs border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">Tüm Kategoriler</option>
               </select>
@@ -76,13 +76,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange 
 
             {/* City */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-[11px] font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Şehir
               </label>
               <select
                 value={filters.city || ''}
                 onChange={(e) => handleFilterChange('city', e.target.value || undefined)}
-                className="w-full px-2 py-1.5 h-9 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-2 py-1 h-8 text-xs border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">Tüm Şehirler</option>
                 {cities.map((c: any) => (
@@ -95,28 +95,28 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange 
 
             {/* Min Price */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-[11px] font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Min Fiyat (₺)
               </label>
               <input
                 type="number"
                 value={filters.minPrice || ''}
                 onChange={(e) => handleFilterChange('minPrice', e.target.value ? Number(e.target.value) : undefined)}
-                className="w-full px-2 py-1.5 h-9 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-2 py-1 h-8 text-xs border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="0"
               />
             </div>
 
             {/* Max Price */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-[11px] font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Max Fiyat (₺)
               </label>
               <input
                 type="number"
                 value={filters.maxPrice || ''}
                 onChange={(e) => handleFilterChange('maxPrice', e.target.value ? Number(e.target.value) : undefined)}
-                className="w-full px-2 py-1.5 h-9 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-2 py-1 h-8 text-xs border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="∞"
               />
             </div>
@@ -124,13 +124,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange 
 
           {/* Sort By */}
           <div>
-            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-[11px] font-medium text-gray-700 dark:text-gray-300 mb-1">
               Sıralama
             </label>
             <select
               value={filters.sortBy}
               onChange={(e) => handleFilterChange('sortBy', e.target.value as any)}
-              className="w-full md:w-auto px-2 py-1.5 h-9 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full md:w-auto px-2 py-1 h-8 text-xs border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="newest">En Yeni</option>
               <option value="oldest">En Eski</option>
