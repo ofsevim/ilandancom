@@ -82,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
           </div>
 
           {/* Search Bar */}
-          <div className="flex-1 max-w-2xl mx-8">
+          <div className="hidden md:block flex-1 max-w-2xl mx-2 md:mx-8">
             <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"
@@ -96,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
@@ -108,10 +108,17 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             {/* New Ad Button */}
             <button
               onClick={handleShowNewAd}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+              className="hidden md:flex bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 items-center"
             >
               <Plus size={16} className="mr-2" />
               İlan Ver
+            </button>
+            <button
+              onClick={handleShowNewAd}
+              className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              title="İlan Ver"
+            >
+              <Plus size={20} />
             </button>
 
             {/* Messages Button */}
@@ -211,9 +218,10 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             ) : (
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
+                className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
               >
-                Giriş Yap
+                <User size={18} className="md:hidden" />
+                <span className="hidden md:inline">Giriş Yap</span>
               </button>
             )}
           </div>
