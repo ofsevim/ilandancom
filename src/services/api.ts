@@ -230,11 +230,15 @@ export const adService = {
   },
 
   async deleteAd(id: string) {
+    // Adblock engellerini aşmak için önce RPC dene
+    const { error: rpcError } = await supabase.rpc('delete_ad', { ad_id: id });
+    if (!rpcError) return;
+
+    // RPC yoksa eski yolu dene (engelleyici bloklayabilir)
     const { error } = await supabase
       .from('ads')
       .delete()
       .eq('id', id);
-    
     if (error) throw error;
   },
 
