@@ -1,0 +1,148 @@
+import React from 'react';
+import { Filter } from 'lucide-react';
+import { SearchFilters as SearchFiltersType } from '../types';
+import { useCities } from '../hooks/useCities';
+
+interface SearchFiltersProps {
+  filters: SearchFiltersType;
+  onFiltersChange: (filters: SearchFiltersType) => void;
+}
+
+const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFiltersChange }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { cities } = useCities();
+
+  const handleFilterChange = (key: keyof SearchFiltersType, value: any) => {
+    onFiltersChange({
+      ...filters,
+      [key]: value,
+    });
+  };
+
+  const clearFilters = () => {
+    onFiltersChange({
+      sortBy: 'newest',
+    });
+  };
+
+  const activeFiltersCount = Object.entries(filters).filter(([key, value]) => 
+    key !== 'sortBy' && value !== undefined && value !== ''
+  ).length;
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          <Filter size={20} />
+          <span className="font-medium">Filtreler</span>
+          {activeFiltersCount > 0 && (
+            <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs">
+              {activeFiltersCount}
+            </span>
+          )}
+        </button>
+
+        {activeFiltersCount > 0 && (
+          <button
+            onClick={clearFilters}
+            className="text-red-500 hover:text-red-600 text-sm font-medium"
+          >
+            Temizle
+          </button>
+        )}
+      </div>
+
+      {/* Filters Content */}
+      {isOpen && (
+        <div className="p-4 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Kategori
+              </label>
+              <select
+                value={filters.category || ''}
+                onChange={(e) => handleFilterChange('category', e.target.value || undefined)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="">Tüm Kategoriler</option>
+              </select>
+            </div>
+
+            {/* City */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Şehir
+              </label>
+              <select
+                value={filters.city || ''}
+                onChange={(e) => handleFilterChange('city', e.target.value || undefined)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="">Tüm Şehirler</option>
+                {cities.map((c: any) => (
+                  <option key={c.id} value={c.name}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Min Price */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Min Fiyat (₺)
+              </label>
+              <input
+                type="number"
+                value={filters.minPrice || ''}
+                onChange={(e) => handleFilterChange('minPrice', e.target.value ? Number(e.target.value) : undefined)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                placeholder="0"
+              />
+            </div>
+
+            {/* Max Price */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Max Fiyat (₺)
+              </label>
+              <input
+                type="number"
+                value={filters.maxPrice || ''}
+                onChange={(e) => handleFilterChange('maxPrice', e.target.value ? Number(e.target.value) : undefined)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                placeholder="∞"
+              />
+            </div>
+          </div>
+
+          {/* Sort By */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Sıralama
+            </label>
+            <select
+              value={filters.sortBy}
+              onChange={(e) => handleFilterChange('sortBy', e.target.value as any)}
+              className="w-full md:w-auto px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="newest">En Yeni</option>
+              <option value="oldest">En Eski</option>
+              <option value="price_low">Fiyat (Düşük-Yüksek)</option>
+              <option value="price_high">Fiyat (Yüksek-Düşük)</option>
+              <option value="most_viewed">En Çok Görüntülenen</option>
+            </select>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SearchFilters;
