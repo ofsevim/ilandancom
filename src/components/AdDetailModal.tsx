@@ -15,6 +15,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [seller, setSeller] = useState(ad.user);
 
   React.useEffect(() => {
@@ -112,7 +113,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 <img
                   src={ad.images[currentImageIndex]}
                   alt={ad.title}
-                  className="w-full h-[520px] object-cover rounded-lg"
+                  className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in"
+                  onClick={() => setIsFullscreen(true)}
                 />
                 
                 {ad.images.length > 1 && (
@@ -184,7 +186,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mt-10 md:mt-0">
                   {user && user.id === ad.userId && (
                     <button
                       onClick={handleDelete}
@@ -314,6 +316,42 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Image Viewer */}
+      {isFullscreen && ad.images.length > 0 && (
+        <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center">
+          <button
+            onClick={() => setIsFullscreen(false)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"
+            aria-label="Kapat"
+          >
+            <X size={20} />
+          </button>
+          {ad.images.length > 1 && (
+            <>
+              <button
+                onClick={prevImage}
+                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"
+                aria-label="Önceki"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"
+                aria-label="Sonraki"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </>
+          )}
+          <img
+            src={ad.images[currentImageIndex]}
+            alt={ad.title}
+            className="max-w-[95vw] max-h-[90vh] object-contain"
+          />
+        </div>
+      )}
     </div>
   );
 };
