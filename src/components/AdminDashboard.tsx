@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Users, FileText, TrendingUp, Clock, Check, Ban, Trash2, Eye, Search } from 'lucide-react';
-import { mockAds, mockUsers } from '../data/mockData';
 import { Ad, User } from '../types';
+import { supabase } from '../lib/supabase';
+import { adService } from '../services/api';
+import toast from 'react-hot-toast';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -9,27 +11,63 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'ads' | 'users'>('overview');
-  const [ads] = useState<Ad[]>(mockAds);
-  const [users] = useState<User[]>(mockUsers);
+  const [ads, setAds] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [{ data: adsData, error: adsErr }, { data: usersData, error: usersErr }] = await Promise.all([
+        supabase.from('ads').select('*, users(*), categories(*)').order('created_at', { ascending: false }),
+        supabase.from('users').select('*').order('created_at', { ascending: false })
+      ]);
+      if (adsErr) throw adsErr;
+      if (usersErr) throw usersErr;
+      setAds(adsData || []);
+      setUsers(usersData || []);
+    } catch (e: any) {
+      setError(e.message || 'Veriler yüklenemedi');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const stats = {
     totalAds: ads.length,
-    activeAds: ads.filter(ad => ad.status === 'active').length,
-    pendingAds: ads.filter(ad => ad.status === 'pending').length,
+    activeAds: ads.filter((ad: any) => ad.status === 'active').length,
+    pendingAds: ads.filter((ad: any) => ad.status === 'pending').length,
     totalUsers: users.length,
-    activeUsers: users.filter(user => user.isActive).length,
+    activeUsers: users.filter((u: any) => u.is_active).length,
   };
 
-  const filteredAds = ads.filter(ad => 
-    ad.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ad.user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredAds = ads.filter((ad: any) => 
+    (ad.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (ad.users?.name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter((user: any) => 
+    (user.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDeleteAd = async (id: string) => {
+    if (!confirm('Bu ilanı silmek istediğinize emin misiniz?')) return;
+    try {
+      await adService.deleteAd(id);
+      toast.success('İlan silindi');
+      setAds(prev => prev.filter((a: any) => a.id !== id));
+    } catch (e: any) {
+      toast.error(e.message || 'Silme işlemi başarısız');
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     const colors = {
@@ -115,7 +153,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             </div>
           </div>
 
-          {activeTab === 'overview' && (
+          {loading ? (
+            <div className="py-16 text-center text-gray-600 dark:text-gray-300">Yükleniyor...</div>
+          ) : error ? (
+            <div className="py-16 text-center text-red-600">{error}</div>
+          ) : activeTab === 'overview' ? (
             <div className="space-y-6">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -212,9 +254,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
 
-          {activeTab === 'ads' && (
+          {activeTab === 'ads' && !loading && !error && (
             <div className="space-y-6">
               {/* Search */}
               <div className="relative">
@@ -252,12 +294,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {filteredAds.map((ad) => (
+                      {filteredAds.map((ad: any) => (
                         <tr key={ad.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                           <td className="px-6 py-4">
                             <div className="flex items-center">
                               <img
-                                src={ad.images[0] || ''}
+                                src={ad.images?.[0] || ''}
                                 alt=""
                                 className="w-12 h-12 rounded-lg object-cover mr-3"
                               />
@@ -266,7 +308,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                   {ad.title}
                                 </div>
                                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                                  {ad.category.name}
+                                  {ad.categories?.name || ''}
                                 </div>
                               </div>
                             </div>
@@ -275,7 +317,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                             {formatPrice(ad.price)}
                           </td>
                           <td className="px-6 py-4 text-gray-900 dark:text-white">
-                            {ad.user.name}
+                            {ad.users?.name}
                           </td>
                           <td className="px-6 py-4">
                             {getStatusBadge(ad.status)}
@@ -288,7 +330,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                               <button className="text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded">
                                 <Check size={16} />
                               </button>
-                              <button className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
+                              <button onClick={() => handleDeleteAd(ad.id)} className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
                                 <Trash2 size={16} />
                               </button>
                             </div>
@@ -302,7 +344,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             </div>
           )}
 
-          {activeTab === 'users' && (
+          {activeTab === 'users' && !loading && !error && (
             <div className="space-y-6">
               {/* Search */}
               <div className="relative">
@@ -340,21 +382,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {filteredUsers.map((user) => (
+                      {filteredUsers.map((user: any) => (
                         <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                           <td className="px-6 py-4">
                             <div className="flex items-center">
                               <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3">
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">
-                                  {user.name.charAt(0).toUpperCase()}
+                                  {(user.name || '').charAt(0).toUpperCase()}
                                 </span>
                               </div>
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">
                                   {user.name}
                                 </div>
-                                <div className={`text-sm ${user.isActive ? 'text-green-600' : 'text-red-600'}`}>
-                                  {user.isActive ? 'Aktif' : 'Pasif'}
+                                <div className={`text-sm ${user.is_active ? 'text-green-600' : 'text-red-600'}`}>
+                                  {user.is_active ? 'Aktif' : 'Pasif'}
                                 </div>
                               </div>
                             </div>
@@ -372,7 +414,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                             </span>
                           </td>
                           <td className="px-6 py-4 text-gray-900 dark:text-white">
-                            {formatDate(user.createdAt)}
+                            {formatDate(user.created_at)}
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex space-x-2">
