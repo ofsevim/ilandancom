@@ -238,14 +238,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   Son Aktiviteler
                 </h3>
                 <div className="space-y-3">
-                  {ads.slice(0, 5).map((ad) => (
+                  {ads.slice(0, 5).map((ad: any) => (
                     <div key={ad.id} className="flex items-center justify-between py-2">
                       <div>
                         <div className="font-medium text-gray-900 dark:text-white">
                           {ad.title}
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {ad.user.name} tarafından {formatDate(ad.createdAt)}
+                          {(ad.users?.name || 'Bilinmiyor')} tarafından {formatDate(ad.created_at)}
                         </div>
                       </div>
                       {getStatusBadge(ad.status)}
