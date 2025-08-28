@@ -18,10 +18,10 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick }) => {
             className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden animate-pulse"
           >
             <div className="h-48 bg-gray-300 dark:bg-gray-600"></div>
-            <div className="p-4 space-y-3">
+            <div className="p-3 space-y-2.5">
               <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-              <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
-              <div className="space-y-2">
+              <div className="h-5 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
+              <div className="space-y-1.5">
                 <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
                 <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
               </div>
@@ -35,11 +35,11 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick }) => {
   if (ads.length === 0) {
     return (
       <div className="col-span-full flex flex-col items-center justify-center py-12">
-        <div className="text-gray-400 dark:text-gray-500 text-6xl mb-4">🔍</div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+        <div className="text-gray-400 dark:text-gray-500 text-5xl mb-3">🔍</div>
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1.5">
           İlan bulunamadı
         </h3>
-        <p className="text-gray-500 dark:text-gray-400 text-center">
+        <p className="text-gray-500 dark:text-gray-400 text-center text-sm">
           Arama kriterlerinizi değiştirerek tekrar deneyin
         </p>
       </div>

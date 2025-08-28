@@ -53,9 +53,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
         </button>
 
         <div className="text-center mb-6">
-          <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-lg">S</span>
-          </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
           </h2>

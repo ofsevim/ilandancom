@@ -41,7 +41,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
   return (
     <div
       onClick={() => onAdClick(ad)}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-200"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-200"
     >
       {/* Image */}
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
@@ -84,16 +84,16 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="font-medium text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+      <div className="p-3">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-1.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">
           {ad.title}
         </h3>
 
-        <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-3">
+        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5">
           {formatPrice(ad.price)}
         </div>
 
-        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+        <div className="space-y-1.5 text-[13px] text-gray-600 dark:text-gray-400">
           <div className="flex items-center">
             <MapPin size={14} className="mr-1 flex-shrink-0" />
             <span className="truncate">
@@ -115,8 +115,8 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
         </div>
 
         {/* Category */}
-        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-          <span className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-xs">
+        <div className="mt-2.5 pt-2.5 border-t border-gray-200 dark:border-gray-700">
+          <span className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs">
             {ad.category.name}
           </span>
         </div>

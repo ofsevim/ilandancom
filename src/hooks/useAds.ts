@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Ad, SearchFilters } from '../types';
-import { adService } from '../services/api';
+import { adService, categoryService } from '../services/api';
 
 export const useAds = (filters?: SearchFilters) => {
   const [ads, setAds] = useState<Ad[]>([]);
@@ -11,7 +11,13 @@ export const useAds = (filters?: SearchFilters) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await adService.getAllAds(filters);
+      const [data, categories] = await Promise.all([
+        adService.getAllAds(filters),
+        categoryService.getAllCategories().catch(() => [] as any[])
+      ]);
+
+      const categoryById: Record<string, any> = {};
+      (categories || []).forEach((c: any) => { if (c?.id) categoryById[c.id] = c; });
       
       // Transform data to match our Ad interface (null join'lara dayanıklı)
       const transformedAds: Ad[] = (data || []).map((item: any) => ({
@@ -20,10 +26,10 @@ export const useAds = (filters?: SearchFilters) => {
         description: item.description,
         price: item.price,
         category: {
-          id: item?.categories?.id ?? 'unknown',
-          name: item?.categories?.name ?? 'Diğer',
-          slug: item?.categories?.slug ?? 'diger',
-          icon: item?.categories?.icon ?? 'tag'
+          id: item?.categories?.id ?? item?.category_id ?? 'unknown',
+          name: item?.categories?.name ?? categoryById[item?.category_id]?.name ?? 'Diğer',
+          slug: item?.categories?.slug ?? categoryById[item?.category_id]?.slug ?? 'diger',
+          icon: item?.categories?.icon ?? categoryById[item?.category_id]?.icon ?? 'tag'
         },
         location: {
           city: item.city ?? '',
