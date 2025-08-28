@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2 } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { adService } from '../services/api';
 
 interface AdDetailModalProps {
   ad: Ad;
   onClose: () => void;
+  onDeleted?: () => void;
 }
 
-const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose }) => {
+const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted }) => {
   const { favorites, toggleFavorite, user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const isFavorite = favorites.includes(ad.id);
 
@@ -46,6 +49,23 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose }) => {
 
   const handleFavoriteClick = () => {
     toggleFavorite(ad.id);
+  };
+
+  const handleDelete = async () => {
+    if (!user || user.id !== ad.userId || deleting) return;
+    const confirmDelete = window.confirm('İlanı kaldırmak istediğinize emin misiniz?');
+    if (!confirmDelete) return;
+    try {
+      setDeleting(true);
+      await adService.deleteAd(ad.id);
+      onDeleted && onDeleted();
+      onClose();
+    } catch (e) {
+      console.error('İlan silinirken hata:', e);
+      alert('İlan silinirken bir hata oluştu.');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -138,15 +158,28 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose }) => {
                   </div>
                 </div>
 
-                <button
-                  onClick={handleFavoriteClick}
-                  className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  <Heart
-                    size={20}
-                    className={isFavorite ? 'text-red-500 fill-current' : 'text-gray-500 dark:text-gray-400'}
-                  />
-                </button>
+                <div className="flex items-center gap-2">
+                  {user && user.id === ad.userId && (
+                    <button
+                      onClick={handleDelete}
+                      disabled={deleting}
+                      className="w-12 h-12 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-full flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors disabled:opacity-60"
+                      title="İlanı Kaldır"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  )}
+                  <button
+                    onClick={handleFavoriteClick}
+                    className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    title="Favorilere Ekle"
+                  >
+                    <Heart
+                      size={20}
+                      className={isFavorite ? 'text-red-500 fill-current' : 'text-gray-500 dark:text-gray-400'}
+                    />
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">

@@ -29,27 +29,27 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
     setLoading(true);
     try {
       const data = await adService.getUserAds(user.id);
-      const transformedAds: Ad[] = data.map((item: any) => ({
-        id: item.id,
+      const transformedAds: Ad[] = (data || []).map((item: any) => ({
+        id: item?.id ?? '',
         title: item.title,
         description: item.description,
         price: item.price,
         category: {
-          id: item.categories.id,
-          name: item.categories.name,
-          slug: item.categories.slug,
-          icon: item.categories.icon
+          id: item?.category_id ?? 'unknown',
+          name: 'Diğer',
+          slug: 'diger',
+          icon: 'tag'
         },
         location: {
-          city: item.city,
-          district: item.district,
+          city: item.city ?? '',
+          district: item.district ?? '',
           coordinates: item.latitude && item.longitude ? {
             lat: item.latitude,
             lng: item.longitude
           } : undefined
         },
-        images: item.images || [],
-        userId: item.user_id,
+        images: Array.isArray(item.images) ? item.images : [],
+        userId: item.user_id ?? user.id,
         user: {
           id: user.id,
           email: user.email,
@@ -61,11 +61,11 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
           isActive: user.isActive
         },
         status: item.status,
-        createdAt: item.created_at,
-        updatedAt: item.updated_at,
-        viewCount: item.view_count,
-        featured: item.featured
-      }));
+        createdAt: item.created_at ?? new Date().toISOString(),
+        updatedAt: item.updated_at ?? item.created_at ?? new Date().toISOString(),
+        viewCount: item.view_count ?? 0,
+        featured: item.featured ?? false
+      })).filter((ad: Ad) => ad.id);
       setAds(transformedAds);
     } catch (error: any) {
       toast.error(error.message || 'İlanlar yüklenirken hata oluştu');

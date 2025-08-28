@@ -120,6 +120,10 @@ const AppContent: React.FC = () => {
         <AdDetailModal
           ad={selectedAd}
           onClose={() => setSelectedAd(null)}
+          onDeleted={() => {
+            setSelectedAd(null);
+            refreshAds();
+          }}
         />
       )}
 

@@ -15,7 +15,7 @@ export const useAds = (filters?: SearchFilters) => {
       
       // Transform data to match our Ad interface (null join'lara dayanıklı)
       const transformedAds: Ad[] = (data || []).map((item: any) => ({
-        id: item.id,
+        id: item?.id ?? '',
         title: item.title,
         description: item.description,
         price: item.price,
@@ -26,15 +26,15 @@ export const useAds = (filters?: SearchFilters) => {
           icon: item?.categories?.icon ?? 'tag'
         },
         location: {
-          city: item.city,
-          district: item.district,
+          city: item.city ?? '',
+          district: item.district ?? '',
           coordinates: item.latitude && item.longitude ? {
             lat: item.latitude,
             lng: item.longitude
           } : undefined
         },
         images: Array.isArray(item.images) ? item.images : [],
-        userId: item.user_id,
+        userId: item.user_id ?? '',
         user: {
           id: item?.users?.id ?? item.user_id ?? 'unknown',
           email: item?.users?.email ?? '',
@@ -42,15 +42,16 @@ export const useAds = (filters?: SearchFilters) => {
           phone: item?.users?.phone ?? '',
           avatar: item?.users?.avatar ?? '',
           role: item?.users?.role ?? 'user',
-          createdAt: item?.users?.created_at ?? item.created_at,
+          createdAt: item?.users?.created_at ?? item.created_at ?? new Date().toISOString(),
           isActive: item?.users?.is_active ?? true
         },
         status: item.status,
-        createdAt: item.created_at,
-        updatedAt: item.updated_at,
-        viewCount: item.view_count,
-        featured: item.featured
-      }));
+        createdAt: item.created_at ?? new Date().toISOString(),
+        updatedAt: item.updated_at ?? item.created_at ?? new Date().toISOString(),
+        viewCount: item.view_count ?? 0,
+        featured: item.featured ?? false
+      }))
+      .filter((ad: Ad) => !!ad && !!ad.id);
       
       setAds(transformedAds);
     } catch (err: any) {
