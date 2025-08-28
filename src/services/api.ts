@@ -399,3 +399,59 @@ export const locationService = {
     return data || [];
   }
 };
+
+// Message Services
+export const messageService = {
+  async sendMessage(params: { receiverId: string; adId?: string; content: string }) {
+    const { data, error } = await supabase
+      .from('messages')
+      .insert([
+        {
+          receiver_id: params.receiverId,
+          ad_id: params.adId || null,
+          content: params.content,
+        },
+      ])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getConversation(otherUserId: string, adId?: string) {
+    let query = supabase
+      .from('messages')
+      .select('*')
+      .or(`sender_id.eq.${(await supabase.auth.getUser()).data.user?.id},receiver_id.eq.${(await supabase.auth.getUser()).data.user?.id}`)
+      .or(`sender_id.eq.${otherUserId},receiver_id.eq.${otherUserId}`)
+      .order('created_at', { ascending: true });
+
+    if (adId) {
+      query = query.eq('ad_id', adId);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  },
+
+  async listConversations() {
+    const { data: me } = await supabase.auth.getUser();
+    const myId = me.user?.id;
+    if (!myId) return [];
+
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .or(`sender_id.eq.${myId},receiver_id.eq.${myId}`)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+
+    const map: Record<string, any> = {};
+    (data || []).forEach((m: any) => {
+      const otherId = m.sender_id === myId ? m.receiver_id : m.sender_id;
+      if (!map[otherId]) map[otherId] = { otherUserId: otherId, lastMessage: m, adId: m.ad_id };
+    });
+    return Object.values(map);
+  },
+};

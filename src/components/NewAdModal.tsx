@@ -74,6 +74,11 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
       return;
     }
 
+    if (formData.description.trim().length < 60) {
+      toast.error('Açıklama en az 60 karakter olmalıdır');
+      return;
+    }
+
     if (hasDistrictList && !formData.district) {
       toast.error('Lütfen ilçe seçin');
       return;
@@ -162,6 +167,9 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
               placeholder="İlan açıklamasını girin"
               maxLength={1000}
             />
+            <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              En az 60 karakter. ({formData.description.trim().length}/1000)
+            </div>
           </div>
 
           {/* Price and Category */}

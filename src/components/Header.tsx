@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDarkMode } from '../hooks/useDarkMode';
-import { Search, Plus, Moon, Sun, User, Heart, Package } from 'lucide-react';
+import { Search, Plus, Moon, Sun, User, Heart, Package, MessageSquare } from 'lucide-react';
 import AuthModal from './AuthModal';
 import ProfileModal from './ProfileModal';
 import MyAdsModal from './MyAdsModal';
 import FavoritesModal from './FavoritesModal';
+import MessagesModal from './MessagesModal';
 
 interface HeaderProps {
   onSearch?: (query: string) => void;
@@ -19,6 +20,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showMyAdsModal, setShowMyAdsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
+  const [showMessagesModal, setShowMessagesModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -82,6 +84,17 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
               <Plus size={16} className="mr-2" />
               İlan Ver
             </button>
+
+            {/* Messages Button */}
+            {user && (
+              <button
+                onClick={() => setShowMessagesModal(true)}
+                className="p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                title="Mesajlar"
+              >
+                <MessageSquare size={20} />
+              </button>
+            )}
 
             {/* User Menu */}
             {user ? (
@@ -191,6 +204,10 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
       
       {showFavoritesModal && (
         <FavoritesModal onClose={() => setShowFavoritesModal(false)} />
+      )}
+
+      {showMessagesModal && user && (
+        <MessagesModal receiverId={user.id} onClose={() => setShowMessagesModal(false)} />
       )}
     </header>
   );

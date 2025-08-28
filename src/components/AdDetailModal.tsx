@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2 } from 'lucide-react';
+import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2, Send } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { adService, userService, publicUserService } from '../services/api';
+import MessagesModal from './MessagesModal';
 
 interface AdDetailModalProps {
   ad: Ad;
@@ -17,6 +18,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   const [deleting, setDeleting] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [seller, setSeller] = useState(ad.user);
+  const [showMessages, setShowMessages] = useState(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -321,6 +323,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                     )}
                   </div>
                 )}
+                <button
+                  onClick={() => setShowMessages(true)}
+                  className="w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <Send size={18} />
+                  <span>Mesaj Gönder</span>
+                </button>
               </div>
             </div>
           </div>
@@ -362,6 +371,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
             loading="lazy"
           />
         </div>
+      )}
+      {showMessages && (
+        <MessagesModal receiverId={ad.userId} adId={ad.id} onClose={() => setShowMessages(false)} />
       )}
     </div>
   );
