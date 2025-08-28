@@ -101,7 +101,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
       <div className="bg-white dark:bg-gray-800 rounded-xl max-w-6xl w-full my-8 relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-opacity-100 transition-all"
+          aria-label="Kapat"
+          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
         >
           <X size={20} />
         </button>
@@ -115,6 +116,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   src={ad.images[currentImageIndex]}
                   alt={ad.title}
                   className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in"
+                  loading="eager"
                   onClick={() => setIsFullscreen(true)}
                 />
                 
@@ -122,13 +124,15 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   <>
                     <button
                       onClick={prevImage}
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-80 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all"
+                      aria-label="Önceki görsel"
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-80 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                     >
                       <ChevronLeft size={20} />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-80 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all"
+                      aria-label="Sonraki görsel"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-80 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                     >
                       <ChevronRight size={20} />
                     </button>
@@ -160,8 +164,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   >
                     <img
                       src={image}
-                      alt=""
+                      alt={ad.title}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </button>
                 ))}
@@ -192,7 +197,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                     <button
                       onClick={handleDelete}
                       disabled={deleting}
-                      className="w-12 h-12 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-full flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors disabled:opacity-60"
+                      aria-label="İlanı Kaldır"
+                      className="w-12 h-12 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-full flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                       title="İlanı Kaldır"
                     >
                       <Trash2 size={20} />
@@ -200,7 +206,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   )}
                   <button
                     onClick={handleFavoriteClick}
-                    className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    aria-label="Favorilere ekle"
+                    className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                     title="Favorilere Ekle"
                   >
                     <Heart
@@ -273,7 +280,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 {!showContactInfo ? (
                   <button
                     onClick={() => setShowContactInfo(true)}
-                    className="w-full flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                    aria-label="Telefonu göster"
+                    className="w-full flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                   >
                     <Phone size={18} />
                     <span>Telefonu Göster</span>
@@ -288,7 +296,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                         </span>
                       </div>
                       {seller?.phone && (
-                        <a href={`tel:${seller.phone}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline">Ara</a>
+                        <a href={`tel:${seller.phone}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline" aria-label="Telefon et">Ara</a>
                       )}
                     </div>
                     {seller?.email && (
@@ -297,7 +305,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                           <MessageCircle size={18} />
                           <span className="font-medium">{seller.email}</span>
                         </div>
-                        <a href={`mailto:${seller.email}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline">E‑posta</a>
+                        <a href={`mailto:${seller.email}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline" aria-label="E-posta gönder">E‑posta</a>
                       </div>
                     )}
                     {seller?.phone && (
@@ -306,6 +314,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center text-green-700 dark:text-green-300 text-sm font-medium hover:underline"
+                        aria-label="WhatsApp ile yaz"
                       >
                         WhatsApp ile yaz
                       </a>
@@ -323,7 +332,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
         <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center">
           <button
             onClick={() => setIsFullscreen(false)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
             aria-label="Kapat"
           >
             <X size={20} />
@@ -332,14 +341,14 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
             <>
               <button
                 onClick={prevImage}
-                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"
+                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
                 aria-label="Önceki"
               >
                 <ChevronLeft size={24} />
               </button>
               <button
                 onClick={nextImage}
-                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"
+                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
                 aria-label="Sonraki"
               >
                 <ChevronRight size={24} />
@@ -350,6 +359,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
             src={ad.images[currentImageIndex]}
             alt={ad.title}
             className="max-w-[95vw] max-h-[90vh] object-contain"
+            loading="lazy"
           />
         </div>
       )}
