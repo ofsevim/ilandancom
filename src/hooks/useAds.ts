@@ -13,17 +13,17 @@ export const useAds = (filters?: SearchFilters) => {
       setError(null);
       const data = await adService.getAllAds(filters);
       
-      // Transform data to match our Ad interface
-      const transformedAds: Ad[] = data.map((item: any) => ({
+      // Transform data to match our Ad interface (null join'lara dayanıklı)
+      const transformedAds: Ad[] = (data || []).map((item: any) => ({
         id: item.id,
         title: item.title,
         description: item.description,
         price: item.price,
         category: {
-          id: item.categories.id,
-          name: item.categories.name,
-          slug: item.categories.slug,
-          icon: item.categories.icon
+          id: item?.categories?.id ?? 'unknown',
+          name: item?.categories?.name ?? 'Diğer',
+          slug: item?.categories?.slug ?? 'diger',
+          icon: item?.categories?.icon ?? 'tag'
         },
         location: {
           city: item.city,
@@ -33,17 +33,17 @@ export const useAds = (filters?: SearchFilters) => {
             lng: item.longitude
           } : undefined
         },
-        images: item.images || [],
+        images: Array.isArray(item.images) ? item.images : [],
         userId: item.user_id,
         user: {
-          id: item.users.id,
-          email: item.users.email,
-          name: item.users.name,
-          phone: item.users.phone,
-          avatar: item.users.avatar,
-          role: item.users.role,
-          createdAt: item.users.created_at,
-          isActive: item.users.is_active
+          id: item?.users?.id ?? item.user_id ?? 'unknown',
+          email: item?.users?.email ?? '',
+          name: item?.users?.name ?? 'Gizli Kullanıcı',
+          phone: item?.users?.phone ?? '',
+          avatar: item?.users?.avatar ?? '',
+          role: item?.users?.role ?? 'user',
+          createdAt: item?.users?.created_at ?? item.created_at,
+          isActive: item?.users?.is_active ?? true
         },
         status: item.status,
         createdAt: item.created_at,
