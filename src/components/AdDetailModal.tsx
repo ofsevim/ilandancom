@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2 } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { adService, userService } from '../services/api';
+import { adService, userService, publicUserService } from '../services/api';
 
 interface AdDetailModalProps {
   ad: Ad;
@@ -23,7 +23,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
     const loadSeller = async () => {
       try {
         if (!ad.userId) return;
-        const sellerData = await userService.getUserById(ad.userId);
+        // Public view üzerinden herkese açık satıcı bilgisi
+        const sellerData = await publicUserService.getPublicUserById(ad.userId);
         if (!isMounted) return;
         setSeller({
           id: sellerData.id,
@@ -186,7 +187,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 mt-10 md:mt-0">
+                <div className="flex items-center gap-2 mt-10 md:mt-0 mr-10 md:mr-16">
                   {user && user.id === ad.userId && (
                     <button
                       onClick={handleDelete}

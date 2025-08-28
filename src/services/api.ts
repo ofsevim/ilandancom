@@ -89,6 +89,19 @@ export const userService = {
   }
 };
 
+// Public User Service (read-only limited fields for public visibility)
+export const publicUserService = {
+  async getPublicUserById(id: string) {
+    const { data, error } = await supabase
+      .from('user_public')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    return data;
+  }
+};
+
 // Category Services
 export const categoryService = {
   async getAllCategories() {
