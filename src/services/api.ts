@@ -117,12 +117,8 @@ export const categoryService = {
 export const adService = {
   async getAllAds(filters?: SearchFilters) {
     let query = supabase
-      .from('ads')
-      .select(`
-        *,
-        categories (*),
-        users (*)
-      `)
+      .from('listings')
+      .select(`*`)
       .eq('status', 'active');
 
     // Apply filters
@@ -175,12 +171,8 @@ export const adService = {
 
   async getAdById(id: string) {
     const { data, error } = await supabase
-      .from('ads')
-      .select(`
-        *,
-        categories (*),
-        users (*)
-      `)
+      .from('listings')
+      .select(`*`)
       .eq('id', id)
       .single();
     
@@ -247,34 +239,32 @@ export const adService = {
   },
 
   async incrementViewCount(id: string) {
-    // Önce mevcut view count'u al
-    const { data: currentAd, error: fetchError } = await supabase
-      .from('ads')
-      .select('view_count')
-      .eq('id', id)
-      .single();
-    
-    if (fetchError) throw fetchError;
-    
-    // View count'u 1 artır
-    const { data, error } = await supabase
-      .from('ads')
-      .update({ view_count: (currentAd.view_count || 0) + 1 })
-      .eq('id', id)
-      .select()
-      .single();
-    
-    if (error) throw error;
+    // Reklam engelleyicilerden kaçınmak için RPC kullan
+    const { data, error } = await supabase.rpc('increment_view', { ad_id: id });
+    if (error) {
+      // Geriye dönük uyumluluk: RPC yoksa eski yöntemi dene (engelleyici bloklayabilir)
+      const { data: currentAd, error: fetchError } = await supabase
+        .from('ads')
+        .select('view_count')
+        .eq('id', id)
+        .single();
+      if (fetchError) throw fetchError;
+      const { data: updated, error: updErr } = await supabase
+        .from('ads')
+        .update({ view_count: (currentAd.view_count || 0) + 1 })
+        .eq('id', id)
+        .select()
+        .single();
+      if (updErr) throw updErr;
+      return updated;
+    }
     return data;
   },
 
   async getUserAds(userId: string) {
     const { data, error } = await supabase
-      .from('ads')
-      .select(`
-        *,
-        categories (*)
-      `)
+      .from('listings')
+      .select(`*`)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
     
