@@ -7,6 +7,8 @@ import ProfileModal from './ProfileModal';
 import MyAdsModal from './MyAdsModal';
 import FavoritesModal from './FavoritesModal';
 import MessagesModal from './MessagesModal';
+import { supabase } from '../lib/supabase';
+import toast from 'react-hot-toast';
 
 interface HeaderProps {
   onSearch?: (query: string) => void;
@@ -21,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
   const [showMyAdsModal, setShowMyAdsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showMessagesModal, setShowMessagesModal] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -36,6 +39,32 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
       onShowNewAd();
     }
   };
+
+  React.useEffect(() => {
+    if (!user) return;
+    (async () => {
+      try {
+        const count = await (await import('../services/api')).messageService.getUnreadCount();
+        setUnreadCount(count);
+      } catch {}
+    })();
+    const channel = supabase
+      .channel('messages-header-realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload: any) => {
+        const m = payload.new;
+        if (m.receiver_id === user.id) {
+          setUnreadCount((c) => c + 1);
+          toast.custom((t) => (
+            <div className={`pointer-events-auto flex items-center gap-3 rounded-lg bg-white dark:bg-gray-800 shadow px-4 py-3 border border-gray-200 dark:border-gray-700 ${t.visible ? 'animate-fade-in' : ''}`}>
+              <MessageSquare size={18} className="text-blue-600" />
+              <div className="text-sm text-gray-900 dark:text-white">Yeni bir mesajınız var</div>
+            </div>
+          ), { duration: 3000 });
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-40">
@@ -88,11 +117,16 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             {/* Messages Button */}
             {user && (
               <button
-                onClick={() => setShowMessagesModal(true)}
-                className="p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                onClick={async () => { setShowMessagesModal(true); setUnreadCount(0); try { (await import('../services/api')).messageService.markAllRead(); } catch {} }}
+                className="relative p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                 title="Mesajlar"
               >
                 <MessageSquare size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] leading-[18px] text-center">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
             )}
 

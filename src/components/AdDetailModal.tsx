@@ -195,7 +195,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 </div>
 
                 <div className="flex items-center gap-2 mt-10 md:mt-0 mr-10 md:mr-16">
-                  {user && user.id === ad.userId && (
+                  {(user && (user.id === ad.userId || user.role === 'admin')) && (
                     <button
                       onClick={handleDelete}
                       disabled={deleting}

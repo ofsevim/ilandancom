@@ -454,4 +454,36 @@ export const messageService = {
     });
     return Object.values(map);
   },
+
+  async getUnreadCount() {
+    const { data: me } = await supabase.auth.getUser();
+    const myId = me.user?.id;
+    if (!myId) return 0;
+    const { count, error } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('receiver_id', myId)
+      .is('read_at', null);
+    if (error) throw error;
+    return count || 0;
+  },
+
+  async markConversationRead(otherUserId?: string, adId?: string) {
+    const { data: me } = await supabase.auth.getUser();
+    const myId = me.user?.id;
+    if (!myId) return;
+    let query = supabase
+      .from('messages')
+      .update({ read_at: new Date().toISOString() })
+      .eq('receiver_id', myId)
+      .is('read_at', null);
+    if (otherUserId) query = query.eq('sender_id', otherUserId);
+    if (adId) query = query.eq('ad_id', adId);
+    const { error } = await query;
+    if (error) throw error;
+  },
+
+  async markAllRead() {
+    return this.markConversationRead();
+  },
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { X, Send } from 'lucide-react';
 import { messageService } from '../services/api';
 import toast from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 
 interface MessagesModalProps {
   receiverId: string;
@@ -14,6 +15,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const [myId, setMyId] = useState<string | null>(null);
 
   const load = async () => {
     try {
@@ -26,8 +28,31 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
   };
 
   useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (mounted) setMyId(data.user?.id || null);
+    })();
     load();
-  }, [receiverId, adId]);
+
+    const channel = supabase
+      .channel('messages-realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload: any) => {
+        const m = payload.new;
+        const participantsOk = (m.sender_id === receiverId || m.receiver_id === receiverId) || (myId && (m.sender_id === myId || m.receiver_id === myId));
+        const adOk = adId ? m.ad_id === adId : true;
+        if (participantsOk && adOk) {
+          setMessages(prev => [...prev, m]);
+          setTimeout(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' }), 50);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      mounted = false;
+      supabase.removeChannel(channel);
+    };
+  }, [receiverId, adId, myId]);
 
   const send = async () => {
     if (!input.trim()) return;
@@ -36,6 +61,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
       await messageService.sendMessage({ receiverId, adId, content: input.trim() });
       setInput('');
       await load();
+      try { await messageService.markConversationRead(receiverId, adId); } catch {}
     } catch (e: any) {
       toast.error(e.message || 'Mesaj gönderilemedi');
     } finally {
@@ -56,13 +82,16 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
           {messages.length === 0 ? (
             <div className="text-center text-sm text-gray-500 dark:text-gray-400">Henüz mesaj yok</div>
           ) : (
-            messages.map((m) => (
-              <div key={m.id} className={`flex ${m.is_mine ? 'justify-end' : 'justify-start'}`}>
-                <div className={`px-3 py-2 rounded-lg text-sm ${m.is_mine ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'}`}>
-                  {m.content}
+            messages.map((m) => {
+              const isMine = myId && m.sender_id === myId;
+              return (
+                <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`px-3 py-2 rounded-lg text-sm ${isMine ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'}`}>
+                    {m.content}
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
         <div className="p-3 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">

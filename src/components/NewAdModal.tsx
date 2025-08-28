@@ -45,8 +45,8 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    if (files.length + formData.images.length > 5) {
-      toast.error('En fazla 5 resim yükleyebilirsiniz');
+    if (files.length + formData.images.length > 10) {
+      toast.error('En fazla 10 resim yükleyebilirsiniz');
       return;
     }
     setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
@@ -266,7 +266,7 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
           {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Resimler (En fazla 5 adet)
+              Resimler (En fazla 10 adet)
             </label>
             <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
               <input
@@ -287,7 +287,7 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
 
             {/* Image Preview */}
             {formData.images.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 {formData.images.map((file, index) => (
                   <div key={index} className="relative">
                     <img
