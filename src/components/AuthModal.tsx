@@ -59,12 +59,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            {isLogin 
-              ? 'Demo: admin@sahibinden.com / password veya john@example.com / password'
-              : 'Yeni hesap oluşturun'
-            }
-          </p>
+          {!isLogin && (
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Yeni hesap oluşturun
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
