@@ -16,11 +16,11 @@ const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
           </button>
         </div>
         <div className="p-5 space-y-4 text-gray-700 dark:text-gray-300 text-sm leading-6">
-          <div className="flex items-center"><Mail size={18} className="mr-2" /> destek@ilandan.com</div>
-          <div className="flex items-center"><Phone size={18} className="mr-2" /> +90 212 000 00 00</div>
-          <div className="flex items-center"><MapPin size={18} className="mr-2" /> İstanbul, Türkiye</div>
+          <div className="flex items-center"><Mail size={18} className="mr-2" /> omersvm0606@gmail.com</div>
+          <div className="flex items-center"><Phone size={18} className="mr-2" /> +90 312 000 00 00</div>
+          <div className="flex items-center"><MapPin size={18} className="mr-2" /> Ankara, Türkiye</div>
           <div className="pt-2">
-            <a href="mailto:destek@ilandan.com" className="text-blue-600 dark:text-blue-400 hover:underline">E-posta Gönder</a>
+            <a href="mailto:omersvm0606@gmail.com" className="text-blue-600 dark:text-blue-400 hover:underline">E-posta Gönder</a>
           </div>
         </div>
       </div>
