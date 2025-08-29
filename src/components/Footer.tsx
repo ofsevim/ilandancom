@@ -94,9 +94,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">İletişim</h4>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-              <li className="flex items-center"><Mail size={16} className="mr-2" /> destek@ilandan.com</li>
-              <li className="flex items-center"><Phone size={16} className="mr-2" /> +90 212 000 00 00</li>
-              <li className="flex items-center"><MapPin size={16} className="mr-2" /> İstanbul, Türkiye</li>
+              <li className="flex items-center"><Mail size={16} className="mr-2" /> omersvm0606@gmail.com</li>
+              <li className="flex items-center"><Phone size={16} className="mr-2" /> +90 312 000 00 00</li>
+              <li className="flex items-center"><MapPin size={16} className="mr-2" /> Ankara, Türkiye</li>
             </ul>
           </div>
         </div>
