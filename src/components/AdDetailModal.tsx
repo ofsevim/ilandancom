@@ -22,16 +22,6 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   const [seller, setSeller] = useState(ad.user);
   const [showMessages, setShowMessages] = useState(false);
 
-  // İlk 3 fotoğrafı preload et
-  React.useEffect(() => {
-    if (ad.images.length > 1) {
-      ad.images.slice(0, 3).forEach((image, index) => {
-        const img = new Image();
-        img.src = buildImageUrl(image, { width: 600, height: 400, quality: 70, resize: 'cover', format: 'webp' });
-      });
-    }
-  }, [ad.images]);
-
   React.useEffect(() => {
     let isMounted = true;
     const loadSeller = async () => {
@@ -130,7 +120,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
                 
                 <img
-                  src={buildImageUrl(ad.images[currentImageIndex], { width: 600, height: 400, quality: 70, resize: 'cover', format: 'webp' })}
+                  src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 800, quality: 85, resize: 'cover', format: 'webp' })}
                   alt={ad.title}
                   className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-opacity duration-300 relative z-10"
                   loading="eager"
@@ -187,17 +177,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                         : 'border-gray-300 dark:border-gray-600'
                     }`}
                   >
-                    {/* Thumbnail Loading Skeleton */}
-                    <div className="w-full h-full bg-gray-200 dark:bg-gray-700 animate-pulse absolute inset-0"></div>
-                    
                     <img
-                      src={buildImageUrl(image, { width: 64, height: 64, quality: 50, resize: 'cover', format: 'webp' })}
+                      src={buildImageUrl(image, { width: 160, height: 160, quality: 60, resize: 'cover', format: 'webp' })}
                       alt={ad.title}
-                      className="w-full h-full object-cover transition-opacity duration-200 relative z-10"
-                      loading={index < 3 ? "eager" : "lazy"}
+                      className="w-full h-full object-cover transition-opacity duration-200"
+                      loading="lazy"
                       onLoad={(e) => {
                         e.currentTarget.style.opacity = '1';
-                        e.currentTarget.previousElementSibling?.remove();
                       }}
                       onError={(e) => {
                         e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMkM0MC44MzY2IDIyIDQ4IDI5LjE2MzQgNDggMzhDNDggNDYuODM2NiA0MC44MzY2IDU0IDMyIDU0QzIzLjE2MzQgNTQgMTYgNDYuODM2NiAxNiAzOEMxNiAyOS4xNjM0IDIzLjE2MzQgMjIgMzIgMjJaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=';
