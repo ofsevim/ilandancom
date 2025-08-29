@@ -50,6 +50,69 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
   const isFavorite = favorites.includes(ad.id);
 
+  // Tüm görselleri arka planda preload et
+  React.useEffect(() => {
+    if (ad.images.length > 1) {
+      ad.images.forEach((image, index) => {
+        if (index !== currentImageIndex) {
+          const img = new Image();
+          img.src = buildImageUrl(image, { 
+            width: 1200, 
+            height: 800, 
+            quality: 85, 
+            resize: 'cover', 
+            format: 'webp' 
+          });
+        }
+      });
+    }
+  }, [ad.images, currentImageIndex]);
+
+  // Network-aware loading
+  const [isSlowConnection, setIsSlowConnection] = React.useState(false);
+  
+  React.useEffect(() => {
+    if ('connection' in navigator) {
+      const connection = (navigator as any).connection;
+      const updateConnectionStatus = () => {
+        setIsSlowConnection(
+          connection.effectiveType === '2g' || 
+          connection.effectiveType === 'slow-2g' ||
+          connection.downlink < 1
+        );
+      };
+      
+      updateConnectionStatus();
+      connection.addEventListener('change', updateConnectionStatus);
+      
+      return () => connection.removeEventListener('change', updateConnectionStatus);
+    }
+  }, []);
+
+  // Sonraki ve önceki görseli preload et
+  React.useEffect(() => {
+    const preloadImage = (index: number) => {
+      if (ad.images[index]) {
+        const img = new Image();
+        const quality = isSlowConnection ? 60 : 85;
+        const width = isSlowConnection ? 800 : 1200;
+        img.src = buildImageUrl(ad.images[index], { 
+          width, 
+          height: Math.round(width * 0.67), 
+          quality, 
+          resize: 'cover', 
+          format: 'webp' 
+        });
+      }
+    };
+
+    const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
+    const prevIndex = currentImageIndex === 0 ? ad.images.length - 1 : currentImageIndex - 1;
+    
+    preloadImage(nextIndex);
+    preloadImage(prevIndex);
+  }, [currentImageIndex, ad.images, isSlowConnection]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
       style: 'currency',
@@ -120,10 +183,18 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
                 
                 <img
-                  src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 800, quality: 85, resize: 'cover', format: 'webp' })}
+                  src={buildImageUrl(ad.images[currentImageIndex], { 
+                    width: isSlowConnection ? 800 : 1200, 
+                    height: isSlowConnection ? 533 : 800, 
+                    quality: isSlowConnection ? 60 : 85, 
+                    resize: 'cover', 
+                    format: 'webp' 
+                  })}
                   alt={ad.title}
                   className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-opacity duration-300 relative z-10"
                   loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
                   onClick={() => setIsFullscreen(true)}
                   onLoad={(e) => {
                     e.currentTarget.style.opacity = '1';
