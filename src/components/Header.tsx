@@ -7,6 +7,7 @@ import ProfileModal from './ProfileModal';
 import MyAdsModal from './MyAdsModal';
 import FavoritesModal from './FavoritesModal';
 import MessagesModal from './MessagesModal';
+import ConversationsModal from './ConversationsModal';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
@@ -23,6 +24,8 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
   const [showMyAdsModal, setShowMyAdsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showMessagesModal, setShowMessagesModal] = useState(false);
+  const [showConversationsModal, setShowConversationsModal] = useState(false);
+  const [currentConversation, setCurrentConversation] = useState<{receiverId: string, adId: string} | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -124,7 +127,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             {/* Messages Button */}
             {user && (
               <button
-                onClick={async () => { setShowMessagesModal(true); setUnreadCount(0); try { (await import('../services/api')).messageService.markAllRead(); } catch {} }}
+                onClick={() => { setShowConversationsModal(true); setUnreadCount(0); try { (async () => { (await import('../services/api')).messageService.markAllRead(); })(); } catch {} }}
                 className="relative p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                 title="Mesajlar"
               >
@@ -248,8 +251,22 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
         <FavoritesModal onClose={() => setShowFavoritesModal(false)} />
       )}
 
-      {showMessagesModal && user && (
-        <MessagesModal receiverId={user.id} onClose={() => setShowMessagesModal(false)} />
+      {showConversationsModal && (
+        <ConversationsModal 
+          onClose={() => setShowConversationsModal(false)}
+          onOpenConversation={(receiverId, adId) => {
+            setCurrentConversation({ receiverId, adId });
+            setShowConversationsModal(false);
+          }}
+        />
+      )}
+      
+      {currentConversation && (
+        <MessagesModal 
+          receiverId={currentConversation.receiverId} 
+          adId={currentConversation.adId}
+          onClose={() => setCurrentConversation(null)} 
+        />
       )}
     </header>
   );

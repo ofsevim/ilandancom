@@ -486,4 +486,57 @@ export const messageService = {
   async markAllRead() {
     return this.markConversationRead();
   },
+
+  async getConversations() {
+    const { data: me } = await supabase.auth.getUser();
+    const myId = me.user?.id;
+    if (!myId) return [];
+
+    // İlan bazlı konuşmaları getir
+    const { data, error } = await supabase
+      .from('messages')
+      .select(`
+        *,
+        ads!inner(title),
+        users!messages_sender_id_fkey(name)
+      `)
+      .or(`sender_id.eq.${myId},receiver_id.eq.${myId}`)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+
+    // Konuşmaları grupla
+    const conversationsMap = new Map();
+    
+    (data || []).forEach((m: any) => {
+      const otherId = m.sender_id === myId ? m.receiver_id : m.sender_id;
+      const adId = m.ad_id;
+      const key = `${adId}-${otherId}`;
+      
+      if (!conversationsMap.has(key)) {
+        conversationsMap.set(key, {
+          ad_id: adId,
+          ad_title: m.ads?.title || 'Bilinmeyen İlan',
+          other_user_id: otherId,
+          other_user_name: m.users?.name || 'Bilinmeyen Kullanıcı',
+          last_message: m.content,
+          last_message_time: m.created_at,
+          unread_count: 0
+        });
+      } else {
+        const conv = conversationsMap.get(key);
+        if (new Date(m.created_at) > new Date(conv.last_message_time)) {
+          conv.last_message = m.content;
+          conv.last_message_time = m.created_at;
+        }
+        if (m.receiver_id === myId && !m.read_at) {
+          conv.unread_count++;
+        }
+      }
+    });
+
+    return Array.from(conversationsMap.values()).sort((a, b) => 
+      new Date(b.last_message_time).getTime() - new Date(a.last_message_time).getTime()
+    );
+  },
 };
