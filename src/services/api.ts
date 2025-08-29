@@ -564,6 +564,17 @@ export const adminService = {
       throw new Error('Giriş yapmanız gerekiyor');
     }
 
+    // Önce kullanıcının admin olup olmadığını kontrol et
+    const { data: currentUser, error: userError } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    
+    if (userError || currentUser?.role !== 'admin') {
+      throw new Error('Admin yetkisi gerekli');
+    }
+
     // Admin ise tüm kullanıcıları getir
     const { data, error } = await supabase
       .from('users')
