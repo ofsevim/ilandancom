@@ -554,3 +554,75 @@ export const messageService = {
     );
   },
 };
+
+// Admin Services
+export const adminService = {
+  async getAllUsers() {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getAllAds() {
+    const { data, error } = await supabase
+      .from('listings')
+      .select(`
+        *,
+        categories (name),
+        users (name, email)
+      `)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  },
+
+  async updateUserRole(userId: string, role: 'user' | 'admin') {
+    const { data, error } = await supabase
+      .from('users')
+      .update({ role })
+      .eq('id', userId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteUser(userId: string) {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', userId);
+    
+    if (error) throw error;
+  },
+
+  async getSystemStats() {
+    const { data: users, error: usersError } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true });
+    
+    const { data: ads, error: adsError } = await supabase
+      .from('listings')
+      .select('*', { count: 'exact', head: true });
+    
+    const { data: messages, error: messagesError } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true });
+    
+    if (usersError || adsError || messagesError) {
+      throw new Error('İstatistikler yüklenirken hata oluştu');
+    }
+    
+    return {
+      totalUsers: users || 0,
+      totalAds: ads || 0,
+      totalMessages: messages || 0
+    };
+  }
+};
