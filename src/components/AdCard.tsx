@@ -117,7 +117,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
         {/* Category */}
         <div className="mt-2.5 pt-2.5 border-t border-gray-200 dark:border-gray-700">
           <span className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs">
-            {ad.category.name}
+            {ad.category?.name || 'Diğer'}
           </span>
         </div>
       </div>

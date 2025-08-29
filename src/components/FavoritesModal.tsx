@@ -34,10 +34,10 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
         description: item.ads.description,
         price: item.ads.price,
         category: {
-          id: item.ads.categories.id,
-          name: item.ads.categories.name,
-          slug: item.ads.categories.slug,
-          icon: item.ads.categories.icon
+          id: item.ads.categories?.id || 'unknown',
+          name: item.ads.categories?.name || 'Diğer',
+          slug: item.ads.categories?.slug || 'other',
+          icon: item.ads.categories?.icon || 'package'
         },
         location: {
           city: item.ads.city,
@@ -50,20 +50,20 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
         images: item.ads.images || [],
         userId: item.ads.user_id,
         user: {
-          id: item.ads.users.id,
-          email: item.ads.users.email,
-          name: item.ads.users.name,
-          phone: item.ads.users.phone,
-          avatar: item.ads.users.avatar,
-          role: item.ads.users.role,
-          createdAt: item.ads.users.created_at,
-          isActive: item.ads.users.is_active
+          id: item.ads.users?.id || 'unknown',
+          email: item.ads.users?.email || '',
+          name: item.ads.users?.name || 'Gizli Kullanıcı',
+          phone: item.ads.users?.phone || '',
+          avatar: item.ads.users?.avatar || '',
+          role: item.ads.users?.role || 'user',
+          createdAt: item.ads.users?.created_at || item.ads.created_at,
+          isActive: item.ads.users?.is_active || true
         },
         status: item.ads.status,
         createdAt: item.ads.created_at,
         updatedAt: item.ads.updated_at,
-        viewCount: item.ads.view_count,
-        featured: item.ads.featured
+        viewCount: item.ads.view_count || 0,
+        featured: item.ads.featured || false
       }));
       setFavorites(transformedFavorites);
     } catch (error: any) {
