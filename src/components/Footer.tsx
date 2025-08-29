@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">ilandan.com</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">ilandan</h3>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               Türkiye'nin modern ilan platformu. Emlak, araç, elektronik ve daha fazlası.
             </p>
@@ -104,7 +104,7 @@ const Footer: React.FC = () => {
 
       <div className="border-t border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-          <p>© {new Date().getFullYear()} ilandan.com. Tüm hakları saklıdır.</p>
+          <p>© {new Date().getFullYear()} ilandan. Tüm hakları saklıdır.</p>
           <div className="mt-2 md:mt-0 space-x-4">
             <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Yardım</a>
             <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Güvenlik</a>
