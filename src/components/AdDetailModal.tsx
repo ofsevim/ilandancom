@@ -114,12 +114,23 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
           <div className="space-y-4">
             {ad.images.length > 0 ? (
               <div className="relative">
+                {/* Loading Skeleton */}
+                <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
+                
                 <img
                   src={ad.images[currentImageIndex]}
                   alt={ad.title}
-                  className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in"
+                  className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-opacity duration-300 relative z-10"
                   loading="eager"
                   onClick={() => setIsFullscreen(true)}
+                  onLoad={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.previousElementSibling?.remove();
+                  }}
+                  onError={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBDMTE2LjU2OSA3MCAxMzAgODMuNDMxIDEzMCAxMDBDMTMwIDExNi41NjkgMTE2LjU2OSAxMzAgMTAwIDEzMEM4My40MzEgMTMwIDcwIDExNi41NjkgNzAgMTAwQzcwIDgzLjQzMSA4My40MzEgNzAgMTAwIDcwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
+                  }}
+                  style={{ opacity: 0 }}
                 />
                 
                 {ad.images.length > 1 && (
@@ -167,8 +178,15 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                     <img
                       src={image}
                       alt={ad.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-opacity duration-200"
                       loading="lazy"
+                      onLoad={(e) => {
+                        e.currentTarget.style.opacity = '1';
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMkM0MC44MzY2IDIyIDQ4IDI5LjE2MzQgNDggMzhDNDggNDYuODM2NiA0MC44MzY2IDU0IDMyIDU0QzIzLjE2MzQgNTQgMTYgNDYuODM2NiAxNiAzOEMxNiAyOS4xNjM0IDIzLjE2MzQgMjIgMzIgMjJaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=';
+                      }}
+                      style={{ opacity: 0 }}
                     />
                   </button>
                 ))}
