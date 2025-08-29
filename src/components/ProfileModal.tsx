@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/api';
-import { User, Edit, Save, X, Camera, Settings } from 'lucide-react';
+import { User, Edit, Save, X, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ProfileModalProps {
   onClose: () => void;
-  onShowAdmin?: () => void;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, onShowAdmin }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
   const { user, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -182,18 +181,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, onShowAdmin }) => 
                   <Edit size={16} className="mr-2" />
                   Düzenle
                 </button>
-                {user?.role === 'admin' && onShowAdmin && (
-                  <button
-                    onClick={() => {
-                      onShowAdmin();
-                      onClose();
-                    }}
-                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center"
-                  >
-                    <Settings size={16} className="mr-2" />
-                    Admin Panel
-                  </button>
-                )}
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"

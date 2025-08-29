@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X, Users, FileText, TrendingUp, Clock, Check, Ban, Trash2, Eye, Search } from 'lucide-react';
 import { Ad, User } from '../types';
 import { supabase } from '../lib/supabase';
-import { adService, adminService } from '../services/api';
+import { adService } from '../services/api';
 import toast from 'react-hot-toast';
 
 interface AdminDashboardProps {
@@ -21,10 +21,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     try {
       setLoading(true);
       setError(null);
-      const [adsData, usersData] = await Promise.all([
-        adminService.getAllAds(),
-        adminService.getAllUsers()
+      const [{ data: adsData, error: adsErr }, { data: usersData, error: usersErr }] = await Promise.all([
+        supabase.from('ads').select('*, users(*), categories(*)').order('created_at', { ascending: false }),
+        supabase.from('users').select('*').order('created_at', { ascending: false })
       ]);
+      if (adsErr) throw adsErr;
+      if (usersErr) throw usersErr;
       setAds(adsData || []);
       setUsers(usersData || []);
     } catch (e: any) {
@@ -64,29 +66,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       setAds(prev => prev.filter((a: any) => a.id !== id));
     } catch (e: any) {
       toast.error(e.message || 'Silme işlemi başarısız');
-    }
-  };
-
-  const handleUpdateUserRole = async (userId: string, newRole: 'user' | 'admin') => {
-    try {
-      await adminService.updateUserRole(userId, newRole);
-      toast.success('Kullanıcı rolü güncellendi');
-      setUsers(prev => prev.map((u: any) => 
-        u.id === userId ? { ...u, role: newRole } : u
-      ));
-    } catch (e: any) {
-      toast.error(e.message || 'Rol güncelleme başarısız');
-    }
-  };
-
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) return;
-    try {
-      await adminService.deleteUser(userId);
-      toast.success('Kullanıcı silindi');
-      setUsers(prev => prev.filter((u: any) => u.id !== userId));
-    } catch (e: any) {
-      toast.error(e.message || 'Kullanıcı silme başarısız');
     }
   };
 
@@ -439,18 +418,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex space-x-2">
-                              <button 
-                                onClick={() => handleUpdateUserRole(user.id, user.role === 'admin' ? 'user' : 'admin')}
-                                className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1 rounded"
-                                title={user.role === 'admin' ? 'Kullanıcı yap' : 'Admin yap'}
-                              >
-                                {user.role === 'admin' ? <Users size={16} /> : <Check size={16} />}
+                              <button className="text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 p-1 rounded">
+                                <Ban size={16} />
                               </button>
-                              <button 
-                                onClick={() => handleDeleteUser(user.id)}
-                                className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded"
-                                title="Kullanıcıyı sil"
-                              >
+                              <button className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
                                 <Trash2 size={16} />
                               </button>
                             </div>

@@ -8,7 +8,6 @@ import MyAdsModal from './MyAdsModal';
 import FavoritesModal from './FavoritesModal';
 import MessagesModal from './MessagesModal';
 import ConversationsModal from './ConversationsModal';
-import AdminDashboard from './AdminDashboard';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
@@ -26,7 +25,6 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showMessagesModal, setShowMessagesModal] = useState(false);
   const [showConversationsModal, setShowConversationsModal] = useState(false);
-  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [currentConversation, setCurrentConversation] = useState<{receiverId: string, adId: string} | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -197,7 +195,17 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
                       <Heart size={16} className="mr-2" />
                       Favorilerim
                     </button>
-
+                    {user.role === 'admin' && (
+                      <button
+                        onClick={() => {
+                          window.location.href = '/admin';
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-700"
+                      >
+                        Admin Panel
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         logout();
@@ -229,10 +237,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
       )}
       
       {showProfileModal && (
-        <ProfileModal 
-          onClose={() => setShowProfileModal(false)} 
-          onShowAdmin={() => setShowAdminDashboard(true)}
-        />
+        <ProfileModal onClose={() => setShowProfileModal(false)} />
       )}
       
       {showMyAdsModal && (
@@ -262,10 +267,6 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
           adId={currentConversation.adId}
           onClose={() => setCurrentConversation(null)} 
         />
-      )}
-
-      {showAdminDashboard && (
-        <AdminDashboard onClose={() => setShowAdminDashboard(false)} />
       )}
     </header>
   );
