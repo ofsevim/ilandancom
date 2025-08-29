@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
               aria-label="Anasayfa"
               className="text-xl font-bold text-blue-600 dark:text-blue-400 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 rounded"
             >
-              ilandan.com
+              ilandan
             </button>
           </div>
 
