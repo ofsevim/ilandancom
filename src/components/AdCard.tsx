@@ -48,7 +48,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {ad.images.length > 0 ? (
           <img
-            src={buildImageUrl(ad.images[0], { width: 400, height: 300, quality: 60, resize: 'cover', format: 'webp' })}
+            src={buildImageUrl(ad.images[0], { width: 250, height: 150, quality: 40, resize: 'cover', format: 'webp' })}
             alt={ad.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
             loading="lazy"

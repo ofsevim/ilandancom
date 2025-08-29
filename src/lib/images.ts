@@ -10,18 +10,24 @@ export type ImageTransformOptions = {
 // Not: Public URL'lere ?width=&height=&quality=&resize=&format= parametreleri eklenebilir.
 export function buildImageUrl(originalUrl: string, options: ImageTransformOptions = {}): string {
   if (!originalUrl) return originalUrl;
-  try {
-    const url = new URL(originalUrl);
-    if (options.width) url.searchParams.set('width', String(options.width));
-    if (options.height) url.searchParams.set('height', String(options.height));
-    if (options.quality) url.searchParams.set('quality', String(options.quality));
-    if (options.resize) url.searchParams.set('resize', options.resize);
-    if (options.format) url.searchParams.set('format', options.format);
-    return url.toString();
-  } catch {
-    // Geçersiz URL ise orijinali döndür.
-    return originalUrl;
+  
+  // Supabase Storage URL'lerini kontrol et
+  if (originalUrl.includes('supabase.co') && originalUrl.includes('storage')) {
+    try {
+      const url = new URL(originalUrl);
+      if (options.width) url.searchParams.set('width', String(options.width));
+      if (options.height) url.searchParams.set('height', String(options.height));
+      if (options.quality) url.searchParams.set('quality', String(options.quality));
+      if (options.resize) url.searchParams.set('resize', options.resize);
+      if (options.format) url.searchParams.set('format', options.format);
+      return url.toString();
+    } catch {
+      return originalUrl;
+    }
   }
+  
+  // Diğer URL'ler için orijinali döndür
+  return originalUrl;
 }
 
 
