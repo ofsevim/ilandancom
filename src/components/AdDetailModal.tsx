@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2, Send } from 'lucide-react';
 import { Ad } from '../types';
+import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
 import { adService, userService, publicUserService } from '../services/api';
 import MessagesModal from './MessagesModal';
+import toast from 'react-hot-toast';
 
 interface AdDetailModalProps {
   ad: Ad;
@@ -100,11 +102,11 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-6xl w-full my-8 relative">
+      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-6xl w-full my-8 relative overflow-hidden">
         <button
           onClick={onClose}
           aria-label="Kapat"
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+          className="absolute top-2 right-2 md:top-4 md:right-4 z-50 w-12 h-12 md:w-10 md:h-10 bg-white dark:bg-gray-800 bg-opacity-95 dark:bg-opacity-95 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 shadow-lg border border-gray-200 dark:border-gray-600"
         >
           <X size={20} />
         </button>
@@ -118,7 +120,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
                 
                 <img
-                  src={ad.images[currentImageIndex]}
+                  src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 800, quality: 85, resize: 'cover', format: 'webp' })}
                   alt={ad.title}
                   className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-opacity duration-300 relative z-10"
                   loading="eager"
@@ -176,7 +178,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                     }`}
                   >
                     <img
-                      src={image}
+                      src={buildImageUrl(image, { width: 160, height: 160, quality: 60, resize: 'cover', format: 'webp' })}
                       alt={ad.title}
                       className="w-full h-full object-cover transition-opacity duration-200"
                       loading="lazy"
@@ -342,7 +344,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   </div>
                 )}
                 <button
-                  onClick={() => setShowMessages(true)}
+                  onClick={() => {
+                    if (!user) {
+                      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
+                      return;
+                    }
+                    setShowMessages(true);
+                  }}
                   className="w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 >
                   <Send size={18} />
@@ -383,7 +391,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
             </>
           )}
           <img
-            src={ad.images[currentImageIndex]}
+            src={buildImageUrl(ad.images[currentImageIndex], { width: 2000, height: 1600, quality: 90, resize: 'inside', format: 'webp' })}
             alt={ad.title}
             className="max-w-[95vw] max-h-[90vh] object-contain"
             loading="lazy"

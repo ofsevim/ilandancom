@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Eye, Heart, Clock } from 'lucide-react';
 import { Ad } from '../types';
+import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
 
 interface AdCardProps {
@@ -47,7 +48,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {ad.images.length > 0 ? (
           <img
-            src={ad.images[0]}
+            src={buildImageUrl(ad.images[0], { width: 400, height: 300, quality: 60, resize: 'cover', format: 'webp' })}
             alt={ad.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
             loading="lazy"

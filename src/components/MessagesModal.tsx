@@ -56,6 +56,10 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
 
   const send = async () => {
     if (!input.trim()) return;
+    if (!myId) {
+      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
+      return;
+    }
     try {
       setSending(true);
       await messageService.sendMessage({ receiverId, adId, content: input.trim() });
