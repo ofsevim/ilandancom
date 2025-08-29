@@ -492,23 +492,37 @@ export const messageService = {
     const myId = me.user?.id;
     if (!myId) return [];
 
-    // İlan bazlı konuşmaları getir
-    const { data, error } = await supabase
+    // Önce mesajları getir
+    const { data: messages, error: messagesError } = await supabase
       .from('messages')
-      .select(`
-        *,
-        ads!inner(title),
-        users!messages_sender_id_fkey(name)
-      `)
+      .select('*')
       .or(`sender_id.eq.${myId},receiver_id.eq.${myId}`)
       .order('created_at', { ascending: false });
     
-    if (error) throw error;
+    if (messagesError) throw messagesError;
+
+    // İlan ve kullanıcı bilgilerini ayrı ayrı getir
+    const adIds = [...new Set(messages?.map(m => m.ad_id).filter(Boolean) || [])];
+    const userIds = [...new Set(messages?.flatMap(m => [m.sender_id, m.receiver_id]).filter(id => id !== myId) || [])];
+
+    const { data: ads } = await supabase
+      .from('listings')
+      .select('id, title')
+      .in('id', adIds);
+
+    const { data: users } = await supabase
+      .from('user_public')
+      .select('id, name')
+      .in('id', userIds);
+
+    // Map'leri oluştur
+    const adsMap = new Map(ads?.map(ad => [ad.id, ad]) || []);
+    const usersMap = new Map(users?.map(user => [user.id, user]) || []);
 
     // Konuşmaları grupla
     const conversationsMap = new Map();
     
-    (data || []).forEach((m: any) => {
+    (messages || []).forEach((m: any) => {
       const otherId = m.sender_id === myId ? m.receiver_id : m.sender_id;
       const adId = m.ad_id;
       const key = `${adId}-${otherId}`;
@@ -516,9 +530,9 @@ export const messageService = {
       if (!conversationsMap.has(key)) {
         conversationsMap.set(key, {
           ad_id: adId,
-          ad_title: m.ads?.title || 'Bilinmeyen İlan',
+          ad_title: adsMap.get(adId)?.title || 'Bilinmeyen İlan',
           other_user_id: otherId,
-          other_user_name: m.users?.name || 'Bilinmeyen Kullanıcı',
+          other_user_name: usersMap.get(otherId)?.name || 'Bilinmeyen Kullanıcı',
           last_message: m.content,
           last_message_time: m.created_at,
           unread_count: 0
