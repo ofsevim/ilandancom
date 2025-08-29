@@ -108,22 +108,6 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
-            {/* New Ad Button */}
-            <button
-              onClick={handleShowNewAd}
-              className="hidden md:flex bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 items-center"
-            >
-              <Plus size={16} className="mr-2" />
-              İlan Ver
-            </button>
-            <button
-              onClick={handleShowNewAd}
-              className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-              title="İlan Ver"
-            >
-              <Plus size={20} />
-            </button>
-
             {/* Messages Button */}
             {user && (
               <button
@@ -139,6 +123,22 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
                 )}
               </button>
             )}
+
+            {/* New Ad Button */}
+            <button
+              onClick={handleShowNewAd}
+              className="hidden md:flex bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 items-center"
+            >
+              <Plus size={16} className="mr-2" />
+              İlan Ver
+            </button>
+            <button
+              onClick={handleShowNewAd}
+              className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              title="İlan Ver"
+            >
+              <Plus size={20} />
+            </button>
 
             {/* User Menu */}
             {user ? (
