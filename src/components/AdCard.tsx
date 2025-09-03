@@ -14,6 +14,11 @@ interface AdCardProps {
 const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditClick }) => {
   const { favorites, toggleFavorite, user } = useAuth();
   const isFavorite = favorites.includes(ad.id);
+  
+  // Fotoğraf galerisi state'leri
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
@@ -41,27 +46,90 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
     toggleFavorite(ad.id);
   };
 
+  // Swipe fonksiyonları
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 30; // Daha küçük mesafe
+    const isRightSwipe = distance < -30;
+
+    if (isLeftSwipe && currentImageIndex < ad.images.length - 1) {
+      // Sola kaydırma - sonraki fotoğraf
+      setCurrentImageIndex(prev => prev + 1);
+    } else if (isRightSwipe && currentImageIndex > 0) {
+      // Sağa kaydırma - önceki fotoğraf
+      setCurrentImageIndex(prev => prev - 1);
+    }
+  };
+
   return (
     <div
       onClick={() => onAdClick(ad)}
       className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-200"
     >
       {/* Image */}
-      <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
+      <div 
+        className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {ad.images.length > 0 ? (
-          <img
-            src={buildImageUrl(ad.images[0], { width: 400, height: 300, quality: 60, resize: 'cover', format: 'webp' })}
-            alt={ad.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
-            loading="lazy"
-            onLoad={(e) => {
-              e.currentTarget.style.opacity = '1';
-            }}
-            onError={(e) => {
-              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBDMTE2LjU2OSA3MCAxMzAgODMuNDMxIDEzMCAxMDBDMTMwIDExNi41NjkgMTE2LjU2OSAxMzAgMTAwIDEzMEM4My40MzEgMTMwIDcwIDExNi41NjkgNzAgMTAwQzcwIDgzLjQzMSA4My40MzEgNzAgMTAwIDcwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
-            }}
-            style={{ opacity: 0 }}
-          />
+          <>
+                          <img
+                src={buildImageUrl(ad.images[currentImageIndex], { width: 400, height: 300, quality: 60, resize: 'cover', format: 'webp' })}
+                alt={ad.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              onLoad={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+              onError={(e) => {
+                e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBDMTE2LjU2OSA3MCAxMzAgODMuNDMxIDEzMCAxMDBDMTMwIDExNi41NjkgMTE2LjU2OSAxMzAgMTAwIDEzMEM4My40MzEgMTMwIDcwIDExNi41NjkgNzAgMTAwQzcwIDgzLjQzMSA4My40MzEgNzAgMTAwIDcwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
+              }}
+              style={{ opacity: 0 }}
+            />
+            
+            {/* Click Navigation - Sadece birden fazla fotoğraf varsa */}
+            {ad.images.length > 1 && (
+              <>
+                {/* Sol taraftan tıklama - Önceki fotoğraf */}
+                <div 
+                  className="absolute left-0 top-0 w-1/3 h-full cursor-pointer z-20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (currentImageIndex > 0) {
+                      setCurrentImageIndex(prev => prev - 1);
+                    }
+                  }}
+                />
+                
+                {/* Sağ taraftan tıklama - Sonraki fotoğraf */}
+                <div 
+                  className="absolute right-0 top-0 w-1/3 h-full cursor-pointer z-20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (currentImageIndex < ad.images.length - 1) {
+                      setCurrentImageIndex(prev => prev + 1);
+                    }
+                  }}
+                />
+              </>
+            )}
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             Fotoğraf Yok
@@ -105,7 +173,23 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         {/* Image Count */}
         {ad.images.length > 1 && (
           <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs">
-            {ad.images.length} Fotoğraf
+            {currentImageIndex + 1} / {ad.images.length}
+          </div>
+        )}
+
+        {/* Navigation Dots - Sadece birden fazla fotoğraf varsa */}
+        {ad.images.length > 1 && (
+          <div className="absolute bottom-2 left-2 flex space-x-1">
+            {ad.images.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full ${
+                  index === currentImageIndex 
+                    ? 'bg-white' 
+                    : 'bg-white bg-opacity-40'
+                }`}
+              />
+            ))}
           </div>
         )}
       </div>
