@@ -6,7 +6,6 @@ import AdDetailModal from './components/AdDetailModal';
 import NewAdModal from './components/NewAdModal';
 import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
-import CategoryGrid from './components/CategoryGrid';
 import SidebarFilters from './components/SidebarFilters';
 import { useAuth } from './contexts/AuthContext';
 import { SearchFilters as SearchFiltersType } from './types';
@@ -31,10 +30,6 @@ const AppContent: React.FC = () => {
 
   const handleSearch = (query: string) => {
     setFilters(prev => ({ ...prev, query }));
-  };
-
-  const handleCategorySelect = (categoryId: string | null) => {
-    setFilters(prev => ({ ...prev, category: categoryId || undefined }));
   };
 
   const handleAdClick = async (ad: any) => {
@@ -82,11 +77,8 @@ const AppContent: React.FC = () => {
   return (
     <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Categories */}
-        <CategoryGrid onCategorySelect={handleCategorySelect} />
-
         {/* Main Content */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Filters */}
           <div className="lg:col-span-1">
             <SidebarFilters filters={filters} onFiltersChange={setFilters} />
