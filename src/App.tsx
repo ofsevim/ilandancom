@@ -7,7 +7,7 @@ import NewAdModal from './components/NewAdModal';
 import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
 import CategoryGrid from './components/CategoryGrid';
-import SearchFilters from './components/SearchFilters';
+import SidebarFilters from './components/SidebarFilters';
 import { useAuth } from './contexts/AuthContext';
 import { SearchFilters as SearchFiltersType } from './types';
 import { useAds } from './hooks/useAds';
@@ -85,12 +85,17 @@ const AppContent: React.FC = () => {
         {/* Categories */}
         <CategoryGrid onCategorySelect={handleCategorySelect} />
 
-        {/* Filters and Results Header */}
-        <div className="mt-8 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <SearchFilters filters={filters} onFiltersChange={setFilters} />
-            
-            <div className="flex items-center justify-between">
+        {/* Main Content */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Left Sidebar - Filters */}
+          <div className="lg:col-span-1">
+            <SidebarFilters filters={filters} onFiltersChange={setFilters} />
+          </div>
+
+          {/* Right Content - Ads */}
+          <div className="lg:col-span-3">
+            {/* Results Header */}
+            <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {loading ? 'Yükleniyor...' : `${ads.length} ilan bulundu`}
                 {filters.category && categories.length > 0 && (
@@ -106,23 +111,23 @@ const AppContent: React.FC = () => {
               {user?.role === 'admin' && (
                 <button
                   onClick={showAdminPanel}
-                  className="ml-4 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+                  className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
                 >
                   Admin Panel
                 </button>
               )}
             </div>
+
+            {/* Ads Grid */}
+            <AdGrid 
+              ads={ads} 
+              loading={loading} 
+              onAdClick={handleAdClick}
+              showEditButton={!!user}
+              onEditClick={handleEditAd}
+            />
           </div>
         </div>
-
-                {/* Ads Grid */}
-        <AdGrid 
-          ads={ads} 
-          loading={loading} 
-          onAdClick={handleAdClick}
-          showEditButton={!!user}
-          onEditClick={handleEditAd}
-        />
       </div>
 
       {/* Modals */}
