@@ -10,7 +10,7 @@ interface AdGridProps {
   onEditClick?: (ad: Ad) => void;
 }
 
-const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick }) => {
+const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton, onEditClick }) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
