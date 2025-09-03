@@ -78,15 +78,15 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
   return (
     <div
       onClick={() => onAdClick(ad)}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-200"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}
-      <div 
-        className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
+              <div 
+          className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none group-hover:scale-105 transition-transform duration-300"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
         {ad.images.length > 0 ? (
           <>
                           <img
@@ -196,11 +196,11 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
 
       {/* Content */}
       <div className="p-3">
-        <h3 className="font-semibold text-gray-900 dark:text-white mb-1.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-1.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 tracking-tight">
           {ad.title}
         </h3>
 
-        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5">
+        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5 group-hover:scale-105 transition-transform duration-300">
           {formatPrice(ad.price)}
         </div>
 
