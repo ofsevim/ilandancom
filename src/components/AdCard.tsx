@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Eye, Heart, Clock } from 'lucide-react';
+import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,10 +7,12 @@ import { useAuth } from '../contexts/AuthContext';
 interface AdCardProps {
   ad: Ad;
   onAdClick: (ad: Ad) => void;
+  showEditButton?: boolean;
+  onEditClick?: (ad: Ad) => void;
 }
 
-const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
-  const { favorites, toggleFavorite } = useAuth();
+const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditClick }) => {
+  const { favorites, toggleFavorite, user } = useAuth();
   const isFavorite = favorites.includes(ad.id);
 
   const formatPrice = (price: number) => {
@@ -83,6 +85,22 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick }) => {
             className={isFavorite ? 'text-red-500 fill-current' : 'text-gray-600 dark:text-gray-400'}
           />
         </button>
+
+        {/* Edit Button */}
+        {showEditButton && onEditClick && user && (user.id === ad.userId || user.role === 'admin') && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditClick(ad);
+            }}
+            className={`absolute top-2 w-8 h-8 bg-blue-500 bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all ${
+              ad.featured ? 'left-16' : 'left-2'
+            }`}
+            title="İlanı Düzenle"
+          >
+            <Edit size={16} className="text-white" />
+          </button>
+        )}
 
         {/* Image Count */}
         {ad.images.length > 1 && (

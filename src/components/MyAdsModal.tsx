@@ -5,6 +5,7 @@ import { Ad } from '../types';
 import { X, Edit, Trash2, Eye, Plus, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AdCard from './AdCard';
+import EditAdModal from './EditAdModal';
 
 interface MyAdsModalProps {
   onClose: () => void;
@@ -16,6 +17,7 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
+  const [editingAd, setEditingAd] = useState<Ad | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -88,6 +90,10 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
 
   const handleAdClick = (ad: Ad) => {
     setSelectedAd(ad);
+  };
+
+  const handleEditAd = (ad: Ad) => {
+    setEditingAd(ad);
   };
 
   const formatPrice = (price: number) => {
@@ -228,6 +234,13 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
                         Görüntüle
                       </button>
                       <button
+                        onClick={() => handleEditAd(ad)}
+                        className="bg-green-600 text-white p-2 rounded hover:bg-green-700"
+                        title="İlanı Düzenle"
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button
                         onClick={() => handleDeleteAd(ad.id)}
                         className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
                         title="İlanı Sil"
@@ -259,10 +272,27 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
               </button>
             </div>
             <div className="p-6">
-              <AdCard ad={selectedAd} onAdClick={() => {}} />
+              <AdCard 
+                ad={selectedAd} 
+                onAdClick={() => {}} 
+                showEditButton={true}
+                onEditClick={handleEditAd}
+              />
             </div>
           </div>
         </div>
+      )}
+
+      {/* Edit Ad Modal */}
+      {editingAd && (
+        <EditAdModal
+          ad={editingAd}
+          onClose={() => setEditingAd(null)}
+          onAdUpdated={() => {
+            setEditingAd(null);
+            fetchMyAds(); // İlanları yenile
+          }}
+        />
       )}
     </div>
   );

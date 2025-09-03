@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import AdGrid from './components/AdGrid';
 import AdDetailModal from './components/AdDetailModal';
 import NewAdModal from './components/NewAdModal';
+import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
 import CategoryGrid from './components/CategoryGrid';
 import SearchFilters from './components/SearchFilters';
@@ -17,6 +18,8 @@ const AppContent: React.FC = () => {
   const { user } = useAuth();
   const [selectedAd, setSelectedAd] = useState<any>(null);
   const [showNewAdModal, setShowNewAdModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingAd, setEditingAd] = useState<any>(null);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
 
   const [filters, setFilters] = useState<SearchFiltersType>({
@@ -46,6 +49,11 @@ const AppContent: React.FC = () => {
 
   const handleAdCreated = () => {
     refreshAds();
+  };
+
+  const handleEditAd = (ad: any) => {
+    setEditingAd(ad);
+    setShowEditModal(true);
   };
 
   const showAdminPanel = () => {
@@ -107,11 +115,13 @@ const AppContent: React.FC = () => {
           </div>
         </div>
 
-        {/* Ads Grid */}
-        <AdGrid
-          ads={ads}
-          loading={loading}
+                {/* Ads Grid */}
+        <AdGrid 
+          ads={ads} 
+          loading={loading} 
           onAdClick={handleAdClick}
+          showEditButton={!!user}
+          onEditClick={handleEditAd}
         />
       </div>
 
@@ -131,6 +141,22 @@ const AppContent: React.FC = () => {
         <NewAdModal
           onClose={() => setShowNewAdModal(false)}
           onAdCreated={handleAdCreated}
+        />
+      )}
+
+      {/* Edit Ad Modal */}
+      {showEditModal && editingAd && (
+        <EditAdModal
+          ad={editingAd}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingAd(null);
+          }}
+          onAdUpdated={() => {
+            setShowEditModal(false);
+            setEditingAd(null);
+            refreshAds();
+          }}
         />
       )}
 

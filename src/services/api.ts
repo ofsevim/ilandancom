@@ -231,13 +231,30 @@ export const adService = {
     return data;
   },
 
-  async updateAd(id: string, updates: Partial<Ad>) {
+  async updateAd(id: string, updates: {
+    title?: string;
+    description?: string;
+    price?: number;
+    categoryId?: string;
+    city?: string;
+    district?: string;
+    images?: string[];
+  }) {
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
+
+    if (updates.title !== undefined) updateData.title = updates.title;
+    if (updates.description !== undefined) updateData.description = updates.description;
+    if (updates.price !== undefined) updateData.price = updates.price;
+    if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
+    if (updates.city !== undefined) updateData.city = updates.city;
+    if (updates.district !== undefined) updateData.district = updates.district;
+    if (updates.images !== undefined) updateData.images = updates.images;
+
     const { data, error } = await supabase
-      .from('ads')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
+      .from('listings')
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();

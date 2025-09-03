@@ -6,6 +6,8 @@ interface AdGridProps {
   ads: Ad[];
   loading?: boolean;
   onAdClick: (ad: Ad) => void;
+  showEditButton?: boolean;
+  onEditClick?: (ad: Ad) => void;
 }
 
 const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick }) => {
@@ -49,7 +51,13 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {ads.map((ad) => (
-        <AdCard key={ad.id} ad={ad} onAdClick={onAdClick} />
+        <AdCard 
+          key={ad.id} 
+          ad={ad} 
+          onAdClick={onAdClick}
+          showEditButton={showEditButton}
+          onEditClick={onEditClick}
+        />
       ))}
     </div>
   );

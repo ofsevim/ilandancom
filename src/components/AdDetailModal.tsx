@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2, Send } from 'lucide-react';
+import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2, Send, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
 import { adService, userService, publicUserService } from '../services/api';
 import MessagesModal from './MessagesModal';
+import EditAdModal from './EditAdModal';
 import toast from 'react-hot-toast';
 
 interface AdDetailModalProps {
@@ -21,6 +22,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [seller, setSeller] = useState(ad.user);
   const [showMessages, setShowMessages] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -287,15 +289,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
                 <div className="flex items-center gap-2 mt-10 md:mt-0 mr-10 md:mr-16">
                   {(user && (user.id === ad.userId || user.role === 'admin')) && (
-                    <button
-                      onClick={handleDelete}
-                      disabled={deleting}
-                      aria-label="İlanı Kaldır"
-                      className="w-12 h-12 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-full flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                      title="İlanı Kaldır"
-                    >
-                      <Trash2 size={20} />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => setShowEditModal(true)}
+                        aria-label="İlanı Düzenle"
+                        className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-full flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                        title="İlanı Düzenle"
+                      >
+                        <Edit size={20} />
+                      </button>
+                      <button
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        aria-label="İlanı Kaldır"
+                        className="w-12 h-12 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-full flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                        title="İlanı Kaldır"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </>
                   )}
                   <button
                     onClick={handleFavoriteClick}
@@ -471,6 +483,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
       )}
       {showMessages && (
         <MessagesModal receiverId={ad.userId} adId={ad.id} onClose={() => setShowMessages(false)} />
+      )}
+      {showEditModal && (
+        <EditAdModal
+          ad={ad}
+          onClose={() => setShowEditModal(false)}
+          onAdUpdated={() => {
+            setShowEditModal(false);
+            // İlan güncellendiğinde sayfayı yenile
+            window.location.reload();
+          }}
+        />
       )}
     </div>
   );
