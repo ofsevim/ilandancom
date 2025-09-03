@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
@@ -13,12 +13,17 @@ interface AdCardProps {
 
 const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditClick }) => {
   const { favorites, toggleFavorite, user } = useAuth();
-  const isFavorite = favorites.includes(ad.id);
+  const [isFavorite, setIsFavorite] = useState(favorites.includes(ad.id));
   
   // Fotoğraf galerisi state'leri
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Favorites değiştiğinde local state'i güncelle
+  useEffect(() => {
+    setIsFavorite(favorites.includes(ad.id));
+  }, [favorites, ad.id]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
@@ -41,9 +46,15 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
     return date.toLocaleDateString('tr-TR');
   };
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleFavorite(ad.id);
+    try {
+      await toggleFavorite(ad.id);
+      // Local state'i hemen güncelle
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error('Favori ekleme/çıkarma hatası:', error);
+    }
   };
 
   // Swipe fonksiyonları
