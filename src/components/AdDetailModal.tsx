@@ -23,6 +23,11 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   const [seller, setSeller] = useState(ad.user);
   const [showMessages, setShowMessages] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  
+  // Swipe state'leri
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -51,6 +56,44 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   }, [ad.userId]);
 
   const isFavorite = favorites.includes(ad.id);
+
+  // Swipe fonksiyonları
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setSwipeDirection(null);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+    
+    // Swipe yönünü belirle
+    if (touchStart && e.targetTouches[0].clientX) {
+      const distance = touchStart - e.targetTouches[0].clientX;
+      if (Math.abs(distance) > 20) {
+        setSwipeDirection(distance > 0 ? 'left' : 'right');
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentImageIndex < ad.images.length - 1) {
+      // Sola kaydırma - sonraki fotoğraf
+      setCurrentImageIndex(prev => prev + 1);
+    } else if (isRightSwipe && currentImageIndex > 0) {
+      // Sağa kaydırma - önceki fotoğraf
+      setCurrentImageIndex(prev => prev - 1);
+    }
+    
+    // Swipe yönünü sıfırla
+    setTimeout(() => setSwipeDirection(null), 300);
+  };
 
   // Tüm görselleri arka planda preload et
   React.useEffect(() => {
@@ -180,7 +223,12 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
           {/* Images */}
           <div className="space-y-4">
             {ad.images.length > 0 ? (
-              <div className="relative">
+              <div 
+                className="relative touch-pan-y select-none"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
                 {/* Loading Skeleton */}
                 <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
                 
@@ -193,7 +241,10 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                     format: 'webp' 
                   })}
                   alt={ad.title}
-                  className="w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-opacity duration-300 relative z-10"
+                  className={`w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-all duration-300 relative z-10 ${
+                    swipeDirection === 'left' ? 'translate-x-2' : 
+                    swipeDirection === 'right' ? '-translate-x-2' : ''
+                  }`}
                   loading="eager"
                   decoding="async"
                   fetchpriority="high"
@@ -203,7 +254,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                     e.currentTarget.previousElementSibling?.remove();
                   }}
                   onError={(e) => {
-                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBDMTE2LjU2OSA3MCAxMzAgODMuNDMxIDEzMCAxMDBDMTMwIDExNi41NjkgMTE2LjU2OSAxMzAgMTAwIDEzMEM4My40MzEgMTMwIDcwIDExNi41NjkgNzAgMTAwQzcwIDgzLjQzMSA4My40MzEgNzAgMTAwIDcwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJ0dXJuIG9uIGphdmFzY3JpcHQgdG8gdmlldyB0aGlzIHBhZ2Uu';
                   }}
                   style={{ opacity: 0 }}
                 />
@@ -234,6 +285,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
             ) : (
               <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                 <span className="text-gray-400">Fotoğraf Yok</span>
+              </div>
+            )}
+
+            {/* Swipe Hint - Sadece mobilde göster */}
+            {ad.images.length > 1 && (
+              <div className="md:hidden text-center text-sm text-gray-500 dark:text-gray-400 py-2">
+                <span className="flex items-center justify-center">
+                  <span className="mr-2">←</span>
+                  Fotoğraflar arası geçiş için kaydırın
+                  <span className="ml-2">→</span>
+                </span>
               </div>
             )}
 
@@ -447,7 +509,12 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
       {/* Fullscreen Image Viewer */}
       {isFullscreen && ad.images.length > 0 && (
-        <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center">
+        <div 
+          className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center touch-pan-y select-none"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <button
             onClick={() => setIsFullscreen(false)}
             className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
