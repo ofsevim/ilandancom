@@ -51,6 +51,15 @@ const LazyImage: React.FC<LazyImageProps> = ({
     ? buildImageUrl(src, { width, height, quality, resize, format })
     : placeholder;
 
+  // Debug logging
+  console.log('LazyImage Debug:', {
+    src,
+    hasIntersected,
+    imageUrl,
+    imageLoaded,
+    imageError
+  });
+
   return (
     <div 
       ref={elementRef as React.RefObject<HTMLDivElement>}
@@ -86,6 +95,28 @@ const LazyImage: React.FC<LazyImageProps> = ({
           onLoad={handleLoad}
           onError={handleError}
           loading="lazy"
+          onErrorCapture={(e) => {
+            console.error('Image load error:', e);
+            console.error('Failed URL:', imageUrl);
+            handleError();
+          }}
+        />
+      )}
+
+      {/* Fallback: Show original image if optimized fails */}
+      {hasIntersected && imageError && (
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover"
+          onLoad={() => {
+            console.log('Fallback image loaded successfully');
+            setImageLoaded(true);
+            setImageError(false);
+          }}
+          onError={() => {
+            console.error('Fallback image also failed:', src);
+          }}
         />
       )}
     </div>
