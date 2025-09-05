@@ -57,13 +57,24 @@ const LazyImage: React.FC<LazyImageProps> = ({
     hasIntersected,
     imageUrl,
     imageLoaded,
-    imageError
+    imageError,
+    className,
+    containerStyle: {
+      minHeight: '100%',
+      minWidth: '100%',
+      display: 'block'
+    }
   });
 
   return (
     <div 
       ref={elementRef as React.RefObject<HTMLDivElement>}
       className={`relative overflow-hidden ${className}`}
+      style={{
+        minHeight: '100%',
+        minWidth: '100%',
+        display: 'block'
+      }}
     >
       {/* Placeholder */}
       {!imageLoaded && !imageError && (
@@ -99,6 +110,11 @@ const LazyImage: React.FC<LazyImageProps> = ({
             console.error('Image load error:', e);
             console.error('Failed URL:', imageUrl);
             handleError();
+          }}
+          style={{
+            minHeight: '100%',
+            minWidth: '100%',
+            display: 'block'
           }}
         />
       )}
