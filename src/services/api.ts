@@ -66,15 +66,7 @@ export const userService = {
   },
 
   async getUserById(id: string) {
-    try {
-      // Önce RPC fonksiyonu dene
-      const { data, error } = await supabase.rpc('get_user_by_id', { user_id: id });
-      if (!error && data) return data;
-    } catch (rpcError) {
-      console.log('RPC get_user_by_id failed, trying direct query:', rpcError);
-    }
-
-    // RPC yoksa doğrudan sorgu dene
+    // Doğrudan sorgu kullan (RPC fonksiyonu mevcut olmayabilir)
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -105,15 +97,7 @@ export const userService = {
 // Public User Service (read-only limited fields for public visibility)
 export const publicUserService = {
   async getPublicUserById(id: string) {
-    try {
-      // Önce RPC fonksiyonu dene
-      const { data, error } = await supabase.rpc('get_public_user', { user_id: id });
-      if (!error && data) return data;
-    } catch (rpcError) {
-      console.log('RPC get_public_user failed, trying direct query:', rpcError);
-    }
-
-    // RPC yoksa doğrudan sorgu dene
+    // Doğrudan sorgu kullan (RPC fonksiyonu mevcut olmayabilir)
     const { data, error } = await supabase
       .from('users')
       .select('id, name, email, phone, avatar, role, created_at, is_active')
@@ -277,25 +261,7 @@ export const adService = {
     district?: string;
     images?: string[];
   }) {
-    // AdBlock engellerini aşmak için önce RPC dene
-    try {
-      const { data, error } = await supabase.rpc('update_listing', {
-        listing_id: id,
-        listing_title: updates.title,
-        listing_description: updates.description,
-        listing_price: updates.price,
-        listing_category_id: updates.categoryId,
-        listing_city: updates.city,
-        listing_district: updates.district,
-        listing_images: updates.images
-      });
-      
-      if (!error) return data;
-    } catch (rpcError) {
-      console.log('RPC update failed, trying direct table update:', rpcError);
-    }
-
-    // RPC yoksa eski yolu dene (engelleyici bloklayabilir)
+    // Doğrudan tablo güncellemesi kullan (RPC fonksiyonu mevcut olmayabilir)
     const updateData: any = {
       updated_at: new Date().toISOString()
     };
@@ -320,11 +286,7 @@ export const adService = {
   },
 
   async deleteAd(id: string) {
-    // Adblock engellerini aşmak için önce RPC dene
-    const { error: rpcError } = await supabase.rpc('delete_ad', { ad_id: id });
-    if (!rpcError) return;
-
-    // RPC yoksa eski yolu dene (engelleyici bloklayabilir)
+    // Doğrudan tablo silme işlemi kullan (RPC fonksiyonu mevcut olmayabilir)
     const { error } = await supabase
       .from('ads')
       .delete()
@@ -333,26 +295,24 @@ export const adService = {
   },
 
   async incrementViewCount(id: string) {
-    // Reklam engelleyicilerden kaçınmak için RPC kullan
-    const { data, error } = await supabase.rpc('increment_view', { ad_id: id });
-    if (error) {
-      // Geriye dönük uyumluluk: RPC yoksa eski yöntemi dene (engelleyici bloklayabilir)
-      const { data: currentAd, error: fetchError } = await supabase
-        .from('ads')
-        .select('view_count')
-        .eq('id', id)
-        .single();
-      if (fetchError) throw fetchError;
-      const { data: updated, error: updErr } = await supabase
-        .from('ads')
-        .update({ view_count: (currentAd.view_count || 0) + 1 })
-        .eq('id', id)
-        .select()
-        .single();
-      if (updErr) throw updErr;
-      return updated;
-    }
-    return data;
+    // Doğrudan view count güncellemesi kullan (RPC fonksiyonu mevcut olmayabilir)
+    const { data: currentAd, error: fetchError } = await supabase
+      .from('ads')
+      .select('view_count')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) throw fetchError;
+    
+    const { data: updated, error: updErr } = await supabase
+      .from('ads')
+      .update({ view_count: (currentAd.view_count || 0) + 1 })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (updErr) throw updErr;
+    return updated;
   },
 
   async getUserAds(userId: string) {
