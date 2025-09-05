@@ -3,7 +3,7 @@ import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
-import LazyImage from './LazyImage';
+import SimpleLazyImage from './SimpleLazyImage';
 
 interface AdCardProps {
   ad: Ad;
@@ -103,7 +103,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         >
         {ad.images.length > 0 ? (
           <>
-            <LazyImage
+            <SimpleLazyImage
               src={ad.images[currentImageIndex]}
               alt={ad.title}
               className="w-full h-full object-contain bg-gray-100 dark:bg-gray-600"
