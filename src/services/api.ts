@@ -256,7 +256,25 @@ export const adService = {
       .from('ads')
       .update(updateData)
       .eq('id', id)
-      .select()
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          slug,
+          icon
+        ),
+        users (
+          id,
+          name,
+          email,
+          phone,
+          avatar,
+          role,
+          created_at,
+          is_active
+        )
+      `)
       .single();
     
     if (error) throw error;
