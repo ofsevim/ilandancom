@@ -28,11 +28,9 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(price) + ' TL';
   };
 
   const formatDate = (dateString: string) => {

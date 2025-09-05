@@ -161,11 +161,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(price) + ' TL';
   };
 
   const formatDate = (dateString: string) => {
