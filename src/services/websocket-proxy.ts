@@ -5,16 +5,16 @@ class WebSocketProxy {
   private isConnected = false;
 
   constructor() {
-    this.connect();
+    // Don't auto-connect to avoid WebSocket errors
+    // this.connect();
   }
 
   private connect() {
     try {
-      // Use a different WebSocket endpoint that might not be blocked
-      const wsUrl = import.meta.env.VITE_SUPABASE_URL
-        .replace('https://', 'wss://')
-        .replace('http://', 'ws://')
-        .replace('/rest/v1', '/realtime/v1/websocket');
+      // Use Supabase's actual WebSocket endpoint
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const projectId = supabaseUrl.split('//')[1].split('.')[0];
+      const wsUrl = `wss://${projectId}.supabase.co/realtime/v1/websocket`;
       
       console.log('Attempting WebSocket connection to:', wsUrl);
       this.ws = new WebSocket(wsUrl);
@@ -34,16 +34,16 @@ class WebSocketProxy {
         }
       };
       
-      this.ws.onclose = () => {
-        console.log('WebSocket disconnected');
+      this.ws.onclose = (event) => {
+        console.log('WebSocket disconnected:', event.code, event.reason);
         this.isConnected = false;
-        // Reconnect after 5 seconds
-        setTimeout(() => this.connect(), 5000);
+        // Don't auto-reconnect to avoid spam
       };
-      
+
       this.ws.onerror = (error) => {
         console.error('WebSocket error:', error);
         this.isConnected = false;
+        // Don't auto-reconnect on error
       };
     } catch (error) {
       console.error('WebSocket connection failed:', error);
@@ -78,20 +78,10 @@ class WebSocketProxy {
 
   async updateAd(id: string, data: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      const messageId = Math.random().toString(36).substr(2, 9);
-      
-      this.messageQueue.push({
-        id: messageId,
-        resolve,
-        reject
-      });
-      
-      if (this.isConnected) {
-        this.processQueue();
-      } else {
-        // Fallback to HTTP if WebSocket not available
-        reject(new Error('WebSocket not available'));
-      }
+      // For now, just reject immediately to fall back to offline storage
+      // WebSocket implementation would require proper Supabase Realtime setup
+      console.log('WebSocket proxy: Falling back to offline storage');
+      reject(new Error('WebSocket not available - using offline storage'));
     });
   }
 }
