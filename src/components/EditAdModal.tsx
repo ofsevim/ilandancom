@@ -135,7 +135,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
       const allImages = [...formData.existingImages, ...newImageUrls];
 
       // İlanı güncelle
-      const result = await adService.updateAd(ad.id, {
+      await adService.updateAd(ad.id, {
         title: formData.title,
         description: formData.description,
         price: parseFloat(formData.price),
@@ -145,31 +145,12 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
         images: allImages
       });
 
-      // Check if update was successful or offline
-      if (result && result.status === 'offline_pending') {
-        toast.success('İlan değişiklikleri kaydedildi. Bağlantı sağlandığında otomatik olarak güncellenecek.');
-      } else {
-        toast.success('İlan başarıyla güncellendi');
-      }
+      toast.success('İlan başarıyla güncellendi');
       onAdUpdated();
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error updating ad:', error);
-      console.error('Error details:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code
-      });
-      
-      // Network error kontrolü
-      if (error.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
-        toast.error('AdBlock veya güvenlik eklentisi API isteklerini engelliyor. Lütfen AdBlock\'u devre dışı bırakın veya siteyi beyaz listeye ekleyin.');
-      } else if (error.message?.includes('Failed to fetch') || error.message?.includes('Network error')) {
-        toast.error('Bağlantı hatası! İnternet bağlantınızı kontrol edin ve tekrar deneyin.');
-      } else {
-        toast.error(`İlan güncellenirken hata oluştu: ${error.message || 'Bilinmeyen hata'}`);
-      }
+      toast.error('İlan güncellenirken hata oluştu');
     } finally {
       setLoading(false);
     }

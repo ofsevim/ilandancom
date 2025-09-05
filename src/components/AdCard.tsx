@@ -3,7 +3,6 @@ import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
-import LazyImage from './LazyImage';
 
 interface AdCardProps {
   ad: Ad;
@@ -32,8 +31,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
       currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-      currencyDisplay: 'symbol'
-    }).format(price).replace('₺', '') + ' ₺';
+    }).format(price);
   };
 
   const formatDate = (dateString: string) => {
@@ -102,15 +100,18 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         >
         {ad.images.length > 0 ? (
           <>
-            <LazyImage
-              src={ad.images[currentImageIndex]}
-              alt={ad.title}
-              className="w-full h-full"
-              width={400}
-              height={300}
-              quality={60}
-              format="webp"
-              resize="cover"
+                          <img
+                src={buildImageUrl(ad.images[currentImageIndex], { width: 400, height: 300, quality: 60, resize: 'cover', format: 'webp' })}
+                alt={ad.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              onLoad={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+              onError={(e) => {
+                e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBDMTE2LjU2OSA3MCAxMzAgODMuNDMxIDEzMCAxMDBDMTMwIDExNi41NjkgMTE2LjU2OSAxMzAgMTAwIDEzMEM4My40MzEgMTMwIDcwIDExNi41NjkgNzAgMTAwQzcwIDgzLjQzMSA4My40MzEgNzAgMTAwIDcwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
+              }}
+              style={{ opacity: 0 }}
             />
             
             {/* Click Navigation - Sadece birden fazla fotoğraf varsa */}

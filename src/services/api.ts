@@ -1,9 +1,5 @@
 import { supabase } from '../lib/supabase';
 import { Ad, Category, User, SearchFilters } from '../types';
-import { retry, isNetworkError } from '../utils/retry';
-import { proxyService } from './proxy';
-import { wsProxy } from './websocket-proxy';
-import { offlineStorage } from './offline-storage';
 
 // Auth Services
 export const authService = {
@@ -97,8 +93,8 @@ export const userService = {
 export const publicUserService = {
   async getPublicUserById(id: string) {
     const { data, error } = await supabase
-      .from('users')
-      .select('id, name, email, phone, avatar, role, created_at, is_active')
+      .from('user_public')
+      .select('*')
       .eq('id', id)
       .single();
     if (error) throw error;
@@ -244,105 +240,27 @@ export const adService = {
     district?: string;
     images?: string[];
   }) {
-    return retry(async () => {
-      try {
-        // Önce normal Supabase ile dene
-        const updateData: any = {
-          updated_at: new Date().toISOString()
-        };
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
 
-        if (updates.title !== undefined) updateData.title = updates.title;
-        if (updates.description !== undefined) updateData.description = updates.description;
-        if (updates.price !== undefined) updateData.price = updates.price;
-        if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
-        if (updates.city !== undefined) updateData.city = updates.city;
-        if (updates.district !== undefined) updateData.district = updates.district;
-        if (updates.images !== undefined) updateData.images = updates.images;
+    if (updates.title !== undefined) updateData.title = updates.title;
+    if (updates.description !== undefined) updateData.description = updates.description;
+    if (updates.price !== undefined) updateData.price = updates.price;
+    if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
+    if (updates.city !== undefined) updateData.city = updates.city;
+    if (updates.district !== undefined) updateData.district = updates.district;
+    if (updates.images !== undefined) updateData.images = updates.images;
 
-        const { data, error } = await supabase
-          .from('ads')
-          .update(updateData)
-          .eq('id', id)
-          .select(`
-            *,
-            categories (
-              id,
-              name,
-              slug,
-              icon
-            ),
-            users (
-              id,
-              name,
-              email,
-              phone,
-              avatar,
-              role,
-              created_at,
-              is_active
-            )
-          `)
-          .single();
-        
-        if (error) throw error;
-        return data;
-      } catch (error: any) {
-        // AdBlock engellemesi varsa çoklu fallback sistemi
-        if (error.message?.includes('ERR_BLOCKED_BY_CLIENT') || 
-            error.message?.includes('Failed to fetch') ||
-            error.message?.includes('Network error')) {
-          
-          console.log('AdBlock detected, trying fallback methods...');
-          
-          const updateData: any = {
-            updated_at: new Date().toISOString()
-          };
-
-          if (updates.title !== undefined) updateData.title = updates.title;
-          if (updates.description !== undefined) updateData.description = updates.description;
-          if (updates.price !== undefined) updateData.price = updates.price;
-          if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
-          if (updates.city !== undefined) updateData.city = updates.city;
-          if (updates.district !== undefined) updateData.district = updates.district;
-          if (updates.images !== undefined) updateData.images = updates.images;
-
-          // Try 1: Enhanced Proxy Service
-          try {
-            console.log('Trying enhanced proxy service...');
-            const result = await proxyService.updateAd(id, updateData);
-            const updatedAd = await this.getAdById(id);
-            return updatedAd;
-          } catch (proxyError: any) {
-            console.log('Proxy service failed:', proxyError.message);
-            
-            // Try 2: WebSocket Proxy
-            try {
-              console.log('Trying WebSocket proxy...');
-              const result = await wsProxy.updateAd(id, updateData);
-              const updatedAd = await this.getAdById(id);
-              return updatedAd;
-            } catch (wsError: any) {
-              console.log('WebSocket proxy failed:', wsError.message);
-              
-              // Try 3: Offline Storage
-              console.log('Saving to offline storage...');
-              await offlineStorage.saveUpdate(id, updateData);
-              
-              // Return optimistic update
-              const optimisticResult = {
-                id,
-                ...updateData,
-                status: 'offline_pending'
-              };
-              console.log('Returning optimistic update:', optimisticResult);
-              return optimisticResult;
-            }
-          }
-        }
-        
-        throw error;
-      }
-    }, 3, 1000);
+    const { data, error } = await supabase
+      .from('listings')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
   },
 
   async deleteAd(id: string) {
@@ -610,7 +528,7 @@ export const messageService = {
       .in('id', adIds);
 
     const { data: users } = await supabase
-      .from('users')
+      .from('user_public')
       .select('id, name')
       .in('id', userIds);
 
