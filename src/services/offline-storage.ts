@@ -8,12 +8,14 @@ class OfflineStorage {
       updates[id] = {
         ...data,
         timestamp: Date.now(),
-        status: 'pending'
+        status: 'pending',
+        id: id
       };
       localStorage.setItem(this.storageKey, JSON.stringify(updates));
       console.log('Update saved to offline storage:', id);
     } catch (error) {
       console.error('Failed to save offline update:', error);
+      throw error;
     }
   }
 

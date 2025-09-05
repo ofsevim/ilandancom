@@ -16,6 +16,7 @@ class WebSocketProxy {
         .replace('http://', 'ws://')
         .replace('/rest/v1', '/realtime/v1/websocket');
       
+      console.log('Attempting WebSocket connection to:', wsUrl);
       this.ws = new WebSocket(wsUrl);
       
       this.ws.onopen = () => {

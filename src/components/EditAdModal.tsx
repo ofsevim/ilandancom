@@ -135,7 +135,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
       const allImages = [...formData.existingImages, ...newImageUrls];
 
       // İlanı güncelle
-      await adService.updateAd(ad.id, {
+      const result = await adService.updateAd(ad.id, {
         title: formData.title,
         description: formData.description,
         price: parseFloat(formData.price),
@@ -146,7 +146,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
       });
 
       // Check if update was successful or offline
-      if (result.status === 'offline_pending') {
+      if (result && result.status === 'offline_pending') {
         toast.success('İlan değişiklikleri kaydedildi. Bağlantı sağlandığında otomatik olarak güncellenecek.');
       } else {
         toast.success('İlan başarıyla güncellendi');

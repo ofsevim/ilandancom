@@ -329,11 +329,13 @@ export const adService = {
               await offlineStorage.saveUpdate(id, updateData);
               
               // Return optimistic update
-              return {
+              const optimisticResult = {
                 id,
                 ...updateData,
                 status: 'offline_pending'
               };
+              console.log('Returning optimistic update:', optimisticResult);
+              return optimisticResult;
             }
           }
         }
