@@ -59,7 +59,7 @@ export const userService = {
         is_active: true
       }])
       .select()
-      .single();
+      .maybeSingle();
     
     if (error) throw error;
     return data;
@@ -91,7 +91,7 @@ export const userService = {
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
     
     if (error) throw error;
     return data;
@@ -254,7 +254,7 @@ export const adService = {
         featured: false
       }])
       .select()
-      .single();
+      .maybeSingle();
     
     if (error) throw error;
     return data;
@@ -303,17 +303,37 @@ export const adService = {
     if (updates.images !== undefined) updateData.images = updates.images;
 
     try {
-      // Doğrudan ads tablosunu güncelle
+      // Önce ID'nin varlığını kontrol et
+      const { data: existingAd, error: checkError } = await supabase
+        .from('ads')
+        .select('id')
+        .eq('id', id)
+        .maybeSingle();
+      
+      if (checkError) {
+        console.error('Ad existence check failed:', checkError);
+        throw new Error('İlan kontrol edilirken hata oluştu.');
+      }
+      
+      if (!existingAd) {
+        throw new Error('İlan bulunamadı.');
+      }
+      
+      // ID varsa güncelle
       const { data, error } = await supabase
         .from('ads')
         .update(updateData)
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Ads table update failed:', error);
         throw new Error('İlan güncellenirken hata oluştu. Lütfen AdBlock\'u devre dışı bırakın ve tekrar deneyin.');
+      }
+      
+      if (!data) {
+        throw new Error('İlan güncellenemedi.');
       }
       
       return data;
@@ -334,7 +354,20 @@ export const adService = {
 
   async incrementViewCount(id: string) {
     try {
-      // Asıl ads tablosunu kullan
+      // En temiz yöntem: RPC function kullan
+      const { data, error } = await supabase.rpc('increment_view_safe', {
+        ad_id: id
+      });
+      
+      if (!error && data) {
+        return data;
+      }
+    } catch (rpcError) {
+      console.log('RPC view count update failed, trying direct update:', rpcError);
+    }
+
+    // Fallback: Direct update (maybeSingle ile)
+    try {
       const { data: currentAd, error: fetchError } = await supabase
         .from('ads')
         .select('view_count')
@@ -356,7 +389,7 @@ export const adService = {
         .update({ view_count: (currentAd.view_count || 0) + 1 })
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
       
       if (updErr) {
         console.log('View count update failed:', updErr);
@@ -409,7 +442,7 @@ export const favoriteService = {
         ad_id: adId
       }])
       .select()
-      .single();
+      .maybeSingle();
     
     if (error) throw error;
     return data;
@@ -501,7 +534,7 @@ export const messageService = {
         },
       ])
       .select()
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
