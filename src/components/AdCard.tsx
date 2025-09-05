@@ -92,7 +92,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
     >
       {/* Image */}
               <div 
-          className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none"
+          className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none group-hover:scale-105 transition-transform duration-300"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -102,11 +102,12 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
             <LazyImage
               src={ad.images[currentImageIndex]}
               alt={ad.title}
-              className="w-full h-full"
+              className="w-full h-full object-contain bg-gray-100 dark:bg-gray-600"
               width={400}
               height={300}
               quality={60}
               format="webp"
+              resize="inside"
             />
             
             {/* Click Navigation - Sadece birden fazla fotoğraf varsa */}
@@ -206,7 +207,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
           {ad.title}
         </h3>
 
-        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5">
+        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5 group-hover:scale-105 transition-transform duration-300">
           {formatPrice(ad.price)}
         </div>
 

@@ -9,6 +9,7 @@ interface LazyImageProps {
   height?: number;
   quality?: number;
   format?: 'webp' | 'jpeg' | 'png';
+  resize?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
   placeholder?: string;
   onLoad?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
   onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
@@ -25,6 +26,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
   height = 300,
   quality = 80,
   format = 'webp',
+  resize = 'cover',
   placeholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+',
   onLoad,
   onError,
@@ -73,7 +75,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
     height,
     quality,
     format,
-    resize: 'cover'
+    resize
   });
 
   return (

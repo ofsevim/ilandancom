@@ -242,6 +242,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                   height={isSlowConnection ? 533 : 800}
                   quality={isSlowConnection ? 60 : 85}
                   format="webp"
+                  resize="cover"
                   decoding="async"
                   fetchpriority="high"
                   onClick={() => setIsFullscreen(true)}
