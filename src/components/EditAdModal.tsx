@@ -145,7 +145,12 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
         images: allImages
       });
 
-      toast.success('İlan başarıyla güncellendi');
+      // Check if update was successful or offline
+      if (result.status === 'offline_pending') {
+        toast.success('İlan değişiklikleri kaydedildi. Bağlantı sağlandığında otomatik olarak güncellenecek.');
+      } else {
+        toast.success('İlan başarıyla güncellendi');
+      }
       onAdUpdated();
       onClose();
     } catch (error: any) {

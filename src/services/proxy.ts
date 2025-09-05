@@ -2,37 +2,69 @@
 class ProxyService {
   private baseUrl: string;
   private apiKey: string;
+  private maskedUrls: string[];
 
   constructor() {
     this.baseUrl = import.meta.env.VITE_SUPABASE_URL;
     this.apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    // Masked URLs to bypass AdBlock
+    this.maskedUrls = [
+      this.baseUrl,
+      this.baseUrl.replace('supabase.co', 'supabase.io'),
+      this.baseUrl.replace('rest/v1', 'api/v1'),
+      this.baseUrl.replace('rest/v1', 'graphql/v1')
+    ];
   }
 
-  private async makeRequest(endpoint: string, options: RequestInit = {}) {
-    const url = `${this.baseUrl}${endpoint}`;
+  private async makeRequest(endpoint: string, options: RequestInit = {}, attempt: number = 0): Promise<any> {
+    const baseUrl = this.maskedUrls[attempt % this.maskedUrls.length];
+    const url = `${baseUrl}${endpoint}`;
+    
+    // Randomize headers to avoid detection
+    const userAgents = [
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+      'Mozilla/5.0 (compatible; ilandan-bot/1.0)'
+    ];
     
     const defaultHeaders = {
       'apikey': this.apiKey,
       'Authorization': `Bearer ${this.apiKey}`,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'User-Agent': 'Mozilla/5.0 (compatible; ilandan-bot/1.0)',
-      'X-Client-Info': 'ilandan-web'
+      'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],
+      'X-Client-Info': 'ilandan-web',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
     };
 
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        ...defaultHeaders,
-        ...options.headers
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...options.headers
+        },
+        mode: 'cors',
+        credentials: 'omit'
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      return response.json();
+    } catch (error: any) {
+      // If blocked, try next URL
+      if (error.message?.includes('ERR_BLOCKED_BY_CLIENT') && attempt < this.maskedUrls.length - 1) {
+        console.log(`Attempt ${attempt + 1} blocked, trying next URL...`);
+        return this.makeRequest(endpoint, options, attempt + 1);
+      }
+      throw error;
     }
-
-    return response.json();
   }
 
   async updateAd(id: string, data: any) {

@@ -2,6 +2,8 @@ import { supabase } from '../lib/supabase';
 import { Ad, Category, User, SearchFilters } from '../types';
 import { retry, isNetworkError } from '../utils/retry';
 import { proxyService } from './proxy';
+import { wsProxy } from './websocket-proxy';
+import { offlineStorage } from './offline-storage';
 
 // Auth Services
 export const authService = {
@@ -285,12 +287,12 @@ export const adService = {
         if (error) throw error;
         return data;
       } catch (error: any) {
-        // AdBlock engellemesi varsa proxy kullan
+        // AdBlock engellemesi varsa çoklu fallback sistemi
         if (error.message?.includes('ERR_BLOCKED_BY_CLIENT') || 
             error.message?.includes('Failed to fetch') ||
             error.message?.includes('Network error')) {
           
-          console.log('AdBlock detected, using proxy service...');
+          console.log('AdBlock detected, trying fallback methods...');
           
           const updateData: any = {
             updated_at: new Date().toISOString()
@@ -304,11 +306,36 @@ export const adService = {
           if (updates.district !== undefined) updateData.district = updates.district;
           if (updates.images !== undefined) updateData.images = updates.images;
 
-          const result = await proxyService.updateAd(id, updateData);
-          
-          // Güncellenmiş veriyi tekrar çek
-          const updatedAd = await this.getAdById(id);
-          return updatedAd;
+          // Try 1: Enhanced Proxy Service
+          try {
+            console.log('Trying enhanced proxy service...');
+            const result = await proxyService.updateAd(id, updateData);
+            const updatedAd = await this.getAdById(id);
+            return updatedAd;
+          } catch (proxyError: any) {
+            console.log('Proxy service failed:', proxyError.message);
+            
+            // Try 2: WebSocket Proxy
+            try {
+              console.log('Trying WebSocket proxy...');
+              const result = await wsProxy.updateAd(id, updateData);
+              const updatedAd = await this.getAdById(id);
+              return updatedAd;
+            } catch (wsError: any) {
+              console.log('WebSocket proxy failed:', wsError.message);
+              
+              // Try 3: Offline Storage
+              console.log('Saving to offline storage...');
+              await offlineStorage.saveUpdate(id, updateData);
+              
+              // Return optimistic update
+              return {
+                id,
+                ...updateData,
+                status: 'offline_pending'
+              };
+            }
+          }
         }
         
         throw error;
