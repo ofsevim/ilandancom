@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { buildImageUrl } from '../lib/images';
 
 interface SimpleLazyImageProps {
@@ -30,80 +30,19 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   
   // Unique key için src'yi kullan
-  const imageKey = `lazy-image-${src.replace(/[^a-zA-Z0-9]/g, '')}-${width}-${height}`;
-  
-  const containerRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const isMountedRef = useRef(true);
-
-  // Component mount durumunu takip et
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  // Intersection Observer'ı React DOM yönetimi ile kur
-  useEffect(() => {
-    if (!containerRef.current || !isMountedRef.current) return;
-
-    // Önceki observer'ı temizle
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-      observerRef.current = null;
-    }
-
-    // Yeni observer oluştur
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && isMountedRef.current) {
-            setIsVisible(true);
-            setShouldLoad(true);
-            // Observer'ı temizle
-            if (observerRef.current) {
-              observerRef.current.disconnect();
-              observerRef.current = null;
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px',
-      }
-    );
-
-    // Observer'ı başlat
-    observerRef.current.observe(containerRef.current);
-
-    // Cleanup function
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
-      }
-    };
-  }, [src]); // src değiştiğinde yeniden kur
+  const imageKey = `simple-lazy-${src.replace(/[^a-zA-Z0-9]/g, '')}-${width}-${height}`;
 
   // Event handler'ları useCallback ile optimize et
   const handleLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    if (isMountedRef.current) {
-      setIsLoaded(true);
-      onLoad?.(e);
-    }
+    setIsLoaded(true);
+    onLoad?.(e);
   }, [onLoad]);
 
   const handleError = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    if (isMountedRef.current) {
-      setHasError(true);
-      onError?.(e);
-    }
+    setHasError(true);
+    onError?.(e);
   }, [onError]);
 
   const optimizedSrc = buildImageUrl(src, {
@@ -117,11 +56,10 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
   return (
     <div 
       key={imageKey} // Unique key ekle
-      ref={containerRef} 
       className={`relative overflow-hidden ${className}`}
     >
       {/* Loading Placeholder */}
-      {!isLoaded && !hasError && isVisible && (
+      {!isLoaded && !hasError && (
         <div 
           className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center"
           style={{ width, height }}
@@ -131,7 +69,7 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
       )}
 
       {/* Error State */}
-      {hasError && isVisible && (
+      {hasError && (
         <div 
           className="absolute inset-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400"
           style={{ width, height }}
@@ -143,23 +81,21 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
         </div>
       )}
 
-      {/* Actual Image - Sadece React DOM yönetimi */}
-      {shouldLoad && !hasError && isVisible && (
-        <img
-          key={`${imageKey}-img`} // Image için de unique key
-          src={optimizedSrc}
-          alt={alt}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ width, height }}
-          onLoad={handleLoad}
-          onError={handleError}
-          onClick={onClick}
-          loading="lazy"
-          decoding="async"
-        />
-      )}
+      {/* Actual Image - Native lazy loading */}
+      <img
+        key={`${imageKey}-img`} // Image için de unique key
+        src={optimizedSrc}
+        alt={alt}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ width, height }}
+        onLoad={handleLoad}
+        onError={handleError}
+        onClick={onClick}
+        loading="lazy" // Native lazy loading
+        decoding="async"
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { buildImageUrl } from '../lib/images';
 
 interface LazyImageProps {
@@ -35,56 +35,19 @@ const LazyImage: React.FC<LazyImageProps> = ({
   fetchpriority = 'auto'
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const imgRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const isMountedRef = useRef(true);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-    
-    if (imgRef.current) {
-      observerRef.current = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && isMountedRef.current) {
-            setIsInView(true);
-            if (observerRef.current) {
-              observerRef.current.disconnect();
-              observerRef.current = null;
-            }
-          }
-        },
-        {
-          threshold: 0.1,
-          rootMargin: '50px'
-        }
-      );
-
-      observerRef.current.observe(imgRef.current);
-    }
-
-    return () => {
-      isMountedRef.current = false;
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
-      }
-    };
-  }, []);
+  
+  // Unique key için src'yi kullan
+  const imageKey = `lazy-image-${src.replace(/[^a-zA-Z0-9]/g, '')}-${width}-${height}`;
 
   const handleLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    if (isMountedRef.current) {
-      setIsLoaded(true);
-      onLoad?.(e);
-    }
+    setIsLoaded(true);
+    onLoad?.(e);
   }, [onLoad]);
 
   const handleError = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    if (isMountedRef.current) {
-      setHasError(true);
-      onError?.(e);
-    }
+    setHasError(true);
+    onError?.(e);
   }, [onError]);
 
   const optimizedSrc = buildImageUrl(src, {
@@ -96,8 +59,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
   });
 
   return (
-    <div className={`relative overflow-hidden ${className}`} ref={imgRef}>
-      {/* Placeholder */}
+    <div key={imageKey} className={`relative overflow-hidden ${className}`}>
+      {/* Loading Placeholder */}
       {!isLoaded && !hasError && (
         <div 
           className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center"
@@ -120,23 +83,22 @@ const LazyImage: React.FC<LazyImageProps> = ({
         </div>
       )}
 
-      {/* Actual Image */}
-      {isInView && !hasError && (
-        <img
-          src={optimizedSrc}
-          alt={alt}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ width, height }}
-          onLoad={handleLoad}
-          onError={handleError}
-          onClick={onClick}
-          loading="lazy"
-          decoding={decoding}
-          fetchPriority={fetchpriority}
-        />
-      )}
+      {/* Actual Image - Native lazy loading */}
+      <img
+        key={`${imageKey}-img`}
+        src={optimizedSrc}
+        alt={alt}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ width, height }}
+        onLoad={handleLoad}
+        onError={handleError}
+        onClick={onClick}
+        loading="lazy" // Native lazy loading
+        decoding={decoding}
+        fetchpriority={fetchpriority}
+      />
     </div>
   );
 };
