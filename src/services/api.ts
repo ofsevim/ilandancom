@@ -66,13 +66,26 @@ export const userService = {
   },
 
   async getUserById(id: string) {
+    try {
+      // Önce RPC fonksiyonu dene
+      const { data, error } = await supabase.rpc('get_user_by_id', { user_id: id });
+      if (!error && data) return data;
+    } catch (rpcError) {
+      console.log('RPC get_user_by_id failed, trying direct query:', rpcError);
+    }
+
+    // RPC yoksa doğrudan sorgu dene
     const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', id)
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching user:', error);
+      throw new Error('Kullanıcı bilgileri alınamadı');
+    }
+    
     return data;
   },
 
@@ -92,12 +105,36 @@ export const userService = {
 // Public User Service (read-only limited fields for public visibility)
 export const publicUserService = {
   async getPublicUserById(id: string) {
+    try {
+      // Önce RPC fonksiyonu dene
+      const { data, error } = await supabase.rpc('get_public_user', { user_id: id });
+      if (!error && data) return data;
+    } catch (rpcError) {
+      console.log('RPC get_public_user failed, trying direct query:', rpcError);
+    }
+
+    // RPC yoksa doğrudan sorgu dene
     const { data, error } = await supabase
       .from('users')
       .select('id, name, email, phone, avatar, role, created_at, is_active')
       .eq('id', id)
       .single();
-    if (error) throw error;
+    
+    if (error) {
+      console.error('Error fetching public user:', error);
+      // Fallback: Sadece temel bilgileri döndür
+      return {
+        id,
+        name: 'Kullanıcı',
+        email: '',
+        phone: '',
+        avatar: '',
+        role: 'user',
+        created_at: new Date().toISOString(),
+        is_active: true
+      };
+    }
+    
     return data;
   }
 };
@@ -546,10 +583,22 @@ export const messageService = {
       .select('id, title')
       .in('id', adIds);
 
-    const { data: users } = await supabase
-      .from('users')
-      .select('id, name')
-      .in('id', userIds);
+    // Kullanıcı bilgilerini güvenli şekilde getir
+    let users: any[] = [];
+    try {
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select('id, name')
+        .in('id', userIds);
+      
+      if (!usersError && usersData) {
+        users = usersData;
+      }
+    } catch (error) {
+      console.log('Users fetch failed, using fallback:', error);
+      // Fallback: Sadece ID'leri kullan
+      users = userIds.map(id => ({ id, name: 'Kullanıcı' }));
+    }
 
     // Map'leri oluştur
     const adsMap = new Map(ads?.map(ad => [ad.id, ad]) || []);
