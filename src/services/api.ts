@@ -240,6 +240,25 @@ export const adService = {
     district?: string;
     images?: string[];
   }) {
+    // AdBlock engellerini aşmak için önce RPC dene
+    try {
+      const { data, error } = await supabase.rpc('update_listing', {
+        listing_id: id,
+        listing_title: updates.title,
+        listing_description: updates.description,
+        listing_price: updates.price,
+        listing_category_id: updates.categoryId,
+        listing_city: updates.city,
+        listing_district: updates.district,
+        listing_images: updates.images
+      });
+      
+      if (!error) return data;
+    } catch (rpcError) {
+      console.log('RPC update failed, trying direct table update:', rpcError);
+    }
+
+    // RPC yoksa eski yolu dene (engelleyici bloklayabilir)
     const updateData: any = {
       updated_at: new Date().toISOString()
     };
