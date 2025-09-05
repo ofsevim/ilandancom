@@ -93,8 +93,8 @@ export const userService = {
 export const publicUserService = {
   async getPublicUserById(id: string) {
     const { data, error } = await supabase
-      .from('user_public')
-      .select('*')
+      .from('users')
+      .select('id, name, email, phone, avatar, role, created_at, is_active')
       .eq('id', id)
       .single();
     if (error) throw error;
@@ -253,7 +253,7 @@ export const adService = {
     if (updates.images !== undefined) updateData.images = updates.images;
 
     const { data, error } = await supabase
-      .from('listings')
+      .from('ads')
       .update(updateData)
       .eq('id', id)
       .select()
@@ -528,7 +528,7 @@ export const messageService = {
       .in('id', adIds);
 
     const { data: users } = await supabase
-      .from('user_public')
+      .from('users')
       .select('id, name')
       .in('id', userIds);
 

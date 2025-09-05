@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { adService, userService, publicUserService } from '../services/api';
 import MessagesModal from './MessagesModal';
 import EditAdModal from './EditAdModal';
+import LazyImage from './LazyImage';
 import toast from 'react-hot-toast';
 
 interface AdDetailModalProps {
@@ -232,32 +233,24 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 {/* Loading Skeleton */}
                 <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
                 
-                <img
-                  src={buildImageUrl(ad.images[currentImageIndex], { 
-                    width: isSlowConnection ? 800 : 1200, 
-                    height: isSlowConnection ? 533 : 800, 
-                    quality: isSlowConnection ? 60 : 85, 
-                    resize: 'cover', 
-                    format: 'webp' 
-                  })}
-                  alt={ad.title}
-                  className={`w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-all duration-300 relative z-10 ${
+                <div 
+                  className={`w-full h-[520px] rounded-lg cursor-zoom-in transition-all duration-300 relative z-10 ${
                     swipeDirection === 'left' ? 'translate-x-2' : 
                     swipeDirection === 'right' ? '-translate-x-2' : ''
                   }`}
-                  loading="eager"
-                  decoding="async"
-                  fetchpriority="high"
                   onClick={() => setIsFullscreen(true)}
-                  onLoad={(e) => {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.previousElementSibling?.remove();
-                  }}
-                  onError={(e) => {
-                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJ0dXJuIG9uIGphdmFzY3JpcHQgdG8gdmlldyB0aGlzIHBhZ2Uu';
-                  }}
-                  style={{ opacity: 0 }}
-                />
+                >
+                  <LazyImage
+                    src={ad.images[currentImageIndex]}
+                    alt={ad.title}
+                    className="w-full h-full rounded-lg"
+                    width={isSlowConnection ? 800 : 1200}
+                    height={isSlowConnection ? 533 : 800}
+                    quality={isSlowConnection ? 60 : 85}
+                    format="webp"
+                    resize="cover"
+                  />
+                </div>
                 
                 {ad.images.length > 1 && (
                   <>
