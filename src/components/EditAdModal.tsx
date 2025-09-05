@@ -156,7 +156,13 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
         hint: error.hint,
         code: error.code
       });
-      toast.error(`İlan güncellenirken hata oluştu: ${error.message || 'Bilinmeyen hata'}`);
+      
+      // Network error kontrolü
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('Network error')) {
+        toast.error('Bağlantı hatası! İnternet bağlantınızı kontrol edin ve tekrar deneyin.');
+      } else {
+        toast.error(`İlan güncellenirken hata oluştu: ${error.message || 'Bilinmeyen hata'}`);
+      }
     } finally {
       setLoading(false);
     }

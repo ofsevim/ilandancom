@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { Ad, Category, User, SearchFilters } from '../types';
+import { retry, isNetworkError } from '../utils/retry';
 
 // Auth Services
 export const authService = {
@@ -240,45 +241,53 @@ export const adService = {
     district?: string;
     images?: string[];
   }) {
-    const updateData: any = {
-      updated_at: new Date().toISOString()
-    };
+    return retry(async () => {
+      const updateData: any = {
+        updated_at: new Date().toISOString()
+      };
 
-    if (updates.title !== undefined) updateData.title = updates.title;
-    if (updates.description !== undefined) updateData.description = updates.description;
-    if (updates.price !== undefined) updateData.price = updates.price;
-    if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
-    if (updates.city !== undefined) updateData.city = updates.city;
-    if (updates.district !== undefined) updateData.district = updates.district;
-    if (updates.images !== undefined) updateData.images = updates.images;
+      if (updates.title !== undefined) updateData.title = updates.title;
+      if (updates.description !== undefined) updateData.description = updates.description;
+      if (updates.price !== undefined) updateData.price = updates.price;
+      if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
+      if (updates.city !== undefined) updateData.city = updates.city;
+      if (updates.district !== undefined) updateData.district = updates.district;
+      if (updates.images !== undefined) updateData.images = updates.images;
 
-    const { data, error } = await supabase
-      .from('ads')
-      .update(updateData)
-      .eq('id', id)
-      .select(`
-        *,
-        categories (
-          id,
-          name,
-          slug,
-          icon
-        ),
-        users (
-          id,
-          name,
-          email,
-          phone,
-          avatar,
-          role,
-          created_at,
-          is_active
-        )
-      `)
-      .single();
-    
-    if (error) throw error;
-    return data;
+      const { data, error } = await supabase
+        .from('ads')
+        .update(updateData)
+        .eq('id', id)
+        .select(`
+          *,
+          categories (
+            id,
+            name,
+            slug,
+            icon
+          ),
+          users (
+            id,
+            name,
+            email,
+            phone,
+            avatar,
+            role,
+            created_at,
+            is_active
+          )
+        `)
+        .single();
+      
+      if (error) {
+        // Network error ise retry yap
+        if (isNetworkError(error)) {
+          throw new Error(`Network error: ${error.message}`);
+        }
+        throw error;
+      }
+      return data;
+    }, 3, 1000);
   },
 
   async deleteAd(id: string) {

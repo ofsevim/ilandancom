@@ -7,7 +7,23 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase URL ve Anon Key gerekli!');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'ilandan-web'
+    }
+  }
+});
 
 // Database types
 export interface Database {
