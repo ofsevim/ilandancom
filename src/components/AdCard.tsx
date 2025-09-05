@@ -92,7 +92,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
     >
       {/* Image */}
               <div 
-          className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none group-hover:scale-105 transition-transform duration-300"
+          className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -206,7 +206,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
           {ad.title}
         </h3>
 
-        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5 group-hover:scale-105 transition-transform duration-300">
+        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5">
           {formatPrice(ad.price)}
         </div>
 
