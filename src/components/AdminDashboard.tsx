@@ -96,7 +96,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       style: 'currency',
       currency: 'TRY',
       minimumFractionDigits: 0,
-    }).format(price);
+      maximumFractionDigits: 0,
+      currencyDisplay: 'symbol'
+    }).format(price).replace('₺', '') + ' ₺';
   };
 
   const formatDate = (dateString: string) => {

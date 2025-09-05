@@ -95,7 +95,8 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
       currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+      currencyDisplay: 'symbol'
+    }).format(price).replace('₺', '') + ' ₺';
   };
 
   return (

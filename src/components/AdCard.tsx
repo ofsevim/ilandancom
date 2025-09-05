@@ -32,7 +32,8 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
       currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+      currencyDisplay: 'symbol'
+    }).format(price).replace('₺', '') + ' ₺';
   };
 
   const formatDate = (dateString: string) => {

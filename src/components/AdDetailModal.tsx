@@ -165,7 +165,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
       currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+      currencyDisplay: 'symbol'
+    }).format(price).replace('₺', '') + ' ₺';
   };
 
   const formatDate = (dateString: string) => {

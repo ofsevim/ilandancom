@@ -102,7 +102,8 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
       currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+      currencyDisplay: 'symbol'
+    }).format(price).replace('₺', '') + ' ₺';
   };
 
   const getStatusBadge = (status: string) => {
