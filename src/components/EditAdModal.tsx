@@ -158,7 +158,9 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
       });
       
       // Network error kontrolü
-      if (error.message?.includes('Failed to fetch') || error.message?.includes('Network error')) {
+      if (error.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
+        toast.error('AdBlock veya güvenlik eklentisi API isteklerini engelliyor. Lütfen AdBlock\'u devre dışı bırakın veya siteyi beyaz listeye ekleyin.');
+      } else if (error.message?.includes('Failed to fetch') || error.message?.includes('Network error')) {
         toast.error('Bağlantı hatası! İnternet bağlantınızı kontrol edin ve tekrar deneyin.');
       } else {
         toast.error(`İlan güncellenirken hata oluştu: ${error.message || 'Bilinmeyen hata'}`);

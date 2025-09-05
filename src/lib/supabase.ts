@@ -20,8 +20,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     headers: {
-      'X-Client-Info': 'ilandan-web'
+      'X-Client-Info': 'ilandan-web',
+      'User-Agent': 'Mozilla/5.0 (compatible; ilandan-bot/1.0)',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     }
+  },
+  db: {
+    schema: 'public'
   }
 });
 
