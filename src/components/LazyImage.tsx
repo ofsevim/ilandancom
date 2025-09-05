@@ -40,24 +40,33 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px'
-      }
-    );
-
+    let observer: IntersectionObserver | null = null;
+    
     if (imgRef.current) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            if (observer) {
+              observer.disconnect();
+              observer = null;
+            }
+          }
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '50px'
+        }
+      );
+
       observer.observe(imgRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
   }, []);
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {

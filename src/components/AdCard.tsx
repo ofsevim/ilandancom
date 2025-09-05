@@ -59,18 +59,22 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
   // Swipe fonksiyonları
   const handleTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation();
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(null);
+      setTouchStart(e.targetTouches[0].clientX);
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     e.stopPropagation();
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(e.targetTouches[0].clientX);
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.stopPropagation();
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd || ad.images.length <= 1) return;
     
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 30; // Daha küçük mesafe

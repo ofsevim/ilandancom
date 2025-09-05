@@ -60,25 +60,29 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
   // Swipe fonksiyonları
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-    setSwipeDirection(null);
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(null);
+      setTouchStart(e.targetTouches[0].clientX);
+      setSwipeDirection(null);
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-    
-    // Swipe yönünü belirle
-    if (touchStart && e.targetTouches[0].clientX) {
-      const distance = touchStart - e.targetTouches[0].clientX;
-      if (Math.abs(distance) > 20) {
-        setSwipeDirection(distance > 0 ? 'left' : 'right');
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(e.targetTouches[0].clientX);
+      
+      // Swipe yönünü belirle
+      if (touchStart && e.targetTouches[0].clientX) {
+        const distance = touchStart - e.targetTouches[0].clientX;
+        if (Math.abs(distance) > 20) {
+          setSwipeDirection(distance > 0 ? 'left' : 'right');
+        }
       }
     }
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd || ad.images.length <= 1) return;
     
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
