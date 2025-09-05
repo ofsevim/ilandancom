@@ -34,25 +34,42 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1, rootMargin: '50px' }
-    );
+    let observer: IntersectionObserver | null = null;
+    
+    try {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setShouldLoad(true);
+            // Observer'ı güvenli şekilde kapat
+            if (observer) {
+              try {
+                observer.disconnect();
+                observer = null;
+              } catch (e) {
+                // Hata durumunda sessizce devam et
+              }
+            }
+          }
+        },
+        { threshold: 0.1, rootMargin: '50px' }
+      );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+      if (containerRef.current) {
+        observer.observe(containerRef.current);
+      }
+    } catch (e) {
+      // Observer oluşturma hatası durumunda hemen yükle
+      setShouldLoad(true);
     }
 
     return () => {
-      try {
-        observer.disconnect();
-      } catch (e) {
-        // Ignore disconnect errors
+      if (observer) {
+        try {
+          observer.disconnect();
+        } catch (e) {
+          // Disconnect hatası durumunda sessizce devam et
+        }
       }
     };
   }, []);
