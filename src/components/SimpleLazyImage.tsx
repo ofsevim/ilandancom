@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { buildImageUrl } from '../lib/images';
 
 interface SimpleLazyImageProps {
@@ -31,58 +31,80 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  // Unique key için src'yi kullan
+  const imageKey = `lazy-image-${src.replace(/[^a-zA-Z0-9]/g, '')}-${width}-${height}`;
+  
   const containerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const isMountedRef = useRef(true);
 
+  // Component mount durumunu takip et
   useEffect(() => {
-    let observer: IntersectionObserver | null = null;
-    
-    try {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setShouldLoad(true);
-            // Observer'ı güvenli şekilde kapat
-            if (observer) {
-              try {
-                observer.disconnect();
-                observer = null;
-              } catch (e) {
-                // Hata durumunda sessizce devam et
-              }
-            }
-          }
-        },
-        { threshold: 0.1, rootMargin: '50px' }
-      );
-
-      if (containerRef.current) {
-        observer.observe(containerRef.current);
-      }
-    } catch (e) {
-      // Observer oluşturma hatası durumunda hemen yükle
-      setShouldLoad(true);
-    }
-
+    isMountedRef.current = true;
     return () => {
-      if (observer) {
-        try {
-          observer.disconnect();
-        } catch (e) {
-          // Disconnect hatası durumunda sessizce devam et
-        }
-      }
+      isMountedRef.current = false;
     };
   }, []);
 
-  const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    setIsLoaded(true);
-    onLoad?.(e);
-  };
+  // Intersection Observer'ı React DOM yönetimi ile kur
+  useEffect(() => {
+    if (!containerRef.current || !isMountedRef.current) return;
 
-  const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    setHasError(true);
-    onError?.(e);
-  };
+    // Önceki observer'ı temizle
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+
+    // Yeni observer oluştur
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && isMountedRef.current) {
+            setIsVisible(true);
+            setShouldLoad(true);
+            // Observer'ı temizle
+            if (observerRef.current) {
+              observerRef.current.disconnect();
+              observerRef.current = null;
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px',
+      }
+    );
+
+    // Observer'ı başlat
+    observerRef.current.observe(containerRef.current);
+
+    // Cleanup function
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+    };
+  }, [src]); // src değiştiğinde yeniden kur
+
+  // Event handler'ları useCallback ile optimize et
+  const handleLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    if (isMountedRef.current) {
+      setIsLoaded(true);
+      onLoad?.(e);
+    }
+  }, [onLoad]);
+
+  const handleError = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    if (isMountedRef.current) {
+      setHasError(true);
+      onError?.(e);
+    }
+  }, [onError]);
 
   const optimizedSrc = buildImageUrl(src, {
     width,
@@ -93,9 +115,13 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
   });
 
   return (
-    <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
+    <div 
+      key={imageKey} // Unique key ekle
+      ref={containerRef} 
+      className={`relative overflow-hidden ${className}`}
+    >
       {/* Loading Placeholder */}
-      {!isLoaded && !hasError && (
+      {!isLoaded && !hasError && isVisible && (
         <div 
           className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center"
           style={{ width, height }}
@@ -105,7 +131,7 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
       )}
 
       {/* Error State */}
-      {hasError && (
+      {hasError && isVisible && (
         <div 
           className="absolute inset-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400"
           style={{ width, height }}
@@ -117,9 +143,10 @@ const SimpleLazyImage: React.FC<SimpleLazyImageProps> = ({
         </div>
       )}
 
-      {/* Actual Image */}
-      {shouldLoad && !hasError && (
+      {/* Actual Image - Sadece React DOM yönetimi */}
+      {shouldLoad && !hasError && isVisible && (
         <img
+          key={`${imageKey}-img`} // Image için de unique key
           src={optimizedSrc}
           alt={alt}
           className={`w-full h-full object-cover transition-opacity duration-300 ${

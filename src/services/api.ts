@@ -269,68 +269,64 @@ export const adService = {
     district?: string;
     images?: string[];
   }) {
+    // AdBlock engellerini aşmak için önce RPC dene
     try {
-      // AdBlock engellerini aşmak için farklı bir yaklaşım
-      const updateData: any = {
-        updated_at: new Date().toISOString()
-      };
-
-      if (updates.title !== undefined) updateData.title = updates.title;
-      if (updates.description !== undefined) updateData.description = updates.description;
-      if (updates.price !== undefined) updateData.price = updates.price;
-      if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
-      if (updates.city !== undefined) updateData.city = updates.city;
-      if (updates.district !== undefined) updateData.district = updates.district;
-      if (updates.images !== undefined) updateData.images = updates.images;
-
-      // Önce listings view'ını dene (daha az engellenir)
-      const { data, error } = await supabase
-        .from('listings')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+      const { data, error } = await supabase.rpc('update_ad_safe', {
+        ad_id: id,
+        ad_title: updates.title || null,
+        ad_description: updates.description || null,
+        ad_price: updates.price || null,
+        ad_category_id: updates.categoryId || null,
+        ad_city: updates.city || null,
+        ad_district: updates.district || null,
+        ad_images: updates.images || null
+      });
       
       if (!error && data) {
         return data;
       }
-    } catch (e) {
-      console.log('Listings update failed, trying ads table:', e);
+    } catch (rpcError) {
+      console.log('RPC update failed, trying direct table update:', rpcError);
     }
 
-    // Fallback: listings tablosunu dene (ads yerine)
+    // Fallback: Asıl ads tablosunu güncelle
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
+
+    if (updates.title !== undefined) updateData.title = updates.title;
+    if (updates.description !== undefined) updateData.description = updates.description;
+    if (updates.price !== undefined) updateData.price = updates.price;
+    if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
+    if (updates.city !== undefined) updateData.city = updates.city;
+    if (updates.district !== undefined) updateData.district = updates.district;
+    if (updates.images !== undefined) updateData.images = updates.images;
+
     try {
-      const updateData: any = {
-        updated_at: new Date().toISOString()
-      };
-
-      if (updates.title !== undefined) updateData.title = updates.title;
-      if (updates.description !== undefined) updateData.description = updates.description;
-      if (updates.price !== undefined) updateData.price = updates.price;
-      if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
-      if (updates.city !== undefined) updateData.city = updates.city;
-      if (updates.district !== undefined) updateData.district = updates.district;
-      if (updates.images !== undefined) updateData.images = updates.images;
-
+      // Doğrudan ads tablosunu güncelle
       const { data, error } = await supabase
-        .from('listings')
+        .from('ads')
         .update(updateData)
         .eq('id', id)
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Ads table update failed:', error);
+        throw new Error('İlan güncellenirken hata oluştu. Lütfen AdBlock\'u devre dışı bırakın ve tekrar deneyin.');
+      }
+      
       return data;
     } catch (e) {
-      console.error('Both update methods failed:', e);
+      console.error('Update failed:', e);
       throw new Error('İlan güncellenirken hata oluştu. Lütfen AdBlock\'u devre dışı bırakın ve tekrar deneyin.');
     }
   },
 
   async deleteAd(id: string) {
-    // Listings tablosunu kullan (ads yerine)
+    // Asıl ads tablosunu kullan
     const { error } = await supabase
-      .from('listings')
+      .from('ads')
       .delete()
       .eq('id', id);
     if (error) throw error;
@@ -338,33 +334,9 @@ export const adService = {
 
   async incrementViewCount(id: string) {
     try {
-      // Önce listings view'ını dene (daha az engellenir)
+      // Asıl ads tablosunu kullan
       const { data: currentAd, error: fetchError } = await supabase
-        .from('listings')
-        .select('view_count')
-        .eq('id', id)
-        .maybeSingle();
-      
-      if (!fetchError && currentAd) {
-        const { data: updated, error: updErr } = await supabase
-          .from('listings')
-          .update({ view_count: (currentAd.view_count || 0) + 1 })
-          .eq('id', id)
-          .select()
-          .single();
-        
-        if (!updErr && updated) {
-          return updated;
-        }
-      }
-    } catch (e) {
-      console.log('Listings view count update failed, trying ads table:', e);
-    }
-
-    // Fallback: listings tablosunu dene (ads yerine)
-    try {
-      const { data: currentAd, error: fetchError } = await supabase
-        .from('listings')
+        .from('ads')
         .select('view_count')
         .eq('id', id)
         .maybeSingle();
@@ -380,7 +352,7 @@ export const adService = {
       }
       
       const { data: updated, error: updErr } = await supabase
-        .from('listings')
+        .from('ads')
         .update({ view_count: (currentAd.view_count || 0) + 1 })
         .eq('id', id)
         .select()
@@ -393,7 +365,7 @@ export const adService = {
       
       return updated;
     } catch (e) {
-      console.log('View count update completely failed:', e);
+      console.log('View count update failed:', e);
       return null; // Sessizce devam et
     }
   },
