@@ -93,9 +93,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
+      style: 'currency',
+      currency: 'TRY',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price) + ' TL';
+    }).format(price);
   };
 
   const formatDate = (dateString: string) => {

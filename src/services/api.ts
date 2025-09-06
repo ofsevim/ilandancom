@@ -59,29 +59,20 @@ export const userService = {
         is_active: true
       }])
       .select()
-      .maybeSingle();
+      .single();
     
     if (error) throw error;
     return data;
   },
 
   async getUserById(id: string) {
-    // Doğrudan sorgu kullan - maybeSingle ile güvenli
     const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', id)
-      .maybeSingle();
+      .single();
     
-    if (error) {
-      console.error('Error fetching user:', error);
-      throw new Error('Kullanıcı bilgileri alınamadı');
-    }
-    
-    if (!data) {
-      throw new Error('Kullanıcı bulunamadı');
-    }
-    
+    if (error) throw error;
     return data;
   },
 
@@ -91,7 +82,7 @@ export const userService = {
       .update(updates)
       .eq('id', id)
       .select()
-      .maybeSingle();
+      .single();
     
     if (error) throw error;
     return data;
@@ -101,33 +92,13 @@ export const userService = {
 // Public User Service (read-only limited fields for public visibility)
 export const publicUserService = {
   async getPublicUserById(id: string) {
-    try {
-      // Önce users tablosunu dene - maybeSingle kullan
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, name, email, phone, avatar, role, created_at, is_active')
-        .eq('id', id)
-        .maybeSingle();
-      
-      if (!error && data) {
-        return data;
-      }
-    } catch (e) {
-      console.log('Users table access failed, using fallback:', e);
-    }
-
-    // Fallback: Sadece temel bilgileri döndür
-    console.log('Using fallback user data for ID:', id);
-    return {
-      id,
-      name: 'Kullanıcı',
-      email: '',
-      phone: '',
-      avatar: '',
-      role: 'user',
-      created_at: new Date().toISOString(),
-      is_active: true
-    };
+    const { data, error } = await supabase
+      .from('user_public')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    return data;
   }
 };
 
@@ -254,7 +225,7 @@ export const adService = {
         featured: false
       }])
       .select()
-      .maybeSingle();
+      .single();
     
     if (error) throw error;
     return data;
@@ -269,27 +240,6 @@ export const adService = {
     district?: string;
     images?: string[];
   }) {
-    // AdBlock engellerini aşmak için önce RPC dene
-    try {
-      const { data, error } = await supabase.rpc('update_ad_safe', {
-        ad_id: id,
-        ad_title: updates.title || null,
-        ad_description: updates.description || null,
-        ad_price: updates.price || null,
-        ad_category_id: updates.categoryId || null,
-        ad_city: updates.city || null,
-        ad_district: updates.district || null,
-        ad_images: updates.images || null
-      });
-      
-      if (!error && data) {
-        return data;
-      }
-    } catch (rpcError) {
-      console.log('RPC update failed, trying direct table update:', rpcError);
-    }
-
-    // Fallback: Asıl ads tablosunu güncelle
     const updateData: any = {
       updated_at: new Date().toISOString()
     };
@@ -302,49 +252,23 @@ export const adService = {
     if (updates.district !== undefined) updateData.district = updates.district;
     if (updates.images !== undefined) updateData.images = updates.images;
 
-    try {
-      // Önce ID'nin varlığını kontrol et
-      const { data: existingAd, error: checkError } = await supabase
-        .from('ads')
-        .select('id')
-        .eq('id', id)
-        .maybeSingle();
-      
-      if (checkError) {
-        console.error('Ad existence check failed:', checkError);
-        throw new Error('İlan kontrol edilirken hata oluştu.');
-      }
-      
-      if (!existingAd) {
-        throw new Error('İlan bulunamadı.');
-      }
-      
-      // ID varsa güncelle
-      const { data, error } = await supabase
-        .from('ads')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .maybeSingle();
-      
-      if (error) {
-        console.error('Ads table update failed:', error);
-        throw new Error('İlan güncellenirken hata oluştu. Lütfen AdBlock\'u devre dışı bırakın ve tekrar deneyin.');
-      }
-      
-      if (!data) {
-        throw new Error('İlan güncellenemedi.');
-      }
-      
-      return data;
-    } catch (e) {
-      console.error('Update failed:', e);
-      throw new Error('İlan güncellenirken hata oluştu. Lütfen AdBlock\'u devre dışı bırakın ve tekrar deneyin.');
-    }
+    const { data, error } = await supabase
+      .from('listings')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
   },
 
   async deleteAd(id: string) {
-    // Asıl ads tablosunu kullan
+    // Adblock engellerini aşmak için önce RPC dene
+    const { error: rpcError } = await supabase.rpc('delete_ad', { ad_id: id });
+    if (!rpcError) return;
+
+    // RPC yoksa eski yolu dene (engelleyici bloklayabilir)
     const { error } = await supabase
       .from('ads')
       .delete()
@@ -353,54 +277,26 @@ export const adService = {
   },
 
   async incrementViewCount(id: string) {
-    try {
-      // En temiz yöntem: RPC function kullan
-      const { data, error } = await supabase.rpc('increment_view_safe', {
-        ad_id: id
-      });
-      
-      if (!error && data) {
-        return data;
-      }
-    } catch (rpcError) {
-      console.log('RPC view count update failed, trying direct update:', rpcError);
-    }
-
-    // Fallback: Direct update (maybeSingle ile)
-    try {
+    // Reklam engelleyicilerden kaçınmak için RPC kullan
+    const { data, error } = await supabase.rpc('increment_view', { ad_id: id });
+    if (error) {
+      // Geriye dönük uyumluluk: RPC yoksa eski yöntemi dene (engelleyici bloklayabilir)
       const { data: currentAd, error: fetchError } = await supabase
         .from('ads')
         .select('view_count')
         .eq('id', id)
-        .maybeSingle();
-      
-      if (fetchError) {
-        console.log('View count fetch failed:', fetchError);
-        return null; // Sessizce devam et
-      }
-      
-      if (!currentAd) {
-        console.log('Ad not found for view count update');
-        return null;
-      }
-      
+        .single();
+      if (fetchError) throw fetchError;
       const { data: updated, error: updErr } = await supabase
         .from('ads')
         .update({ view_count: (currentAd.view_count || 0) + 1 })
         .eq('id', id)
         .select()
-        .maybeSingle();
-      
-      if (updErr) {
-        console.log('View count update failed:', updErr);
-        return null; // Sessizce devam et
-      }
-      
+        .single();
+      if (updErr) throw updErr;
       return updated;
-    } catch (e) {
-      console.log('View count update failed:', e);
-      return null; // Sessizce devam et
     }
+    return data;
   },
 
   async getUserAds(userId: string) {
@@ -442,7 +338,7 @@ export const favoriteService = {
         ad_id: adId
       }])
       .select()
-      .maybeSingle();
+      .single();
     
     if (error) throw error;
     return data;
@@ -534,7 +430,7 @@ export const messageService = {
         },
       ])
       .select()
-      .maybeSingle();
+      .single();
     if (error) throw error;
     return data;
   },
@@ -631,22 +527,10 @@ export const messageService = {
       .select('id, title')
       .in('id', adIds);
 
-    // Kullanıcı bilgilerini güvenli şekilde getir
-    let users: any[] = [];
-    try {
-      const { data: usersData, error: usersError } = await supabase
-        .from('users')
-        .select('id, name')
-        .in('id', userIds);
-      
-      if (!usersError && usersData) {
-        users = usersData;
-      }
-    } catch (error) {
-      console.log('Users fetch failed, using fallback:', error);
-      // Fallback: Sadece ID'leri kullan
-      users = userIds.map(id => ({ id, name: 'Kullanıcı' }));
-    }
+    const { data: users } = await supabase
+      .from('user_public')
+      .select('id, name')
+      .in('id', userIds);
 
     // Map'leri oluştur
     const adsMap = new Map(ads?.map(ad => [ad.id, ad]) || []);

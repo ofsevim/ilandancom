@@ -191,8 +191,8 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
 
       {/* Mobile Filter Modal */}
       {isMobileFiltersOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-start z-50 lg:hidden p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto ml-0">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 lg:hidden p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">

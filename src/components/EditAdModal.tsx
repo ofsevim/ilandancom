@@ -148,15 +148,9 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
       toast.success('İlan başarıyla güncellendi');
       onAdUpdated();
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error updating ad:', error);
-      
-      // AdBlock hatası kontrolü
-      if (error.message?.includes('Failed to fetch') || error.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
-        toast.error('Reklam engelleyici tespit edildi! Lütfen AdBlock\'u devre dışı bırakın ve tekrar deneyin.');
-      } else {
-        toast.error(error.message || 'İlan güncellenirken hata oluştu');
-      }
+      toast.error('İlan güncellenirken hata oluştu');
     } finally {
       setLoading(false);
     }

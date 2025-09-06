@@ -3,7 +3,6 @@ import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
-import SimpleLazyImage from './SimpleLazyImage';
 
 interface AdCardProps {
   ad: Ad;
@@ -28,9 +27,11 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
+      style: 'currency',
+      currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price) + ' TL';
+    }).format(price);
   };
 
   const formatDate = (dateString: string) => {
@@ -59,22 +60,18 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
   // Swipe fonksiyonları
   const handleTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation();
-    if (e.targetTouches && e.targetTouches.length > 0) {
-      setTouchEnd(null);
-      setTouchStart(e.targetTouches[0].clientX);
-    }
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     e.stopPropagation();
-    if (e.targetTouches && e.targetTouches.length > 0) {
-      setTouchEnd(e.targetTouches[0].clientX);
-    }
+    setTouchEnd(e.targetTouches[0].clientX);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.stopPropagation();
-    if (!touchStart || !touchEnd || ad.images.length <= 1) return;
+    if (!touchStart || !touchEnd) return;
     
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 30; // Daha küçük mesafe
@@ -103,15 +100,18 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         >
         {ad.images.length > 0 ? (
           <>
-            <SimpleLazyImage
-              src={ad.images[currentImageIndex]}
-              alt={ad.title}
-              className="w-full h-full object-contain bg-gray-100 dark:bg-gray-600"
-              width={400}
-              height={300}
-              quality={60}
-              format="webp"
-              resize="inside"
+                          <img
+                src={buildImageUrl(ad.images[currentImageIndex], { width: 400, height: 300, quality: 60, resize: 'cover', format: 'webp' })}
+                alt={ad.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              onLoad={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+              onError={(e) => {
+                e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBDMTE2LjU2OSA3MCAxMzAgODMuNDMxIDEzMCAxMDBDMTMwIDExNi41NjkgMTE2LjU2OSAxMzAgMTAwIDEzMEM4My40MzEgMTMwIDcwIDExNi41NjkgNzAgMTAwQzcwIDgzLjQzMSA4My40MzEgNzAgMTAwIDcwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
+              }}
+              style={{ opacity: 0 }}
             />
             
             {/* Click Navigation - Sadece birden fazla fotoğraf varsa */}

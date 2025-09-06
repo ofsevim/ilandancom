@@ -6,7 +6,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { adService, userService, publicUserService } from '../services/api';
 import MessagesModal from './MessagesModal';
 import EditAdModal from './EditAdModal';
-import LazyImage from './LazyImage';
 import toast from 'react-hot-toast';
 
 interface AdDetailModalProps {
@@ -60,29 +59,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
   // Swipe fonksiyonları
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.targetTouches && e.targetTouches.length > 0) {
-      setTouchEnd(null);
-      setTouchStart(e.targetTouches[0].clientX);
-      setSwipeDirection(null);
-    }
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setSwipeDirection(null);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.targetTouches && e.targetTouches.length > 0) {
-      setTouchEnd(e.targetTouches[0].clientX);
-      
-      // Swipe yönünü belirle
-      if (touchStart && e.targetTouches[0].clientX) {
-        const distance = touchStart - e.targetTouches[0].clientX;
-        if (Math.abs(distance) > 20) {
-          setSwipeDirection(distance > 0 ? 'left' : 'right');
-        }
+    setTouchEnd(e.targetTouches[0].clientX);
+    
+    // Swipe yönünü belirle
+    if (touchStart && e.targetTouches[0].clientX) {
+      const distance = touchStart - e.targetTouches[0].clientX;
+      if (Math.abs(distance) > 20) {
+        setSwipeDirection(distance > 0 ? 'left' : 'right');
       }
     }
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd || ad.images.length <= 1) return;
+    if (!touchStart || !touchEnd) return;
     
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
@@ -165,9 +160,11 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
+      style: 'currency',
+      currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price) + ' TL';
+    }).format(price);
   };
 
   const formatDate = (dateString: string) => {
@@ -235,18 +232,20 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                 {/* Loading Skeleton */}
                 <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
                 
-                <LazyImage
-                  src={ad.images[currentImageIndex]}
+                <img
+                  src={buildImageUrl(ad.images[currentImageIndex], { 
+                    width: isSlowConnection ? 800 : 1200, 
+                    height: isSlowConnection ? 533 : 800, 
+                    quality: isSlowConnection ? 60 : 85, 
+                    resize: 'cover', 
+                    format: 'webp' 
+                  })}
                   alt={ad.title}
                   className={`w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-all duration-300 relative z-10 ${
                     swipeDirection === 'left' ? 'translate-x-2' : 
                     swipeDirection === 'right' ? '-translate-x-2' : ''
                   }`}
-                  width={isSlowConnection ? 800 : 1200}
-                  height={isSlowConnection ? 533 : 800}
-                  quality={isSlowConnection ? 60 : 85}
-                  format="webp"
-                  resize="cover"
+                  loading="eager"
                   decoding="async"
                   fetchpriority="high"
                   onClick={() => setIsFullscreen(true)}
