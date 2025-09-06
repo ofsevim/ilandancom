@@ -93,8 +93,8 @@ export const userService = {
 export const publicUserService = {
   async getPublicUserById(id: string) {
     const { data, error } = await supabase
-      .from('user_public')
-      .select('*')
+      .from('users')
+      .select('id, name, avatar')
       .eq('id', id)
       .single();
     if (error) throw error;
@@ -208,7 +208,7 @@ export const adService = {
     userId: string;
   }) {
     const { data, error } = await supabase
-      .from('ads')
+      .from('listings')
       .insert([{
         title: adData.title,
         description: adData.description,
@@ -264,39 +264,33 @@ export const adService = {
   },
 
   async deleteAd(id: string) {
-    // Adblock engellerini aşmak için önce RPC dene
-    const { error: rpcError } = await supabase.rpc('delete_ad', { ad_id: id });
-    if (!rpcError) return;
-
-    // RPC yoksa eski yolu dene (engelleyici bloklayabilir)
+    // Direkt listings tablosunu kullan
     const { error } = await supabase
-      .from('ads')
+      .from('listings')
       .delete()
       .eq('id', id);
     if (error) throw error;
   },
 
   async incrementViewCount(id: string) {
-    // Reklam engelleyicilerden kaçınmak için RPC kullan
-    const { data, error } = await supabase.rpc('increment_view', { ad_id: id });
-    if (error) {
-      // Geriye dönük uyumluluk: RPC yoksa eski yöntemi dene (engelleyici bloklayabilir)
-      const { data: currentAd, error: fetchError } = await supabase
-        .from('ads')
-        .select('view_count')
-        .eq('id', id)
-        .single();
-      if (fetchError) throw fetchError;
-      const { data: updated, error: updErr } = await supabase
-        .from('ads')
-        .update({ view_count: (currentAd.view_count || 0) + 1 })
-        .eq('id', id)
-        .select()
-        .single();
-      if (updErr) throw updErr;
-      return updated;
-    }
-    return data;
+    // Direkt listings tablosunu kullan
+    const { data: currentAd, error: fetchError } = await supabase
+      .from('listings')
+      .select('view_count')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) throw fetchError;
+    
+    const { data: updated, error: updErr } = await supabase
+      .from('listings')
+      .update({ view_count: (currentAd.view_count || 0) + 1 })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (updErr) throw updErr;
+    return updated;
   },
 
   async getUserAds(userId: string) {
@@ -528,7 +522,7 @@ export const messageService = {
       .in('id', adIds);
 
     const { data: users } = await supabase
-      .from('user_public')
+      .from('users')
       .select('id, name')
       .in('id', userIds);
 
