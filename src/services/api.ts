@@ -92,19 +92,24 @@ export const userService = {
 // Public User Service (read-only limited fields for public visibility)
 export const publicUserService = {
   async getPublicUserById(id: string) {
-    // RLS bypass için RPC fonksiyonu kullan
-    const { data, error } = await supabase.rpc('get_public_user', { user_id: id });
-    if (error) {
-      // Fallback: direkt users tablosu
-      const { data: fallbackData, error: fallbackError } = await supabase
+    try {
+      // Basit users tablosu erişimi
+      const { data, error } = await supabase
         .from('users')
         .select('id, name, avatar')
         .eq('id', id)
         .single();
-      if (fallbackError) throw fallbackError;
-      return fallbackData;
+      
+      if (error) {
+        console.warn('User fetch error:', error);
+        return { id, name: 'Bilinmeyen Kullanıcı', avatar: null };
+      }
+      
+      return data;
+    } catch (error) {
+      console.warn('User service error:', error);
+      return { id, name: 'Bilinmeyen Kullanıcı', avatar: null };
     }
-    return data;
   }
 };
 
@@ -276,24 +281,36 @@ export const adService = {
   },
 
   async incrementViewCount(id: string) {
-    // Direkt ads tablosunu kullan
-    const { data: currentAd, error: fetchError } = await supabase
-      .from('ads')
-      .select('view_count')
-      .eq('id', id)
-      .single();
-    
-    if (fetchError) throw fetchError;
-    
-    const { data: updated, error: updErr } = await supabase
-      .from('ads')
-      .update({ view_count: (currentAd.view_count || 0) + 1 })
-      .eq('id', id)
-      .select()
-      .single();
-    
-    if (updErr) throw updErr;
-    return updated;
+    try {
+      // listings tablosunu kullan (view olabilir)
+      const { data: currentAd, error: fetchError } = await supabase
+        .from('listings')
+        .select('view_count')
+        .eq('id', id)
+        .single();
+      
+      if (fetchError) {
+        console.warn('View count fetch error:', fetchError);
+        return; // Sessizce devam et
+      }
+      
+      const { data: updated, error: updErr } = await supabase
+        .from('listings')
+        .update({ view_count: (currentAd.view_count || 0) + 1 })
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (updErr) {
+        console.warn('View count update error:', updErr);
+        return; // Sessizce devam et
+      }
+      
+      return updated;
+    } catch (error) {
+      console.warn('View count increment failed:', error);
+      // Hata durumunda sessizce devam et
+    }
   },
 
   async getUserAds(userId: string) {

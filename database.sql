@@ -134,6 +134,25 @@ CREATE POLICY "Users can update their own profile" ON users
 CREATE POLICY "Users can insert their own profile" ON users
     FOR INSERT WITH CHECK (auth.uid()::text = id::text);
 
+-- Drop existing policies first
+DROP POLICY IF EXISTS "Users can view their own profile" ON users;
+DROP POLICY IF EXISTS "Public users can view limited profile" ON users;
+DROP POLICY IF EXISTS "Users can update their own profile" ON users;
+DROP POLICY IF EXISTS "Users can insert their own profile" ON users;
+
+-- Recreate policies
+CREATE POLICY "Users can view their own profile" ON users
+    FOR SELECT USING (auth.uid()::text = id::text);
+
+CREATE POLICY "Public users can view limited profile" ON users
+    FOR SELECT USING (true);
+
+CREATE POLICY "Users can update their own profile" ON users
+    FOR UPDATE USING (auth.uid()::text = id::text);
+
+CREATE POLICY "Users can insert their own profile" ON users
+    FOR INSERT WITH CHECK (auth.uid()::text = id::text);
+
 -- Categories policies (public read access)
 CREATE POLICY "Categories are viewable by everyone" ON categories
     FOR SELECT USING (true);
