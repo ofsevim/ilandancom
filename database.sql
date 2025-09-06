@@ -125,6 +125,9 @@ DROP POLICY IF EXISTS "Districts write for service" ON districts;
 CREATE POLICY "Users can view their own profile" ON users
     FOR SELECT USING (auth.uid()::text = id::text);
 
+CREATE POLICY "Public users can view limited profile" ON users
+    FOR SELECT USING (true);
+
 CREATE POLICY "Users can update their own profile" ON users
     FOR UPDATE USING (auth.uid()::text = id::text);
 
@@ -148,8 +151,24 @@ CREATE POLICY "Users can create ads" ON ads
 CREATE POLICY "Users can update their own ads" ON ads
     FOR UPDATE USING (auth.uid()::text = user_id::text);
 
+CREATE POLICY "Admins can update any ad" ON ads
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM users 
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
+
 CREATE POLICY "Users can delete their own ads" ON ads
     FOR DELETE USING (auth.uid()::text = user_id::text);
+
+CREATE POLICY "Admins can delete any ad" ON ads
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM users 
+            WHERE id = auth.uid() AND role = 'admin'
+        )
+    );
 
 -- Favorites policies
 CREATE POLICY "Users can view their own favorites" ON favorites
@@ -201,6 +220,26 @@ SELECT c.id, d.name FROM (
 ) AS d(city_name, name)
 JOIN cities c ON c.name = d.city_name
 ON CONFLICT (city_id, name) DO NOTHING;
+
+-- RPC Functions for RLS bypass
+CREATE OR REPLACE FUNCTION get_public_user(user_id UUID)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  result JSON;
+BEGIN
+  SELECT to_json(users.*) INTO result
+  FROM users
+  WHERE id = user_id;
+  
+  RETURN result;
+END;
+$$;
+
+-- Grant execute permission
+GRANT EXECUTE ON FUNCTION get_public_user(UUID) TO anon, authenticated;
 
 -- Create storage bucket for ad images
 INSERT INTO storage.buckets (id, name, public) VALUES ('ad-images', 'ad-images', true)

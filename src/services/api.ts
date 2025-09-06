@@ -92,12 +92,18 @@ export const userService = {
 // Public User Service (read-only limited fields for public visibility)
 export const publicUserService = {
   async getPublicUserById(id: string) {
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, name, avatar')
-      .eq('id', id)
-      .single();
-    if (error) throw error;
+    // RLS bypass için RPC fonksiyonu kullan
+    const { data, error } = await supabase.rpc('get_public_user', { user_id: id });
+    if (error) {
+      // Fallback: direkt users tablosu
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('users')
+        .select('id, name, avatar')
+        .eq('id', id)
+        .single();
+      if (fallbackError) throw fallbackError;
+      return fallbackData;
+    }
     return data;
   }
 };
