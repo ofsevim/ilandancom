@@ -257,8 +257,21 @@ BEGIN
 END;
 $$;
 
--- Grant execute permission
+CREATE OR REPLACE FUNCTION increment_view(ad_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE public.ads
+  SET view_count = COALESCE(view_count, 0) + 1
+  WHERE id = ad_id;
+END;
+$$;
+
+-- Grant execute permissions
 GRANT EXECUTE ON FUNCTION get_public_user(UUID) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION increment_view(UUID) TO anon, authenticated;
 
 -- Create storage bucket for ad images
 INSERT INTO storage.buckets (id, name, public) VALUES ('ad-images', 'ad-images', true)

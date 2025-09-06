@@ -282,31 +282,39 @@ export const adService = {
 
   async incrementViewCount(id: string) {
     try {
-      // listings tablosunu kullan (view olabilir)
-      const { data: currentAd, error: fetchError } = await supabase
-        .from('listings')
-        .select('view_count')
-        .eq('id', id)
-        .single();
+      // RPC fonksiyonu kullan (daha güvenli)
+      const { data, error } = await supabase.rpc('increment_view', { ad_id: id });
       
-      if (fetchError) {
-        console.warn('View count fetch error:', fetchError);
-        return; // Sessizce devam et
+      if (error) {
+        console.warn('View count RPC error:', error);
+        // Fallback: direkt ads tablosu
+        const { data: currentAd, error: fetchError } = await supabase
+          .from('ads')
+          .select('view_count')
+          .eq('id', id)
+          .single();
+        
+        if (fetchError) {
+          console.warn('View count fetch error:', fetchError);
+          return;
+        }
+        
+        const { data: updated, error: updErr } = await supabase
+          .from('ads')
+          .update({ view_count: (currentAd.view_count || 0) + 1 })
+          .eq('id', id)
+          .select()
+          .single();
+        
+        if (updErr) {
+          console.warn('View count update error:', updErr);
+          return;
+        }
+        
+        return updated;
       }
       
-      const { data: updated, error: updErr } = await supabase
-        .from('listings')
-        .update({ view_count: (currentAd.view_count || 0) + 1 })
-        .eq('id', id)
-        .select()
-        .single();
-      
-      if (updErr) {
-        console.warn('View count update error:', updErr);
-        return; // Sessizce devam et
-      }
-      
-      return updated;
+      return data;
     } catch (error) {
       console.warn('View count increment failed:', error);
       // Hata durumunda sessizce devam et
