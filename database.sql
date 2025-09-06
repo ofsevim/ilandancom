@@ -263,6 +263,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
+  -- Direkt ads tablosunu güncelle (listings view'ı ads tablosuna bağlı olabilir)
   UPDATE public.ads
   SET view_count = COALESCE(view_count, 0) + 1
   WHERE id = ad_id;
