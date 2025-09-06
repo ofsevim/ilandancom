@@ -93,22 +93,22 @@ export const userService = {
 export const publicUserService = {
   async getPublicUserById(id: string) {
     try {
-      // Basit users tablosu erişimi
+      // Basit users tablosu erişimi - telefon numarası dahil
       const { data, error } = await supabase
         .from('users')
-        .select('id, name, avatar')
+        .select('id, name, avatar, phone, email')
         .eq('id', id)
         .single();
       
       if (error) {
         console.warn('User fetch error:', error);
-        return { id, name: 'Bilinmeyen Kullanıcı', avatar: null };
+        return { id, name: 'Bilinmeyen Kullanıcı', avatar: null, phone: null, email: null };
       }
       
       return data;
     } catch (error) {
       console.warn('User service error:', error);
-      return { id, name: 'Bilinmeyen Kullanıcı', avatar: null };
+      return { id, name: 'Bilinmeyen Kullanıcı', avatar: null, phone: null, email: null };
     }
   }
 };
