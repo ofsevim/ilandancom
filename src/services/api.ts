@@ -208,7 +208,7 @@ export const adService = {
     userId: string;
   }) {
     const { data, error } = await supabase
-      .from('listings')
+      .from('ads')
       .insert([{
         title: adData.title,
         description: adData.description,
@@ -252,30 +252,27 @@ export const adService = {
     if (updates.district !== undefined) updateData.district = updates.district;
     if (updates.images !== undefined) updateData.images = updates.images;
 
-    const { data, error } = await supabase
-      .from('listings')
+    const { error } = await supabase
+      .from('ads')
       .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
+      .eq('id', id);
     
     if (error) throw error;
-    return data;
   },
 
   async deleteAd(id: string) {
-    // Direkt listings tablosunu kullan
+    // Direkt ads tablosunu kullan
     const { error } = await supabase
-      .from('listings')
+      .from('ads')
       .delete()
       .eq('id', id);
     if (error) throw error;
   },
 
   async incrementViewCount(id: string) {
-    // Direkt listings tablosunu kullan
+    // Direkt ads tablosunu kullan
     const { data: currentAd, error: fetchError } = await supabase
-      .from('listings')
+      .from('ads')
       .select('view_count')
       .eq('id', id)
       .single();
@@ -283,7 +280,7 @@ export const adService = {
     if (fetchError) throw fetchError;
     
     const { data: updated, error: updErr } = await supabase
-      .from('listings')
+      .from('ads')
       .update({ view_count: (currentAd.view_count || 0) + 1 })
       .eq('id', id)
       .select()

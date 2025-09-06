@@ -22,7 +22,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       setLoading(true);
       setError(null);
       const [{ data: adsData, error: adsErr }, { data: usersData, error: usersErr }] = await Promise.all([
-        supabase.from('listings').select('*, users(*), categories(*)').order('created_at', { ascending: false }),
+        supabase.from('ads').select('*, users(*), categories(*)').order('created_at', { ascending: false }),
         supabase.from('users').select('*').order('created_at', { ascending: false })
       ]);
       if (adsErr) throw adsErr;
