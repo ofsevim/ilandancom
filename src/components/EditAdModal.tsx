@@ -8,6 +8,11 @@ import { useCities } from '../hooks/useCities';
 import { useDistricts } from '../hooks/useDistricts';
 import { Ad } from '../types';
 
+// Yardımcı fonksiyon: Dosya adını Supabase dostu hale getir
+const sanitizeFileName = (fileName: string) => {
+  return fileName.replace(/[^a-zA-Z0-9_.-]/g, '-');
+};
+
 interface EditAdModalProps {
   ad: Ad;
   onClose: () => void;
@@ -83,21 +88,6 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
     }
   };
 
-  const generateStorageKey = (file: File, index: number, userId?: string) => {
-    const originalName = file.name || `image-${index}`;
-    const dotIndex = originalName.lastIndexOf('.');
-    const ext = dotIndex !== -1 ? originalName.slice(dotIndex + 1).toLowerCase() : 'jpg';
-    const base = dotIndex !== -1 ? originalName.slice(0, dotIndex) : originalName;
-    const safeBase = base
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-    const prefix = (user?.id ? `${user.id}/` : 'public/') as string;
-    return `${prefix}${Date.now()}-${index}-${safeBase}.${ext}`;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -136,13 +126,15 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
     try {
       setLoading(true);
 
-      // Yeni resimleri yükle (safe keys)
+      // Yeni resimleri yükle
       const newImageUrls: string[] = [];
       for (let i = 0; i < formData.images.length; i++) {
         const file = formData.images[i];
-        const storageKey = generateStorageKey(file, i, user?.id);
-        await storageService.uploadImage(file, storageKey);
-        const url = await storageService.getImageUrl(storageKey);
+        const fileName = `${Date.now()}-${i}-${file.name}`;
+        // Dosya adını sanitize et
+        const sanitizedFileName = sanitizeFileName(fileName);
+        await storageService.uploadImage(file, sanitizedFileName);
+        const url = await storageService.getImageUrl(sanitizedFileName);
         newImageUrls.push(url);
       }
 

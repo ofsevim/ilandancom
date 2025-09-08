@@ -59,21 +59,6 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
     }));
   };
 
-  const generateStorageKey = (file: File, index: number, userId?: string) => {
-    const originalName = file.name || `image-${index}`;
-    const dotIndex = originalName.lastIndexOf('.');
-    const ext = dotIndex !== -1 ? originalName.slice(dotIndex + 1).toLowerCase() : 'jpg';
-    const base = dotIndex !== -1 ? originalName.slice(0, dotIndex) : originalName;
-    const safeBase = base
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // aksanları kaldır
-      .replace(/[^a-z0-9]+/g, '-') // sadece a-z0-9 ve -
-      .replace(/^-+|-+$/g, '');
-    const prefix = (user?.id ? `${user.id}/` : 'public/') as string;
-    return `${prefix}${Date.now()}-${index}-${safeBase}.${ext}`;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -102,13 +87,13 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
     try {
       setLoading(true);
 
-      // Upload images (safe storage keys)
+      // Upload images
       const imageUrls: string[] = [];
       for (let i = 0; i < formData.images.length; i++) {
         const file = formData.images[i];
-        const storageKey = generateStorageKey(file, i, user?.id);
-        await storageService.uploadImage(file, storageKey);
-        const url = await storageService.getImageUrl(storageKey);
+        const fileName = `${Date.now()}-${i}-${file.name}`;
+        await storageService.uploadImage(file, fileName);
+        const url = await storageService.getImageUrl(fileName);
         imageUrls.push(url);
       }
 
