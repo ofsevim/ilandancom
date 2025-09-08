@@ -157,7 +157,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
       onClose();
     } catch (error) {
       console.error('Error updating ad:', error);
-      toast.error('İlan güncellenirken hata oluştu');
+      toast.error('İlan güncellenirken bir sorun oluştu. Lütfen internet bağlantınızı kontrol edin veya reklam engelleyici eklentilerinizi geçici olarak devre dışı bırakmayı deneyin.');
     } finally {
       setLoading(false);
     }
