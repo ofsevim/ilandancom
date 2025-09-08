@@ -87,11 +87,12 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
   return (
     <div
       onClick={() => onAdClick(ad)}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1"
+      style={{ minHeight: 420 }}
     >
       {/* Image */}
-              <div 
-          className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none group-hover:scale-105 transition-transform duration-300"
+      <div 
+          className="relative h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none group-hover:scale-[1.02] transition-transform duration-300"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
