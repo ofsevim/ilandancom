@@ -92,7 +92,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
     >
       {/* Image */}
       <div 
-          className="relative h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none group-hover:scale-[1.02] transition-transform duration-300"
+          className="relative h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -100,9 +100,9 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         {ad.images.length > 0 ? (
           <>
                           <img
-                src={buildImageUrl(ad.images[currentImageIndex], { width: 400, height: 300, quality: 60, resize: 'cover', format: 'webp' })}
+                src={buildImageUrl(ad.images[currentImageIndex], { width: 400, height: 300, quality: 60, resize: 'inside', format: 'webp' })}
                 alt={ad.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700"
                 loading="lazy"
               onLoad={(e) => {
                 e.currentTarget.style.opacity = '1';
