@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
 import AdGrid from './components/AdGrid';
 import AdDetailModal from './components/AdDetailModal';
-import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { Routes, Route, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { adService } from './services/api';
 import { Ad } from './types';
 import NewAdModal from './components/NewAdModal';
@@ -87,6 +87,7 @@ const AdDetailPage: React.FC = () => {
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [selectedAd, setSelectedAd] = useState<any>(null);
   const [showNewAdModal, setShowNewAdModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -141,58 +142,61 @@ const AppContent: React.FC = () => {
     );
   }
 
+  const isAdPage = location.pathname.startsWith('/ad/');
+
   return (
     <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)}>
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Left Sidebar - Filters */}
-          <div className="lg:col-span-1">
-            <SidebarFilters filters={filters} onFiltersChange={setFilters} />
-          </div>
-
-          {/* Right Content - Ads */}
-          <div className="lg:col-span-4">
-            {/* Results Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {loading ? 'Yükleniyor...' : `${ads.length} ilan bulundu`}
-                {filters.category && categories.length > 0 && (
-                  <>
-                    {' - '}
-                    <span className="text-blue-600 dark:text-blue-400">
-                      {categories.find(c => c.id === filters.category)?.name}
-                    </span>
-                  </>
-                )}
-              </h2>
-              
-              {user?.role === 'admin' && (
-                <button
-                  onClick={showAdminPanel}
-                  className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-                >
-                  Admin Panel
-                </button>
-              )}
+      {isAdPage ? (
+        <Routes>
+          <Route path="/ad/:id" element={<AdDetailPage />} />
+        </Routes>
+      ) : (
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            {/* Left Sidebar - Filters */}
+            <div className="lg:col-span-1">
+              <SidebarFilters filters={filters} onFiltersChange={setFilters} />
             </div>
 
-            {/* Ads Grid */}
-            <AdGrid 
-              ads={ads} 
-              loading={loading} 
-              onAdClick={handleAdClick}
-              showEditButton={!!user}
-              onEditClick={handleEditAd}
-            />
+            {/* Right Content - Ads */}
+            <div className="lg:col-span-4">
+              {/* Results Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {loading ? 'Yükleniyor...' : `${ads.length} ilan bulundu`}
+                  {filters.category && categories.length > 0 && (
+                    <>
+                      {' - '}
+                      <span className="text-blue-600 dark:text-blue-400">
+                        {categories.find(c => c.id === filters.category)?.name}
+                      </span>
+                    </>
+                  )}
+                </h2>
+                
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={showAdminPanel}
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+                  >
+                    Admin Panel
+                  </button>
+                )}
+              </div>
+
+              {/* Ads Grid */}
+              <AdGrid 
+                ads={ads} 
+                loading={loading} 
+                onAdClick={handleAdClick}
+                showEditButton={!!user}
+                onEditClick={handleEditAd}
+              />
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Routes */}
-      <Routes>
-        <Route path="/ad/:id" element={<AdDetailPage />} />
-      </Routes>
+      )}
 
       {showNewAdModal && (
         <NewAdModal
