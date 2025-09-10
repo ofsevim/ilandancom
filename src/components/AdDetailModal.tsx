@@ -428,83 +428,51 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
             {/* Seller Info */}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Satıcı Bilgileri
-              </h3>
-              
-              <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-start gap-3 mb-3">
                 <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                  <User size={20} className="text-gray-600 dark:text-gray-400" />
+                  <User size={20} className="text-gray-600 dark:text-gray-300" />
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900 dark:text-white">
+                  <div className="font-semibold text-gray-900 dark:text-white">
                     {seller?.name || 'Satıcı'}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Üyelik: {formatDate(seller?.createdAt || ad.createdAt)}
+                    Hesap açma tarihi: {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { year:'numeric', month:'long' })}
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                {!showContactInfo ? (
-                  <button
-                    onClick={() => setShowContactInfo(true)}
-                    aria-label="Telefonu göster"
-                    className="w-full flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                  >
-                    <Phone size={18} />
-                    <span>Telefonu Göster</span>
-                  </button>
-                ) : (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
-                        <Phone size={18} />
-                        <span className="font-medium">
-                          {seller?.phone || '+90 5XX XXX XX XX'}
-                        </span>
-                      </div>
-                      {seller?.phone && (
-                        <a href={`tel:${seller.phone}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline" aria-label="Telefon et">Ara</a>
-                      )}
-                    </div>
-                    {seller?.email && (
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
-                          <MessageCircle size={18} />
-                          <span className="font-medium">{seller.email}</span>
-                        </div>
-                        <a href={`mailto:${seller.email}`} className="text-blue-600 dark:text-blue-300 text-sm font-medium hover:underline" aria-label="E-posta gönder">E‑posta</a>
-                      </div>
-                    )}
-                    {seller?.phone && (
-                      <a
-                        href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center text-green-700 dark:text-green-300 text-sm font-medium hover:underline"
-                        aria-label="WhatsApp ile yaz"
-                      >
-                        WhatsApp ile yaz
-                      </a>
-                    )}
-                  </div>
-                )}
-                <button
-                  onClick={() => {
-                    if (!user) {
-                      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
-                      return;
-                    }
-                    setShowMessages(true);
-                  }}
-                  className="w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  <Send size={18} />
-                  <span>Mesaj Gönder</span>
-                </button>
+              {/* Links */}
+              <div className="text-sm text-blue-600 dark:text-blue-400 flex flex-wrap gap-x-4 gap-y-2 mb-4">
+                <button type="button" className="hover:underline" onClick={() => toast.info('Tüm ilanlar yakında')}>Tüm ilanları</button>
+                <button type="button" className="hover:underline" onClick={() => toast.info('Profil yakında')}>Profili</button>
+                <button type="button" className="hover:underline" onClick={() => toast.success('Satıcı favorilere eklendi')}>Favori Satıcılarıma ekle</button>
               </div>
+
+              {/* Phone Row */}
+              <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 mb-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600 dark:text-gray-300">Cep</span>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {seller?.phone || '+90 5XX XXX XX XX'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Ask Button */}
+              <button
+                onClick={() => {
+                  if (!user) {
+                    toast.error('Mesaj göndermek için önce giriş yapmalısınız');
+                    return;
+                  }
+                  setShowMessages(true);
+                }}
+                className="inline-flex items-center gap-2 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 px-3 py-2 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
+              >
+                <MessageCircle size={16} />
+                <span>Soru Sor</span>
+              </button>
             </div>
           </div>
         </div>
