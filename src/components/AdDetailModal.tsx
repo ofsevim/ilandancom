@@ -12,9 +12,10 @@ interface AdDetailModalProps {
   ad: Ad;
   onClose: () => void;
   onDeleted?: () => void;
+  asPage?: boolean;
 }
 
-const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted }) => {
+const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, asPage = false }) => {
   const { favorites, toggleFavorite, user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactInfo, setShowContactInfo] = useState(false);
@@ -209,15 +210,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-6xl w-full my-8 relative overflow-hidden">
-        <button
-          onClick={onClose}
-          aria-label="Kapat"
-          className="absolute top-2 right-2 md:top-4 md:right-4 z-50 w-12 h-12 md:w-10 md:h-10 bg-white dark:bg-gray-800 bg-opacity-95 dark:bg-opacity-95 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 shadow-lg border border-gray-200 dark:border-gray-600"
-        >
-          <X size={20} />
-        </button>
+    <div className={asPage ? "max-w-7xl mx-auto p-4 md:p-6" : "fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto"}>
+      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-xl w-full relative overflow-hidden" : "bg-white dark:bg-gray-800 rounded-xl max-w-6xl w-full my-8 relative overflow-hidden"}>
+        {!asPage && (
+          <button
+            onClick={onClose}
+            aria-label="Kapat"
+            className="absolute top-2 right-2 md:top-4 md:right-4 z-50 w-12 h-12 md:w-10 md:h-10 bg-white dark:bg-gray-800 bg-opacity-95 dark:bg-opacity-95 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 shadow-lg border border-gray-200 dark:border-gray-600"
+          >
+            <X size={20} />
+          </button>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
           {/* Images */}
@@ -241,7 +244,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
                     format: 'webp' 
                   })}
                   alt={ad.title}
-                  className={`w-full h-[520px] object-cover rounded-lg cursor-zoom-in transition-all duration-300 relative z-10 ${
+                  className={`${asPage ? 'w-full h-[520px]' : 'w-full h-[520px]'} object-cover rounded-lg cursor-zoom-in transition-all duration-300 relative z-10 ${
                     swipeDirection === 'left' ? 'translate-x-2' : 
                     swipeDirection === 'right' ? '-translate-x-2' : ''
                   }`}
@@ -508,7 +511,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted })
       </div>
 
       {/* Fullscreen Image Viewer */}
-      {isFullscreen && ad.images.length > 0 && (
+      {!asPage && isFullscreen && ad.images.length > 0 && (
         <div 
           className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center touch-pan-y select-none"
           onTouchStart={handleTouchStart}

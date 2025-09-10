@@ -3,6 +3,8 @@ import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
 import AdGrid from './components/AdGrid';
 import AdDetailModal from './components/AdDetailModal';
+import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { adService } from './services/api';
 import NewAdModal from './components/NewAdModal';
 import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
@@ -12,6 +14,40 @@ import { SearchFilters as SearchFiltersType } from './types';
 import { useAds } from './hooks/useAds';
 import { useCategories } from './hooks/useCategories';
 import { adService } from './services/api';
+
+const AdDetailPage: React.FC = () => {
+  const { id } = useParams();
+  const [ad, setAd] = useState<any>(null);
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      if (!id) return;
+      try {
+        const data = await adService.getAdById(id);
+        if (!mounted) return;
+        setAd(data);
+        // görüntülenme sayısı
+        adService.incrementViewCount(id).catch(() => {});
+        // title
+        document.title = `${data.title} - ilandan`;
+      } catch (e) {
+        navigate('/');
+      }
+    };
+    load();
+    return () => { mounted = false; };
+  }, [id, navigate]);
+
+  if (!ad) return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-600 dark:text-gray-300">Yükleniyor...</div>
+  );
+
+  return (
+    <AdDetailModal ad={ad} onClose={() => navigate(-1)} asPage />
+  );
+};
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
@@ -32,14 +68,9 @@ const AppContent: React.FC = () => {
     setFilters(prev => ({ ...prev, query }));
   };
 
+  const navigate = useNavigate();
   const handleAdClick = async (ad: any) => {
-    setSelectedAd(ad);
-    try {
-      await adService.incrementViewCount(ad.id);
-      refreshAds();
-    } catch (error) {
-      console.error('Error incrementing view count:', error);
-    }
+    navigate(`/ad/${ad.id}`);
   };
 
   const handleAdCreated = () => {
@@ -122,17 +153,10 @@ const AppContent: React.FC = () => {
         </div>
       </div>
 
-      {/* Modals */}
-      {selectedAd && (
-        <AdDetailModal
-          ad={selectedAd}
-          onClose={() => setSelectedAd(null)}
-          onDeleted={() => {
-            setSelectedAd(null);
-            refreshAds();
-          }}
-        />
-      )}
+      {/* Routes */}
+      <Routes>
+        <Route path="/ad/:id" element={<AdDetailPage />} />
+      </Routes>
 
       {showNewAdModal && (
         <NewAdModal
