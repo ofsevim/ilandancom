@@ -5,6 +5,7 @@ import AdGrid from './components/AdGrid';
 import AdDetailModal from './components/AdDetailModal';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { adService } from './services/api';
+import { Ad } from './types';
 import NewAdModal from './components/NewAdModal';
 import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
@@ -17,7 +18,7 @@ import { adService } from './services/api';
 
 const AdDetailPage: React.FC = () => {
   const { id } = useParams();
-  const [ad, setAd] = useState<any>(null);
+  const [ad, setAd] = useState<Ad | null>(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -25,13 +26,48 @@ const AdDetailPage: React.FC = () => {
     const load = async () => {
       if (!id) return;
       try {
-        const data = await adService.getAdById(id);
+        const item: any = await adService.getAdById(id);
         if (!mounted) return;
-        setAd(data);
+        // Tek kayıt için güvenli dönüşüm
+        const transformed: Ad = {
+          id: item?.id ?? '',
+          title: item?.title ?? '',
+          description: item?.description ?? '',
+          price: item?.price ?? 0,
+          category: {
+            id: item?.categories?.id ?? item?.category_id ?? 'unknown',
+            name: item?.categories?.name ?? 'Diğer',
+            slug: item?.categories?.slug ?? 'diger',
+            icon: item?.categories?.icon ?? 'tag'
+          },
+          location: {
+            city: item?.city ?? '',
+            district: item?.district ?? '',
+            coordinates: item?.latitude && item?.longitude ? { lat: item.latitude, lng: item.longitude } : undefined
+          },
+          images: Array.isArray(item?.images) ? item.images : [],
+          userId: item?.user_id ?? '',
+          user: {
+            id: item?.users?.id ?? item?.user_id ?? 'unknown',
+            email: item?.users?.email ?? '',
+            name: item?.users?.name ?? 'Gizli Kullanıcı',
+            phone: item?.users?.phone ?? '',
+            avatar: item?.users?.avatar ?? '',
+            role: item?.users?.role ?? 'user',
+            createdAt: item?.users?.created_at ?? item?.created_at ?? new Date().toISOString(),
+            isActive: item?.users?.is_active ?? true
+          },
+          status: item?.status ?? 'active',
+          createdAt: item?.created_at ?? new Date().toISOString(),
+          updatedAt: item?.updated_at ?? item?.created_at ?? new Date().toISOString(),
+          viewCount: item?.view_count ?? 0,
+          featured: item?.featured ?? false
+        };
+        setAd(transformed);
         // görüntülenme sayısı
         adService.incrementViewCount(id).catch(() => {});
         // title
-        document.title = `${data.title} - ilandan`;
+        if (transformed?.title) document.title = `${transformed.title} - ilandan`;
       } catch (e) {
         navigate('/');
       }
