@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MapPin, Clock, Eye, Heart, Phone, MessageCircle, ChevronLeft, ChevronRight, User, Trash2, Send, Edit } from 'lucide-react';
+import { X, MapPin, Clock, Eye, Heart, Phone, ChevronLeft, ChevronRight, User, Trash2, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
@@ -460,10 +460,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-green-700 dark:text-green-300 px-3 py-2 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 mb-3"
+                  className="inline-flex items-center gap-2 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800 px-3 py-2 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 mb-3"
                   aria-label="WhatsApp ile yaz"
                 >
-                  <MessageCircle size={16} />
                   <span>WhatsApp</span>
                 </a>
               )}
@@ -479,7 +478,6 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 }}
                 className="inline-flex items-center gap-2 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 px-3 py-2 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
               >
-                <MessageCircle size={16} />
                 <span>Soru Sor</span>
               </button>
             </div>
@@ -488,7 +486,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
       </div>
 
       {/* Fullscreen Image Viewer */}
-      {!asPage && isFullscreen && ad.images.length > 0 && (
+      {isFullscreen && ad.images.length > 0 && (
         <div 
           className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center touch-pan-y select-none"
           onTouchStart={handleTouchStart}
