@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { userService } from '../services/api';
+import { userService, adService } from '../services/api';
 import { User, Edit, Save, X, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -9,7 +9,7 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, favorites } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,6 +18,32 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
     phone: user?.phone || '',
     avatar: user?.avatar || ''
   });
+
+  const [stats, setStats] = useState({
+    activeAds: 0,
+    soldAds: 0,
+    totalViews: 0,
+  });
+
+  React.useEffect(() => {
+    let mounted = true;
+    const loadStats = async () => {
+      if (!user) return;
+      try {
+        const myAds: any[] = await adService.getUserAds(user.id);
+        if (!mounted) return;
+        const activeAds = (myAds || []).filter(a => a.status === 'active').length;
+        const soldAds = (myAds || []).filter(a => a.status === 'sold').length;
+        const totalViews = (myAds || []).reduce((sum, a) => sum + (a.view_count || 0), 0);
+        setStats({ activeAds, soldAds, totalViews });
+      } catch {
+        if (!mounted) return;
+        setStats({ activeAds: 0, soldAds: 0, totalViews: 0 });
+      }
+    };
+    loadStats();
+    return () => { mounted = false; };
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -166,19 +192,19 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">0</div>
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.activeAds}</div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">Aktif İlan</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">0</div>
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.soldAds}</div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">Satılan İlan</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">0</div>
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.totalViews}</div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">Toplam Görüntülenme</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">0</div>
+                <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{favorites.length}</div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">Favori İlan</div>
               </div>
             </div>
