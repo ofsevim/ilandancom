@@ -445,8 +445,6 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               {/* Links */}
               <div className="text-sm text-blue-600 dark:text-blue-400 flex flex-wrap gap-x-4 gap-y-2 mb-4">
                 <button type="button" className="hover:underline" onClick={() => toast('Tüm ilanlar yakında')}>Tüm ilanları</button>
-                <button type="button" className="hover:underline" onClick={() => toast('Profil yakında')}>Profili</button>
-                <button type="button" className="hover:underline" onClick={() => toast.success('Satıcı favorilere eklendi')}>Favori Satıcılarıma ekle</button>
               </div>
 
               {/* Phone Row */}
