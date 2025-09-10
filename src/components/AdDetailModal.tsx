@@ -442,13 +442,10 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 </div>
               </div>
 
-              {/* Links */}
-              <div className="text-sm text-blue-600 dark:text-blue-400 flex flex-wrap gap-x-4 gap-y-2 mb-4">
-                <button type="button" className="hover:underline" onClick={() => toast('Tüm ilanlar yakında')}>Tüm ilanları</button>
-              </div>
+              {/* Links kaldırıldı */}
 
               {/* Phone Row */}
-              <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 mb-3">
+              <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 mb-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-300">Cep</span>
                   <div className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -456,6 +453,20 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   </div>
                 </div>
               </div>
+
+              {/* WhatsApp */}
+              {seller?.phone && (
+                <a
+                  href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 text-green-700 dark:text-green-300 px-3 py-2 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 mb-3"
+                  aria-label="WhatsApp ile yaz"
+                >
+                  <MessageCircle size={16} />
+                  <span>WhatsApp</span>
+                </a>
+              )}
 
               {/* Ask Button */}
               <button
