@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { X, MapPin, Clock, Eye, Heart, Phone, ChevronLeft, ChevronRight, User, Trash2, Edit } from 'lucide-react';
+import { X, MapPin, Clock, Eye, Heart, ChevronLeft, ChevronRight, User, Trash2, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
-import { adService, userService, publicUserService } from '../services/api';
+import { adService, publicUserService } from '../services/api';
 import MessagesModal from './MessagesModal';
 import EditAdModal from './EditAdModal';
 import toast from 'react-hot-toast';
@@ -18,7 +18,6 @@ interface AdDetailModalProps {
 const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, asPage = false }) => {
   const { favorites, toggleFavorite, user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showContactInfo, setShowContactInfo] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [seller, setSeller] = useState(ad.user);
@@ -44,9 +43,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           name: sellerData.name,
           phone: sellerData.phone,
           avatar: sellerData.avatar,
-          role: sellerData.role,
-          createdAt: sellerData.created_at,
-          isActive: sellerData.is_active
+          role: (sellerData as any).role || 'user',
+          createdAt: (sellerData as any).created_at || (sellerData as any).createdAt,
+          isActive: (sellerData as any).is_active || (sellerData as any).isActive
         });
       } catch {
         // ignore, fallback ad.user
@@ -250,7 +249,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   }`}
                   loading="eager"
                   decoding="async"
-                  fetchpriority="high"
+                  fetchPriority="high"
                   onClick={() => setIsFullscreen(true)}
                   onLoad={(e) => {
                     e.currentTarget.style.opacity = '1';
@@ -448,9 +447,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 mb-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-300">Cep</span>
-                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white">
                     {seller?.phone || '+90 5XX XXX XX XX'}
-                  </div>
+                  </span>
                 </div>
               </div>
 
