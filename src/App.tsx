@@ -107,7 +107,10 @@ const AppContent: React.FC = () => {
   };
 
   const handleCategorySelect = (categoryId: string) => {
-    setFilters(prev => ({ ...prev, category: categoryId }));
+    setFilters(prev => ({ 
+      ...prev, 
+      category: prev.category === categoryId ? undefined : categoryId 
+    }));
   };
 
   const navigate = useNavigate();
@@ -168,7 +171,10 @@ const AppContent: React.FC = () => {
             <div className="lg:col-span-4">
               {/* Mobile Category Grid */}
               <div className="lg:hidden mb-6">
-                <CategoryGrid onCategorySelect={handleCategorySelect} />
+                <CategoryGrid 
+                  onCategorySelect={handleCategorySelect} 
+                  selectedCategoryId={filters.category}
+                />
               </div>
 
               {/* Results Header */}

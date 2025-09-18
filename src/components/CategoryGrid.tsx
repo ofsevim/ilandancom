@@ -4,9 +4,10 @@ import { useCategories } from '../hooks/useCategories';
 
 interface CategoryGridProps {
   onCategorySelect: (categoryId: string) => void;
+  selectedCategoryId?: string;
 }
 
-const CategoryGrid: React.FC<CategoryGridProps> = ({ onCategorySelect }) => {
+const CategoryGrid: React.FC<CategoryGridProps> = ({ onCategorySelect, selectedCategoryId }) => {
   const { categories, loading, error } = useCategories();
 
   const getIcon = (iconName: string) => {
@@ -47,17 +48,30 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ onCategorySelect }) => {
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
       {categories.map((category) => {
         const IconComponent = getIcon(category.icon);
+        const isSelected = selectedCategoryId === category.id;
         return (
           <button
             key={category.id}
             onClick={() => onCategorySelect(category.id)}
-            className="flex flex-col items-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition-all duration-200 group"
+            className={`flex flex-col items-center p-4 rounded-lg border transition-all duration-200 group ${
+              isSelected 
+                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-400 shadow-md' 
+                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md'
+            }`}
           >
             <IconComponent 
               size={32} 
-              className="text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 mb-2 transition-colors" 
+              className={`mb-2 transition-colors ${
+                isSelected 
+                  ? 'text-blue-600 dark:text-blue-400' 
+                  : 'text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+              }`}
             />
-            <span className="text-sm font-medium text-gray-900 dark:text-white text-center">
+            <span className={`text-sm font-medium text-center ${
+              isSelected 
+                ? 'text-blue-600 dark:text-blue-400' 
+                : 'text-gray-900 dark:text-white'
+            }`}>
               {category.name}
             </span>
           </button>
