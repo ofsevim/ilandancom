@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
               className="flex items-center text-xl font-bold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white rounded"
             >
               <Home size={24} className="mr-2" />
-              ilanYeri
+              ilandan.online
             </button>
           </div>
 
