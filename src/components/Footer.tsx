@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
     terms: {
       title: 'Kullanım Koşulları',
       content:
-        'ilandan.com’u kullanarak ilan ekleme, düzenleme ve mesajlaşma özelliklerinden faydalanabilirsiniz. Yasaya aykırı içerik ve telif haklarını ihlal eden paylaşımlar kabul edilmez.'
+        'ilandan.online’ı kullanarak ilan ekleme, düzenleme ve mesajlaşma özelliklerinden faydalanabilirsiniz. Yasaya aykırı içerik ve telif haklarını ihlal eden paylaşımlar kabul edilmez.'
     },
     cookies: {
       title: 'Çerez Politikası',
@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-semibold text-white">ilandan</h3>
+            <h3 className="text-lg font-semibold text-white">ilandan.online</h3>
             <p className="mt-2 text-sm text-gray-300">
               Türkiye'nin modern ilan platformu. Emlak, araç, elektronik ve daha fazlası.
             </p>
@@ -104,7 +104,7 @@ const Footer: React.FC = () => {
 
       <div className="border-t border-gray-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-400">
-          <p>© {new Date().getFullYear()} ilandan. Tüm hakları saklıdır.</p>
+          <p>© {new Date().getFullYear()} ilandan.online Tüm hakları saklıdır.</p>
           <div className="mt-2 md:mt-0 space-x-4">
             <a href="#" className="hover:text-white">Yardım</a>
             <a href="#" className="hover:text-white">Güvenlik</a>
