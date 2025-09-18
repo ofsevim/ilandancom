@@ -425,6 +425,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </span>
             </div>
 
+            {/* Mobile Category Badge */}
+            <div className="lg:hidden">
+              <span className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-xs">
+                {ad.category.name}
+              </span>
+            </div>
+
             {/* Seller Info */}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
               <div className="flex items-start gap-3 mb-3">
