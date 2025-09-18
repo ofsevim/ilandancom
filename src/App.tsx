@@ -10,6 +10,7 @@ import NewAdModal from './components/NewAdModal';
 import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
 import SidebarFilters from './components/SidebarFilters';
+import CategoryGrid from './components/CategoryGrid';
 import { useAuth } from './contexts/AuthContext';
 import { SearchFilters as SearchFiltersType } from './types';
 import { useAds } from './hooks/useAds';
@@ -105,6 +106,10 @@ const AppContent: React.FC = () => {
     setFilters(prev => ({ ...prev, query }));
   };
 
+  const handleCategorySelect = (categoryId: string) => {
+    setFilters(prev => ({ ...prev, category: categoryId }));
+  };
+
   const navigate = useNavigate();
   const handleAdClick = async (ad: any) => {
     navigate(`/ad/${ad.id}`);
@@ -161,6 +166,11 @@ const AppContent: React.FC = () => {
 
             {/* Right Content - Ads */}
             <div className="lg:col-span-4">
+              {/* Mobile Category Grid */}
+              <div className="lg:hidden mb-6">
+                <CategoryGrid onCategorySelect={handleCategorySelect} />
+              </div>
+
               {/* Results Header */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
