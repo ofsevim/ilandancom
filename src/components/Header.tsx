@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDarkMode } from '../hooks/useDarkMode';
-import { Search, Plus, Moon, Sun, User, Heart, Package, MessageSquare } from 'lucide-react';
+import { Search, Plus, Moon, Sun, User, Heart, Package, MessageSquare, Home } from 'lucide-react';
 import AuthModal from './AuthModal';
 import ProfileModal from './ProfileModal';
 import MyAdsModal from './MyAdsModal';
@@ -78,24 +78,32 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             <button
               onClick={() => { window.location.href = '/'; }}
               aria-label="Anasayfa"
-              className="flex items-center text-xl font-bold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 rounded"
+              className="flex items-center text-xl font-bold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white rounded"
             >
-              <div className="w-6 h-6 border-2 border-white rounded mr-2"></div>
+              <Home size={24} className="mr-2" />
               ilanYeri
             </button>
           </div>
 
           {/* Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             <a href="/" className="text-white hover:text-gray-300 font-medium">Ana Sayfa</a>
-            <a href="/category/emlak" className="text-white hover:text-gray-300 font-medium">Emlak</a>
-            <a href="/category/vasita" className="text-white hover:text-gray-300 font-medium">Vasıta</a>
-            <a href="/category/ikinci-el" className="text-white hover:text-gray-300 font-medium">İkinci El</a>
-            <a href="/category/is-ilanlari" className="text-white hover:text-gray-300 font-medium">İş İlanları</a>
-          </nav>
+            <a href="/emlak" className="text-white hover:text-gray-300 font-medium">Emlak</a>
+            <a href="/vasita" className="text-white hover:text-gray-300 font-medium">Vasıta</a>
+            <a href="/ikinci-el" className="text-white hover:text-gray-300 font-medium">İkinci El</a>
+            <a href="/is-ilanlari" className="text-white hover:text-gray-300 font-medium">İş İlanları</a>
+          </div>
 
           {/* Actions */}
           <div className="flex items-center space-x-3">
+            {/* New Ad Button */}
+            <button
+              onClick={handleShowNewAd}
+              className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 border border-white/20 items-center font-medium"
+            >
+              İlan Ver
+            </button>
+
             {/* Messages Button */}
             {user && (
               <button
@@ -112,34 +120,91 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
               </button>
             )}
 
-            {/* New Ad Button */}
+            {/* Dark Mode Toggle */}
             <button
-              onClick={handleShowNewAd}
-              className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 border border-white/20 items-center font-medium"
+              onClick={toggleDarkMode}
+              className="p-2 text-white hover:text-gray-300"
             >
-              İlan Ver
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
             {/* User Menu */}
             {user ? (
-              <div className="flex items-center space-x-3">
-                {user.role === 'admin' && (
-                  <button
-                    onClick={() => window.location.href = '/admin'}
-                    className="bg-yellow-500 text-slate-800 px-4 py-2 rounded-lg hover:bg-yellow-400 font-medium"
-                  >
-                    Admin
-                  </button>
-                )}
-                
+              <div className="relative">
                 <button
-                  onClick={() => {
-                    logout();
-                  }}
-                  className="bg-white text-slate-800 px-4 py-2 rounded-lg hover:bg-gray-100 font-medium"
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 text-white hover:text-gray-300"
                 >
-                  Çıkış Yap
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <User size={16} className="text-white" />
+                    )}
+                  </div>
+                  <span className="hidden md:block font-medium">
+                    {user.name}
+                  </span>
                 </button>
+
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                    <button
+                      onClick={() => {
+                        setShowProfileModal(true);
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center"
+                    >
+                      <User size={16} className="mr-2" />
+                      Profilim
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowMyAdsModal(true);
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center"
+                    >
+                      <Package size={16} className="mr-2" />
+                      İlanlarım
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowFavoritesModal(true);
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center"
+                    >
+                      <Heart size={16} className="mr-2" />
+                      Favorilerim
+                    </button>
+                    {user.role === 'admin' && (
+                      <button
+                        onClick={() => {
+                          window.location.href = '/admin';
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 border-t border-gray-200"
+                      >
+                        Admin Panel
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        logout();
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                    >
+                      Çıkış Yap
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <button

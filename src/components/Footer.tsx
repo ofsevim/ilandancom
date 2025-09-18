@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
   } as const;
 
   return (
-    <footer className="bg-slate-800 border-t border-gray-600 mt-12">
+    <footer className="bg-slate-800 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -103,7 +103,7 @@ const Footer: React.FC = () => {
       </div>
 
       <div className="border-t border-gray-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-400">
           <p>© {new Date().getFullYear()} ilandan. Tüm hakları saklıdır.</p>
           <div className="mt-2 md:mt-0 space-x-4">
             <a href="#" className="hover:text-white">Yardım</a>
