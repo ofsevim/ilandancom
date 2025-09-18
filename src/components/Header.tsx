@@ -85,13 +85,18 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             </button>
           </div>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="/" className="text-white hover:text-gray-300 font-medium">Ana Sayfa</a>
-            <a href="/emlak" className="text-white hover:text-gray-300 font-medium">Emlak</a>
-            <a href="/vasita" className="text-white hover:text-gray-300 font-medium">Vasıta</a>
-            <a href="/ikinci-el" className="text-white hover:text-gray-300 font-medium">İkinci El</a>
-            <a href="/is-ilanlari" className="text-white hover:text-gray-300 font-medium">İş İlanları</a>
+          {/* Search Bar */}
+          <div className="hidden md:block flex-1 max-w-2xl mx-2 md:mx-8">
+            <form onSubmit={handleSearch} className="relative">
+              <input
+                type="text"
+                placeholder="Ne arıyorsunuz?"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            </form>
           </div>
 
           {/* Actions */}
