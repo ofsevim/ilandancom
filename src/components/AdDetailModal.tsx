@@ -213,8 +213,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   };
 
   return (
-    <div className={asPage ? "max-w-full mx-auto p-2 lg:p-4" : "fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-2 overflow-y-auto"}>
-      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-xl w-full relative overflow-hidden" : "bg-white dark:bg-gray-800 rounded-xl max-w-full w-full my-4 relative overflow-hidden"}>
+    <div className={asPage ? "max-w-full mx-auto p-1 lg:p-2" : "fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-1 overflow-y-auto"}>
+      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-lg w-full relative overflow-hidden" : "bg-white dark:bg-gray-800 rounded-lg max-w-full w-full my-2 relative overflow-hidden"}>
         {!asPage && (
           <button
             onClick={onClose}
@@ -225,12 +225,12 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </button>
         )}
 
-        <div className="p-3 lg:p-4">
+        <div className="p-2 lg:p-3">
           {/* Main Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3">
             
             {/* Left Side - Photo Gallery */}
-            <div className="space-y-3">
+            <div className="space-y-2">
             {ad.images.length > 0 ? (
               <div 
                 className="relative touch-pan-y select-none"
@@ -356,21 +356,21 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
             )}
 
               {/* Description Card - Moved below photo */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700">
+                <h3 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
                   İlan Açıklaması
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-xs">
                   {ad.description}
                 </p>
               </div>
           </div>
 
             {/* Right Side - Info Grid */}
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-2">
               
               {/* Title and Price Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-200 dark:border-gray-700">
                 <h1 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white mb-1">
                   {ad.title}
                 </h1>
@@ -398,26 +398,26 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
               {/* Action Buttons Card - Only for owners */}
               {(user && (user.id === ad.userId || user.role === 'admin')) && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
                     İşlemler
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                     <button
                       onClick={() => setShowEditModal(true)}
                       aria-label="İlanı Düzenle"
-                      className="flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 text-sm font-medium"
+                      className="flex items-center justify-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 text-xs font-medium"
                     >
-                      <Edit size={14} />
+                      <Edit size={12} />
                       <span>Düzenle</span>
                     </button>
                     <button
                       onClick={handleDelete}
                       disabled={deleting}
                       aria-label="İlanı Kaldır"
-                      className="flex items-center justify-center gap-1 bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 text-sm font-medium"
+                      className="flex items-center justify-center gap-1 bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-700 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 text-xs font-medium"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={12} />
                       <span>Kaldır</span>
                     </button>
                   </div>
@@ -425,17 +425,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               )}
 
               {/* Seller Info Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-200 dark:border-gray-700">
+                <h3 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
                   Satıcı Bilgileri
                 </h3>
                 
-                <div className="flex items-start gap-2 mb-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <User size={14} className="text-white" />
+                <div className="flex items-start gap-2 mb-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <User size={12} className="text-white" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900 dark:text-white text-sm">
+                    <div className="font-semibold text-gray-900 dark:text-white text-xs">
                       {seller?.name || 'Satıcı'}
                     </div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">
@@ -445,40 +445,40 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 </div>
 
                 {/* Phone */}
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-3">
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-md p-2 mb-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-300 font-medium text-sm">Telefon</span>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <span className="text-gray-600 dark:text-gray-300 font-medium text-xs">Telefon</span>
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">
                       {seller?.phone || '+90 5XX XXX XX XX'}
                     </span>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {seller?.phone && (
                     <a
                       href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center justify-center gap-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                      className="flex items-center justify-center gap-1 bg-green-600 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-colors text-xs font-medium"
                     >
                       <span>WhatsApp</span>
                     </a>
                   )}
 
-                <button 
-                  onClick={() => {
-                    if (!user) {
-                      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
-                      return;
-                    }
-                    setShowMessages(true);
-                  }}
-                    className="flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  <button
+                    onClick={() => {
+                      if (!user) {
+                        toast.error('Mesaj göndermek için önce giriş yapmalısınız');
+                        return;
+                      }
+                      setShowMessages(true);
+                    }}
+                    className="flex items-center justify-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md hover:bg-blue-700 transition-colors text-xs font-medium"
                   >
                     <span>Soru Sor</span>
-                </button>
+                  </button>
                 </div>
               </div>
             </div>
