@@ -196,8 +196,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   };
 
   return (
-    <div className={asPage ? "max-w-7xl mx-auto p-4 md:p-6" : "fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto"}>
-      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-xl w-full relative overflow-hidden" : "bg-white dark:bg-gray-800 rounded-xl max-w-6xl w-full my-8 relative overflow-hidden"}>
+    <div className={asPage ? "max-w-7xl mx-auto p-6 lg:p-8" : "fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto"}>
+      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-xl w-full relative overflow-hidden" : "bg-white dark:bg-gray-800 rounded-xl max-w-7xl w-full my-8 relative overflow-hidden"}>
         {!asPage && (
           <button
             onClick={onClose}
@@ -208,9 +208,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </button>
         )}
 
-        <div className="space-y-8">
+        <div className="p-6 lg:p-8 space-y-8">
           {/* Main Image Section */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {ad.images.length > 0 ? (
               <div 
                 className="relative touch-pan-y select-none"
@@ -231,7 +231,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 </div>
 
                 {/* Loading Skeleton */}
-                <div className="w-full h-[600px] bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse absolute inset-0"></div>
+                <div className="w-full h-[500px] lg:h-[600px] bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse absolute inset-0"></div>
                 
                 <img
                   src={buildImageUrl(ad.images[currentImageIndex], { 
@@ -242,7 +242,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     format: 'webp' 
                   })}
                   alt={ad.title}
-                  className="w-full h-[600px] object-cover rounded-2xl cursor-zoom-in transition-all duration-300 relative z-10"
+                  className="w-full h-[500px] lg:h-[600px] object-cover rounded-2xl cursor-zoom-in transition-all duration-300 relative z-10"
                   loading="eager"
                   decoding="async"
                   fetchPriority="high"
@@ -281,7 +281,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 )}
               </div>
             ) : (
-              <div className="w-full h-[600px] bg-gray-200 dark:bg-gray-700 rounded-2xl flex items-center justify-center">
+              <div className="w-full h-[500px] lg:h-[600px] bg-gray-200 dark:bg-gray-700 rounded-2xl flex items-center justify-center">
                 <span className="text-gray-400 text-lg">Fotoğraf Yok</span>
               </div>
             )}
@@ -319,19 +319,19 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </div>
 
           {/* Details Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-8">
               {/* Title and Price */}
-              <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+              <div className="mb-8">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4">
                   {ad.title}
                 </h1>
-                <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+                <div className="text-3xl lg:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-6">
                   {formatPrice(ad.price)}
                 </div>
                 
-                <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex flex-wrap gap-6 text-sm lg:text-base text-gray-600 dark:text-gray-400">
                   <div className="flex items-center">
                     <MapPin size={18} className="mr-2" />
                     <span className="font-medium">{ad.location.district}, {ad.location.city}</span>
@@ -350,7 +350,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex flex-wrap items-center gap-3 mb-8">
                 {(user && (user.id === ad.userId || user.role === 'admin')) && (
                   <>
                     <button
@@ -390,17 +390,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
 
               {/* Description */}
-              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6">
+              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 lg:p-8">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   İlan Açıklaması
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-base">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-base lg:text-lg">
                   {ad.description}
                 </p>
               </div>
 
               {/* Category */}
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 lg:p-8">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Kategori
                 </h3>
@@ -414,7 +414,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
             <div className="space-y-6">
 
               {/* Seller Info Card */}
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 lg:p-8">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   Satıcı Bilgileri
                 </h3>
@@ -439,8 +439,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     <span className="text-gray-600 dark:text-gray-300 font-medium">Telefon</span>
                     <span className="text-lg font-semibold text-gray-900 dark:text-white">
                       {seller?.phone || '+90 5XX XXX XX XX'}
-                    </span>
-                  </div>
+              </span>
+            </div>
                 </div>
 
                 {/* Action Buttons */}
@@ -456,18 +456,18 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     </a>
                   )}
 
-                  <button
-                    onClick={() => {
-                      if (!user) {
-                        toast.error('Mesaj göndermek için önce giriş yapmalısınız');
-                        return;
-                      }
-                      setShowMessages(true);
-                    }}
+                <button 
+                  onClick={() => {
+                    if (!user) {
+                      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
+                      return;
+                    }
+                    setShowMessages(true);
+                  }}
                     className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition-colors font-medium"
                   >
                     <span>Soru Sor</span>
-                  </button>
+                </button>
                 </div>
               </div>
             </div>
