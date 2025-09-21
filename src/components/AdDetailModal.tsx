@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MapPin, Clock, Eye, Heart, ChevronLeft, ChevronRight, User, Trash2, Edit } from 'lucide-react';
+import { X, MapPin, Clock, Eye, Heart, ChevronLeft, ChevronRight, User, Trash2, Edit, Bed, Bath, Square, Car, Phone, Mail, MessageCircle, Share2 } from 'lucide-react';
 import { Ad } from '../types';
 import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
@@ -221,8 +221,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </button>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
-          {/* Images */}
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+          {/* Left Side - Main Image */}
           <div className="space-y-4">
             {ad.images.length > 0 ? (
               <div 
@@ -231,34 +232,68 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
+                {/* Status Badges */}
+                <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+                  {ad.featured && (
+                    <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+                      Öne Çıkan
+                    </span>
+                  )}
+                  <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+                    Yeni
+                  </span>
+                </div>
+
+                {/* Action Icons */}
+                <div className="absolute top-4 right-4 z-20 flex gap-2">
+                  <button
+                    onClick={handleFavoriteClick}
+                    aria-label="Favorilere ekle"
+                    className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg"
+                    title="Favorilere Ekle"
+                  >
+                    <Heart
+                      size={18}
+                      className={isFavorite ? 'text-red-500 fill-current' : 'text-gray-600'}
+                    />
+                  </button>
+                  <button
+                    aria-label="Paylaş"
+                    className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg"
+                    title="Paylaş"
+                  >
+                    <Share2 size={18} className="text-gray-600" />
+                  </button>
+                </div>
+
                 {/* Loading Skeleton */}
-                <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse absolute inset-0"></div>
+                <div className="w-full h-[600px] bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse absolute inset-0"></div>
                 
                 <img
                   src={buildImageUrl(ad.images[currentImageIndex], { 
                     width: isSlowConnection ? 800 : 1200, 
-                    height: isSlowConnection ? 533 : 800, 
+                    height: isSlowConnection ? 600 : 900, 
                     quality: isSlowConnection ? 60 : 85, 
                     resize: 'cover', 
                     format: 'webp' 
                   })}
                   alt={ad.title}
-                  className={`${asPage ? 'w-full h-[520px]' : 'w-full h-[520px]'} object-cover rounded-lg cursor-zoom-in transition-all duration-300 relative z-10 ${
+                  className={`w-full h-[600px] object-cover rounded-xl cursor-zoom-in transition-all duration-300 relative z-10 ${
                     swipeDirection === 'left' ? 'translate-x-2' : 
                     swipeDirection === 'right' ? '-translate-x-2' : ''
                   }`}
-                  loading="eager"
+                  loading="eager" as any
                   decoding="async"
                   fetchPriority="high"
                   onClick={() => setIsFullscreen(true)}
-                  onLoad={(e) => {
+                  onLoad={(e: React.SyntheticEvent<HTMLImageElement>) => {
                     e.currentTarget.style.opacity = '1';
                     e.currentTarget.previousElementSibling?.remove();
                   }}
-                  onError={(e) => {
+                  onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                     e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJ0dXJuIG9uIGphdmFzY3JpcHQgdG8gdmlldyB0aGlzIHBhZ2Uu';
                   }}
-                  style={{ opacity: 0 }}
+                  style={{ opacity: 0 } as React.CSSProperties}
                 />
                 
                 {ad.images.length > 1 && (
@@ -266,52 +301,41 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     <button
                       onClick={prevImage}
                       aria-label="Önceki görsel"
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-80 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                     >
                       <ChevronLeft size={20} />
                     </button>
                     <button
                       onClick={nextImage}
                       aria-label="Sonraki görsel"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-80 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                     >
                       <ChevronRight size={20} />
                     </button>
                     
-                    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm">
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
                       {currentImageIndex + 1} / {ad.images.length}
                     </div>
                   </>
                 )}
               </div>
             ) : (
-              <div className="w-full h-[520px] bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+              <div className="w-full h-[600px] bg-gray-200 dark:bg-gray-700 rounded-xl flex items-center justify-center">
                 <span className="text-gray-400">Fotoğraf Yok</span>
-              </div>
-            )}
-
-            {/* Swipe Hint - Sadece mobilde göster */}
-            {ad.images.length > 1 && (
-              <div className="md:hidden text-center text-sm text-gray-500 dark:text-gray-400 py-2">
-                <span className="flex items-center justify-center">
-                  <span className="mr-2">←</span>
-                  Fotoğraflar arası geçiş için kaydırın
-                  <span className="ml-2">→</span>
-                </span>
               </div>
             )}
 
             {/* Thumbnail Images */}
             {ad.images.length > 1 && (
-              <div className="flex space-x-2 overflow-x-auto">
+              <div className="flex space-x-3 overflow-x-auto pb-2">
                 {ad.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 ${
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       index === currentImageIndex 
-                        ? 'border-blue-500' 
-                        : 'border-gray-300 dark:border-gray-600'
+                        ? 'border-blue-500 scale-105' 
+                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
                     }`}
                   >
                     <img
@@ -333,159 +357,172 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
             )}
           </div>
 
-          {/* Details */}
+          {/* Right Side - Property Details */}
           <div className="space-y-6">
+            {/* Title and Location */}
             <div>
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  {ad.featured && (
-                    <span className="inline-block bg-orange-500 text-white px-2 py-1 rounded text-xs font-medium mb-2">
-                      VİTRİN İLANI
-                    </span>
-                  )}
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    {ad.title}
-                  </h1>
-                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    {formatPrice(ad.price)}
-                  </div>
-                </div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 leading-tight">
+                {ad.title}
+              </h1>
+              <div className="flex items-center text-gray-600 dark:text-gray-400 mb-4">
+                <MapPin size={18} className="mr-2" />
+                <span className="text-lg">{ad.location.district}, {ad.location.city}</span>
+              </div>
+            </div>
 
-                <div className="flex items-center gap-2 mt-10 md:mt-0 mr-10 md:mr-16">
-                  {(user && (user.id === ad.userId || user.role === 'admin')) && (
-                    <>
-                      <button
-                        onClick={() => setShowEditModal(true)}
-                        aria-label="İlanı Düzenle"
-                        className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-full flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                        title="İlanı Düzenle"
-                      >
-                        <Edit size={20} />
-                      </button>
-                      <button
-                        onClick={handleDelete}
-                        disabled={deleting}
-                        aria-label="İlanı Kaldır"
-                        className="w-12 h-12 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-full flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                        title="İlanı Kaldır"
-                      >
-                        <Trash2 size={20} />
-                      </button>
-                    </>
-                  )}
+            {/* Price */}
+            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-6">
+              {formatPrice(ad.price)}
+            </div>
+
+            {/* Property Features */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <Bed size={20} className="text-gray-600 dark:text-gray-400" />
+                <span className="font-medium text-gray-900 dark:text-white">4 Oda</span>
+              </div>
+              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <Bath size={20} className="text-gray-600 dark:text-gray-400" />
+                <span className="font-medium text-gray-900 dark:text-white">3 Banyo</span>
+              </div>
+              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <Square size={20} className="text-gray-600 dark:text-gray-400" />
+                <span className="font-medium text-gray-900 dark:text-white">180m²</span>
+              </div>
+              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <Car size={20} className="text-gray-600 dark:text-gray-400" />
+                <span className="font-medium text-gray-900 dark:text-white">2 Otopark</span>
+              </div>
+            </div>
+
+            {/* Amenity Tags */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
+                Deniz Manzarası
+              </span>
+              <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-sm font-medium">
+                Lüks
+              </span>
+              <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
+                Merkezi
+              </span>
+              <span className="bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 px-3 py-1 rounded-full text-sm font-medium">
+                Yüzme Havuzu
+              </span>
+            </div>
+
+            {/* Admin Actions */}
+            {(user && (user.id === ad.userId || user.role === 'admin')) && (
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Admin İşlemleri</h3>
+                <div className="flex gap-3">
                   <button
-                    onClick={handleFavoriteClick}
-                    aria-label="Favorilere ekle"
-                    className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                    title="Favorilere Ekle"
+                    onClick={() => setShowEditModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    <Heart
-                      size={20}
-                      className={isFavorite ? 'text-red-500 fill-current' : 'text-gray-500 dark:text-gray-400'}
-                    />
+                    <Edit size={16} />
+                    Düzenle
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60"
+                  >
+                    <Trash2 size={16} />
+                    Sil
                   </button>
                 </div>
               </div>
+            )}
 
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <button className="w-full flex items-center justify-center gap-3 bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium text-lg">
+                <Phone size={20} />
+                Hemen Ara
+              </button>
+              <div className="grid grid-cols-2 gap-3">
+                <button 
+                  onClick={() => {
+                    if (!user) {
+                      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
+                      return;
+                    }
+                    setShowMessages(true);
+                  }}
+                  className="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <MessageCircle size={18} />
+                  Mesaj Gönder
+                </button>
+                <button className="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <Mail size={18} />
+                  E-posta Gönder
+                </button>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
               <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-                <div className="flex items-center">
-                  <MapPin size={16} className="mr-1" />
-                  <span>{ad.location.district}, {ad.location.city}</span>
-                </div>
-                
                 <div className="flex items-center">
                   <Clock size={16} className="mr-1" />
                   <span>{formatDate(ad.createdAt)}</span>
                 </div>
-                
                 <div className="flex items-center">
                   <Eye size={16} className="mr-1" />
                   <span>{ad.viewCount} görüntülenme</span>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Description */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Açıklama
-              </h3>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+        {/* Description Section */}
+        <div className="px-6 pb-6">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Açıklama
+            </h3>
+            <div className="prose prose-gray dark:prose-invert max-w-none">
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-lg">
                 {ad.description}
               </p>
             </div>
+          </div>
 
-            {/* Category */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Kategori
-              </h3>
-              <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-lg text-sm font-medium">
-                {ad.category.name}
-              </span>
-            </div>
+          {/* Category */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              Kategori
+            </h3>
+            <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-4 py-2 rounded-lg text-sm font-medium">
+              {ad.category.name}
+            </span>
+          </div>
 
-            {/* Mobile Category Badge */}
-            <div className="lg:hidden mt-4">
-              <span className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-xs">
-                {ad.category.name}
-              </span>
-            </div>
-
-            {/* Seller Info */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                  <User size={20} className="text-gray-600 dark:text-gray-300" />
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    {seller?.name || 'Satıcı'}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Hesap açma tarihi: {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { year:'numeric', month:'long' })}
-                  </div>
-                </div>
+          {/* Seller Info */}
+          <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Satıcı Bilgileri
+            </h3>
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                <User size={24} className="text-gray-600 dark:text-gray-300" />
               </div>
-
-              {/* Links kaldırıldı */}
-
-              {/* Phone Row */}
-              <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-800 mb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Cep</span>
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {seller?.phone || '+90 5XX XXX XX XX'}
-                  </span>
+              <div className="flex-1">
+                <div className="font-semibold text-gray-900 dark:text-white text-lg">
+                  {seller?.name || 'Satıcı'}
                 </div>
+                <div className="text-gray-600 dark:text-gray-400">
+                  Hesap açma tarihi: {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { year:'numeric', month:'long' })}
+                </div>
+                {seller?.phone && (
+                  <div className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
+                    {seller.phone}
+                  </div>
+                )}
               </div>
-
-              {/* WhatsApp */}
-              {seller?.phone && (
-                <a
-                  href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800 px-3 py-2 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 mb-3"
-                  aria-label="WhatsApp ile yaz"
-                >
-                  <span>WhatsApp</span>
-                </a>
-              )}
-
-              {/* Ask Button */}
-              <button
-                onClick={() => {
-                  if (!user) {
-                    toast.error('Mesaj göndermek için önce giriş yapmalısınız');
-                    return;
-                  }
-                  setShowMessages(true);
-                }}
-                className="inline-flex items-center gap-2 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 px-3 py-2 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
-              >
-                <span>Soru Sor</span>
-              </button>
             </div>
           </div>
         </div>
