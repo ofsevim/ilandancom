@@ -282,7 +282,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     swipeDirection === 'left' ? 'translate-x-2' : 
                     swipeDirection === 'right' ? '-translate-x-2' : ''
                   }`}
-                  loading="eager" as any
+                  loading="eager"
                   decoding="async"
                   fetchPriority="high"
                   onClick={() => setIsFullscreen(true)}
@@ -343,13 +343,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                       alt={ad.title}
                       className="w-full h-full object-cover transition-opacity duration-200"
                       loading="lazy"
-                      onLoad={(e) => {
+                      onLoad={(e: React.SyntheticEvent<HTMLImageElement>) => {
                         e.currentTarget.style.opacity = '1';
                       }}
-                      onError={(e) => {
+                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                         e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMkM0MC44MzY2IDIyIDQ4IDI5LjE2MzQgNDggMzhDNDggNDYuODM2NiA0MC44MzY2IDU0IDMyIDU0QzIzLjE2MzQgNTQgMTYgNDYuODM2NiAxNiAzOEMxNiAyOS4xNjM0IDIzLjE2MzQgMjIgMzIgMjJaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=';
                       }}
-                      style={{ opacity: 0 }}
+                      style={{ opacity: 0 } as React.CSSProperties}
                     />
                   </button>
                 ))}
