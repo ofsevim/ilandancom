@@ -370,31 +370,31 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
             <div className="grid grid-cols-1 gap-3">
               
               {/* Title and Price Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
-                <h1 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-2">
-                {ad.title}
-              </h1>
-                <div className="text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-3">
-              {formatPrice(ad.price)}
-            </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs lg:text-sm text-gray-600 dark:text-gray-400">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md border border-gray-200 dark:border-gray-700">
+                <h1 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  {ad.title}
+                </h1>
+                <div className="text-xl lg:text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                  {formatPrice(ad.price)}
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 text-xs text-gray-600 dark:text-gray-400">
                   <div className="flex items-center">
-                    <MapPin size={14} className="mr-1" />
+                    <MapPin size={12} className="mr-1" />
                     <span className="font-medium">{ad.location.district}, {ad.location.city}</span>
-              </div>
+                  </div>
                   
                   <div className="flex items-center">
-                    <Clock size={14} className="mr-1" />
+                    <Clock size={12} className="mr-1" />
                     <span>{formatDate(ad.createdAt)}</span>
-              </div>
+                  </div>
                   
                   <div className="flex items-center">
-                    <Eye size={14} className="mr-1" />
+                    <Eye size={12} className="mr-1" />
                     <span>{ad.viewCount} görüntülenme</span>
+                  </div>
+                </div>
               </div>
-              </div>
-            </div>
 
               {/* Action Buttons Card - Only for owners */}
               {(user && (user.id === ad.userId || user.role === 'admin')) && (
