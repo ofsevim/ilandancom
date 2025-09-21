@@ -54,6 +54,23 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
     return () => { isMounted = false; };
   }, [ad.userId]);
 
+  // View count artırma
+  React.useEffect(() => {
+    const incrementView = async () => {
+      try {
+        // Sadece ilan sahibi değilse view count artır
+        if (!user || user.id !== ad.userId) {
+          await adService.incrementViewCount(ad.id);
+        }
+      } catch (error) {
+        console.warn('View count artırılamadı:', error);
+      }
+    };
+
+    // İlan açıldığında view count artır
+    incrementView();
+  }, [ad.id, ad.userId, user]);
+
   const isFavorite = favorites.includes(ad.id);
 
   // Swipe fonksiyonları
@@ -196,8 +213,8 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   };
 
   return (
-    <div className={asPage ? "max-w-7xl mx-auto p-6 lg:p-8" : "fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto"}>
-      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-xl w-full relative overflow-hidden" : "bg-white dark:bg-gray-800 rounded-xl max-w-7xl w-full my-8 relative overflow-hidden"}>
+    <div className={asPage ? "max-w-full mx-auto p-2 lg:p-4" : "fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-2 overflow-y-auto"}>
+      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-xl w-full relative overflow-hidden" : "bg-white dark:bg-gray-800 rounded-xl max-w-full w-full my-4 relative overflow-hidden"}>
         {!asPage && (
           <button
             onClick={onClose}
@@ -208,12 +225,12 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </button>
         )}
 
-        <div className="p-6 lg:p-8">
+        <div className="p-3 lg:p-4">
           {/* Main Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
             
             {/* Left Side - Photo Gallery */}
-            <div className="space-y-6">
+            <div className="space-y-3">
               {ad.images.length > 0 ? (
                 <div 
                   className="relative touch-pan-y select-none"
@@ -234,7 +251,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   </div>
 
                   {/* Loading Skeleton */}
-                  <div className="w-full h-[400px] lg:h-[500px] bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse absolute inset-0 shadow-lg"></div>
+                  <div className="w-full h-[350px] lg:h-[450px] bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse absolute inset-0 shadow-md"></div>
                   
                   <img
                     src={buildImageUrl(ad.images[currentImageIndex], { 
@@ -245,7 +262,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                       format: 'webp' 
                     })}
                     alt={ad.title}
-                    className="w-full h-[400px] lg:h-[500px] object-cover rounded-2xl cursor-zoom-in transition-all duration-300 relative z-10 shadow-lg"
+                    className="w-full h-[350px] lg:h-[450px] object-cover rounded-xl cursor-zoom-in transition-all duration-300 relative z-10 shadow-md"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
@@ -283,22 +300,22 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     </>
                   )}
                 </div>
-              ) : (
-                <div className="w-full h-[400px] lg:h-[500px] bg-gray-200 dark:bg-gray-700 rounded-2xl flex items-center justify-center shadow-lg">
-                  <span className="text-gray-400 text-lg">Fotoğraf Yok</span>
-                </div>
-              )}
+            ) : (
+              <div className="w-full h-[350px] lg:h-[450px] bg-gray-200 dark:bg-gray-700 rounded-xl flex items-center justify-center shadow-md">
+                <span className="text-gray-400">Fotoğraf Yok</span>
+              </div>
+            )}
 
               {/* Thumbnail Images */}
               {ad.images.length > 1 && (
-                <div className="flex space-x-3 overflow-x-auto pb-2">
+                <div className="flex space-x-2 overflow-x-auto pb-1">
                   {ad.images.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-all shadow-md ${
+                      className={`flex-shrink-0 w-12 h-12 lg:w-16 lg:h-16 rounded-lg overflow-hidden border-2 transition-all shadow-sm ${
                         index === currentImageIndex 
-                          ? 'border-blue-500 shadow-lg scale-105' 
+                          ? 'border-blue-500 shadow-md scale-105' 
                           : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
                       }`}
                     >
@@ -322,58 +339,58 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
             </div>
 
             {/* Right Side - Info Grid */}
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-3">
               
               {/* Title and Price Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
+                <h1 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-2">
                   {ad.title}
                 </h1>
-                <div className="text-3xl lg:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-6">
+                <div className="text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-3">
                   {formatPrice(ad.price)}
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm lg:text-base text-gray-600 dark:text-gray-400">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs lg:text-sm text-gray-600 dark:text-gray-400">
                   <div className="flex items-center">
-                    <MapPin size={18} className="mr-2" />
+                    <MapPin size={14} className="mr-1" />
                     <span className="font-medium">{ad.location.district}, {ad.location.city}</span>
                   </div>
                   
                   <div className="flex items-center">
-                    <Clock size={18} className="mr-2" />
+                    <Clock size={14} className="mr-1" />
                     <span>{formatDate(ad.createdAt)}</span>
                   </div>
                   
                   <div className="flex items-center">
-                    <Eye size={18} className="mr-2" />
+                    <Eye size={14} className="mr-1" />
                     <span>{ad.viewCount} görüntülenme</span>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                   İşlemler
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                   {(user && (user.id === ad.userId || user.role === 'admin')) && (
                     <>
                       <button
                         onClick={() => setShowEditModal(true)}
                         aria-label="İlanı Düzenle"
-                        className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 font-medium"
+                        className="flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 text-sm font-medium"
                       >
-                        <Edit size={18} />
+                        <Edit size={14} />
                         <span>Düzenle</span>
                       </button>
                       <button
                         onClick={handleDelete}
                         disabled={deleting}
                         aria-label="İlanı Kaldır"
-                        className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-3 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 font-medium"
+                        className="flex items-center justify-center gap-1 bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 text-sm font-medium"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={14} />
                         <span>Kaldır</span>
                       </button>
                     </>
@@ -381,14 +398,14 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   <button
                     onClick={handleFavoriteClick}
                     aria-label="Favorilere ekle"
-                    className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 font-medium ${
+                    className={`flex items-center justify-center gap-1 px-3 py-2 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 text-sm font-medium ${
                       isFavorite 
                         ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100' 
                         : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
                     }`}
                   >
                     <Heart
-                      size={18}
+                      size={14}
                       className={isFavorite ? 'fill-current' : ''}
                     />
                     <span className="hidden sm:inline">{isFavorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}</span>
@@ -398,63 +415,63 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
 
               {/* Description Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                   İlan Açıklaması
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-base lg:text-lg">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
                   {ad.description}
                 </p>
               </div>
 
               {/* Category Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                   Kategori
                 </h3>
-                <span className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-4 py-2 rounded-xl text-base font-medium">
+                <span className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-lg text-sm font-medium">
                   {ad.category.name}
                 </span>
               </div>
 
               {/* Seller Info Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                   Satıcı Bilgileri
                 </h3>
                 
-                <div className="flex items-start gap-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <User size={20} className="text-white" />
+                <div className="flex items-start gap-2 mb-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <User size={14} className="text-white" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900 dark:text-white">
+                    <div className="font-semibold text-gray-900 dark:text-white text-sm">
                       {seller?.name || 'Satıcı'}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-xs text-gray-600 dark:text-gray-400">
                       {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { year:'numeric', month:'long' })} tarihinde üye
                     </div>
                   </div>
                 </div>
 
                 {/* Phone */}
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-4">
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-300 font-medium">Telefon</span>
-                    <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <span className="text-gray-600 dark:text-gray-300 font-medium text-sm">Telefon</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
                       {seller?.phone || '+90 5XX XXX XX XX'}
                     </span>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {seller?.phone && (
                     <a
                       href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-xl hover:bg-green-700 transition-colors font-medium"
+                      className="flex items-center justify-center gap-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                     >
                       <span>WhatsApp</span>
                     </a>
@@ -468,7 +485,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                       }
                       setShowMessages(true);
                     }}
-                    className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition-colors font-medium"
+                    className="flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                   >
                     <span>Soru Sor</span>
                   </button>
