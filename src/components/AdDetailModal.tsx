@@ -458,7 +458,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {seller?.phone && (
                     <a
-                      href={`https://wa.me/${seller.phone.replace(/\D/g,'')}`}
+                      href={`https://wa.me/90${seller.phone.replace(/\D/g,'').replace(/^90/, '')}`}
                       target="_blank"
                       rel="noreferrer"
                       className="flex items-center justify-center gap-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
