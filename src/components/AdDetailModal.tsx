@@ -175,12 +175,12 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </button>
         )}
 
-        <div className="p-4 lg:p-6">
+        <div className="p-4 lg:p-6 max-w-7xl mx-auto">
           {/* Main Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Left Side - Photo Gallery */}
-            <div className="space-y-3">
+            <div className="lg:col-span-2 space-y-3">
             {ad.images.length > 0 ? (
               <div 
                 className="relative touch-pan-y select-none"
@@ -302,58 +302,45 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
           </div>
 
-            {/* Right Side - Info Grid */}
-            <div className="space-y-4">
+            {/* Right Side - Info Sidebar */}
+            <div className="lg:col-span-1 space-y-4">
               
-              {/* Title and Price Card - Modern Design */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg border border-blue-100 dark:border-gray-700">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
-                        {ad.category?.name || 'Diğer'}
-                      </span>
-                      {ad.featured && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
-                          ⭐ Öne Çıkan
-                        </span>
-                      )}
-                    </div>
-                    <h1 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-3 leading-tight">
-                      {ad.title}
-                    </h1>
-                  </div>
+              {/* Price Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700 sticky top-20">
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+                  {formatPrice(ad.price)}
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Fiyat</div>
-                  <div className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                    {formatPrice(ad.price)}
-                  </div>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white mb-3 leading-tight">
+                  {ad.title}
+                </h1>
+
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">
+                    {ad.category?.name || 'Diğer'}
+                  </span>
+                  {ad.featured && (
+                    <span className="inline-block px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 rounded text-xs font-bold">
+                      ⭐ VİTRİN
+                    </span>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
-                    <MapPin size={18} className="mx-auto mb-1 text-blue-600 dark:text-blue-400" />
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Konum</div>
-                    <div className="text-xs font-semibold text-gray-900 dark:text-white truncate">
-                      {ad.location.city}
-                    </div>
+                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 pb-4 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2">
+                    <MapPin size={16} className="flex-shrink-0" />
+                    <span>{ad.location.district}, {ad.location.city}</span>
                   </div>
                   
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
-                    <Clock size={18} className="mx-auto mb-1 text-green-600 dark:text-green-400" />
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tarih</div>
-                    <div className="text-xs font-semibold text-gray-900 dark:text-white">
-                      {new Date(ad.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Clock size={16} className="flex-shrink-0" />
+                      <span>{new Date(ad.createdAt).toLocaleDateString('tr-TR')}</span>
                     </div>
-                  </div>
-                  
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
-                    <Eye size={18} className="mx-auto mb-1 text-purple-600 dark:text-purple-400" />
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Görüntülenme</div>
-                    <div className="text-xs font-semibold text-gray-900 dark:text-white">
-                      {ad.viewCount}
+                    
+                    <div className="flex items-center gap-1">
+                      <Eye size={16} className="flex-shrink-0" />
+                      <span>{ad.viewCount}</span>
                     </div>
                   </div>
                 </div>

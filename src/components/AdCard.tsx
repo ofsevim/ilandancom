@@ -51,39 +51,37 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
   return (
     <div
       onClick={() => onAdClick(ad)}
-      className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg hover:shadow-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
-      style={{ minHeight: 420 }}
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}
-      <div className="relative h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden">
+      <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {ad.images.length > 0 ? (
-          <>
-            {/* Ultra-Fast Image Loading */}
-            <img
-              src={ad.images[0]}
-              alt={ad.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
-          </>
+          <img
+            src={ad.images[0]}
+            alt={ad.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
-            Fotoğraf Yok
+            <span className="text-4xl">📷</span>
           </div>
         )}
         
-        {/* Featured Badge */}
-        {ad.featured && (
-          <div className="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded text-xs font-medium">
-            VİTRİN
-          </div>
-        )}
+        {/* Top Badges */}
+        <div className="absolute top-2 left-2 flex gap-1">
+          {ad.featured && (
+            <span className="bg-yellow-500 text-white px-2 py-0.5 rounded text-xs font-bold">
+              VİTRİN
+            </span>
+          )}
+        </div>
 
         {/* Favorite Button */}
         <button
           onClick={handleFavoriteClick}
-          className="absolute top-2 right-2 w-8 h-8 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all"
+          className="absolute top-2 right-2 w-8 h-8 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-md"
         >
           <Heart
             size={16}
@@ -98,61 +96,59 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
               e.stopPropagation();
               onEditClick(ad);
             }}
-            className={`absolute top-2 w-8 h-8 bg-blue-500 bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all ${
-              ad.featured ? 'left-16' : 'left-2'
-            }`}
+            className="absolute top-2 left-2 w-8 h-8 bg-blue-500/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-md"
             title="İlanı Düzenle"
           >
             <Edit size={16} className="text-white" />
           </button>
         )}
 
-        {/* Image Count Badge */}
+        {/* Image Count */}
         {ad.images.length > 1 && (
-          <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded-lg text-xs font-semibold backdrop-blur-sm">
-            📷 {ad.images.length}
+          <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1">
+            <span>📷</span>
+            <span>{ad.images.length}</span>
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 text-base leading-tight">
+      <div className="p-3">
+        {/* Category Badge */}
+        <div className="mb-2">
+          <span className="inline-block px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">
+            {ad.category?.name || 'Diğer'}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 text-sm leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {ad.title}
         </h3>
 
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-3 mb-3 group-hover:from-blue-100 group-hover:to-indigo-100 dark:group-hover:from-blue-900/30 dark:group-hover:to-indigo-900/30 transition-all">
-          <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            {formatPrice(ad.price)}
-          </div>
+        {/* Price */}
+        <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-3">
+          {formatPrice(ad.price)}
         </div>
 
-        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-          <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2 py-1.5">
-            <MapPin size={14} className="flex-shrink-0 text-blue-500" />
-            <span className="truncate font-medium">
-              {ad.location.district}, {ad.location.city}
-            </span>
+        {/* Location & Stats */}
+        <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-1">
+            <MapPin size={12} className="flex-shrink-0" />
+            <span className="truncate">{ad.location.city}</span>
           </div>
 
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2 py-1.5 flex-1">
-              <Clock size={14} className="flex-shrink-0 text-green-500" />
-              <span className="text-xs">{formatDate(ad.createdAt)}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <Clock size={12} className="flex-shrink-0" />
+              <span>{formatDate(ad.createdAt)}</span>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2 py-1.5">
-              <Eye size={14} className="flex-shrink-0 text-purple-500" />
-              <span className="text-xs font-semibold">{ad.viewCount}</span>
+            <div className="flex items-center gap-1">
+              <Eye size={12} className="flex-shrink-0" />
+              <span>{ad.viewCount}</span>
             </div>
           </div>
-        </div>
-
-        {/* Category */}
-        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-300 group-hover:from-blue-100 group-hover:to-indigo-100 dark:group-hover:from-blue-900/30 dark:group-hover:to-indigo-900/30 transition-all">
-            {ad.category?.name || 'Diğer'}
-          </span>
         </div>
       </div>
     </div>
