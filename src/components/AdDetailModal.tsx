@@ -379,9 +379,14 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
               {/* Seller Info Card */}
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
-                  Satıcı Bilgileri
-                </h3>
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+                  <div className="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-xs">👤</span>
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                    Satıcı Bilgileri
+                  </h3>
+                </div>
                 
                 <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                   <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
