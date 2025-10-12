@@ -86,7 +86,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
   return (
     <div
       onClick={() => onAdClick(ad)}
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1"
+      className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg hover:shadow-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
       style={{ minHeight: 420 }}
     >
       {/* Image */}
@@ -202,39 +202,41 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
       </div>
 
       {/* Content */}
-      <div className="p-3">
-        <h3 className="font-semibold text-gray-900 dark:text-white mb-1.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 tracking-tight">
+      <div className="p-4">
+        <h3 className="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300 text-base leading-tight">
           {ad.title}
         </h3>
 
-        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2.5 group-hover:scale-105 transition-transform duration-300">
-          {formatPrice(ad.price)}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-3 mb-3 group-hover:from-blue-100 group-hover:to-indigo-100 dark:group-hover:from-blue-900/30 dark:group-hover:to-indigo-900/30 transition-all">
+          <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            {formatPrice(ad.price)}
+          </div>
         </div>
 
-        <div className="space-y-1.5 text-[13px] text-gray-600 dark:text-gray-400">
-          <div className="flex items-center">
-            <MapPin size={14} className="mr-1 flex-shrink-0" />
-            <span className="truncate">
+        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2 py-1.5">
+            <MapPin size={14} className="flex-shrink-0 text-blue-500" />
+            <span className="truncate font-medium">
               {ad.location.district}, {ad.location.city}
             </span>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Clock size={14} className="mr-1 flex-shrink-0" />
-              <span>{formatDate(ad.createdAt)}</span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2 py-1.5 flex-1">
+              <Clock size={14} className="flex-shrink-0 text-green-500" />
+              <span className="text-xs">{formatDate(ad.createdAt)}</span>
             </div>
 
-            <div className="flex items-center">
-              <Eye size={14} className="mr-1 flex-shrink-0" />
-              <span>{ad.viewCount}</span>
+            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg px-2 py-1.5">
+              <Eye size={14} className="flex-shrink-0 text-purple-500" />
+              <span className="text-xs font-semibold">{ad.viewCount}</span>
             </div>
           </div>
         </div>
 
         {/* Category */}
-        <div className="mt-2.5 pt-2.5 border-t border-gray-200 dark:border-gray-700">
-          <span className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs">
+        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-300 group-hover:from-blue-100 group-hover:to-indigo-100 dark:group-hover:from-blue-900/30 dark:group-hover:to-indigo-900/30 transition-all">
             {ad.category?.name || 'Diğer'}
           </span>
         </div>

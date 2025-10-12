@@ -13,19 +13,19 @@ interface AdGridProps {
 const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton, onEditClick }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6">
-        {[...Array(8)].map((_, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(9)].map((_, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden animate-pulse"
+            className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden animate-pulse"
           >
-            <div className="h-48 bg-gray-300 dark:bg-gray-600"></div>
-            <div className="p-3 space-y-2.5">
-              <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-              <div className="h-5 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
-              <div className="space-y-1.5">
-                <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+            <div className="h-56 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600"></div>
+            <div className="p-4 space-y-3">
+              <div className="h-5 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-lg"></div>
+              <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-lg w-2/3"></div>
+              <div className="space-y-2">
+                <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded"></div>
+                <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded w-4/5"></div>
               </div>
             </div>
           </div>
@@ -36,28 +36,35 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
 
   if (ads.length === 0) {
     return (
-      <div className="col-span-full flex flex-col items-center justify-center py-12">
-        <div className="text-gray-400 dark:text-gray-500 text-5xl mb-3">🔍</div>
-        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1.5">
-          İlan bulunamadı
+      <div className="col-span-full flex flex-col items-center justify-center py-20">
+        <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-full w-32 h-32 flex items-center justify-center mb-6 shadow-xl">
+          <span className="text-6xl">🔍</span>
+        </div>
+        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+          İlan Bulunamadı
         </h3>
-        <p className="text-gray-500 dark:text-gray-400 text-center text-sm">
-          Arama kriterlerinizi değiştirerek tekrar deneyin
+        <p className="text-gray-600 dark:text-gray-400 text-center text-base max-w-md">
+          Arama kriterlerinizi değiştirerek tekrar deneyin veya farklı bir kategori seçin
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6">
-      {ads.map((ad) => (
-        <AdCard 
-          key={ad.id} 
-          ad={ad} 
-          onAdClick={onAdClick}
-          showEditButton={showEditButton}
-          onEditClick={onEditClick}
-        />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+      {ads.map((ad, index) => (
+        <div
+          key={ad.id}
+          style={{ animationDelay: `${index * 50}ms` }}
+          className="animate-fade-in"
+        >
+          <AdCard 
+            ad={ad} 
+            onAdClick={onAdClick}
+            showEditButton={showEditButton}
+            onEditClick={onEditClick}
+          />
+        </div>
       ))}
     </div>
   );

@@ -142,12 +142,15 @@ const AppContent: React.FC = () => {
   if (error) {
     return (
       <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-red-600 mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-2xl p-12 border-2 border-red-200 dark:border-red-800">
+            <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+              <span className="text-4xl">⚠️</span>
+            </div>
+            <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
               Hata Oluştu
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-700 dark:text-gray-300 text-lg">
               {error}
             </p>
           </div>
@@ -165,46 +168,87 @@ const AppContent: React.FC = () => {
           <Route path="/ad/:id" element={<AdDetailPage />} />
         </Routes>
       ) : (
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {/* Desktop Category Grid - Hidden on mobile */}
+          <div className="hidden lg:block mb-8">
+            <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-xl border border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-sm">📂</span>
+                </div>
+                Kategoriler
+              </h2>
+              <CategoryGrid
+                onCategorySelect={handleCategorySelect}
+                selectedCategoryId={filters.category}
+              />
+            </div>
+          </div>
+
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Left Sidebar - Filters */}
             <div className="lg:col-span-1">
               <SidebarFilters filters={filters} onFiltersChange={setFilters} />
             </div>
 
             {/* Right Content - Ads */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 space-y-6">
               {/* Mobile Category Grid */}
-              <div className="lg:hidden mb-6">
-                <CategoryGrid
-                  onCategorySelect={handleCategorySelect}
-                  selectedCategoryId={filters.category}
-                />
+              <div className="lg:hidden">
+                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-4 shadow-lg border border-gray-200 dark:border-gray-700">
+                  <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <div className="w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <span className="text-white text-xs">📂</span>
+                    </div>
+                    Kategoriler
+                  </h2>
+                  <CategoryGrid
+                    onCategorySelect={handleCategorySelect}
+                    selectedCategoryId={filters.category}
+                  />
+                </div>
               </div>
 
-              {/* Results Header */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {loading ? 'Yükleniyor...' : `${ads.length} ilan bulundu`}
-                  {filters.category && categories.length > 0 && (
-                    <>
-                      {' - '}
-                      <span className="text-blue-600 dark:text-blue-400">
-                        {categories.find(c => c.id === filters.category)?.name}
-                      </span>
-                    </>
-                  )}
-                </h2>
+              {/* Results Header - Modern Design */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg border border-blue-100 dark:border-gray-700">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                      {loading ? (
+                        <span className="flex items-center gap-2">
+                          <div className="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                          Yükleniyor...
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <span className="text-3xl">🏠</span>
+                          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            {ads.length} İlan
+                          </span>
+                        </span>
+                      )}
+                    </h2>
+                    {filters.category && categories.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Kategori:</span>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                          {categories.find(c => c.id === filters.category)?.name}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-                {user?.role === 'admin' && (
-                  <button
-                    onClick={showAdminPanel}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-                  >
-                    Admin Panel
-                  </button>
-                )}
+                  {user?.role === 'admin' && (
+                    <button
+                      onClick={showAdminPanel}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
+                    >
+                      <span className="text-lg">⚙️</span>
+                      <span>Admin Panel</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Ads Grid */}
