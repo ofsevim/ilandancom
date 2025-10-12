@@ -105,19 +105,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   // Network connection status check
   React.useEffect(() => {
     if (typeof navigator !== 'undefined' && 'connection' in navigator) {
-      const connection = (navigator as any).connection;
-      const updateConnectionStatus = () => {
-        setIsSlowConnection(
-          connection.effectiveType === '2g' || 
-          connection.effectiveType === 'slow-2g' ||
-          connection.downlink < 1
-        );
-      };
-      
-      updateConnectionStatus();
-      connection.addEventListener('change', updateConnectionStatus);
-      
-      return () => connection.removeEventListener('change', updateConnectionStatus);
+      try {
+        const connection = (navigator as any).connection;
+        if (connection) {
+          const updateConnectionStatus = () => {
+            setIsSlowConnection(
+              connection.effectiveType === '2g' || 
+              connection.effectiveType === 'slow-2g' ||
+              connection.downlink < 1
+            );
+          };
+          
+          updateConnectionStatus();
+          connection.addEventListener('change', updateConnectionStatus);
+          
+          return () => connection.removeEventListener('change', updateConnectionStatus);
+        }
+      } catch (e) {
+        // Ignore connection API errors
+      }
     }
   }, []);
 
@@ -125,7 +131,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   React.useEffect(() => {
     if (ad.images.length <= 1) return;
     
-    const preloadImages = () => {
+    const timer = setTimeout(() => {
       const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
       const prevIndex = currentImageIndex === 0 ? ad.images.length - 1 : currentImageIndex - 1;
       
@@ -133,47 +139,21 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
       [nextIndex, prevIndex].forEach(index => {
         if (ad.images[index]) {
           const img = new Image();
+          const quality = isSlowConnection ? 70 : 85;
+          const width = isSlowConnection ? 800 : 1200;
           img.src = buildImageUrl(ad.images[index], { 
-            width: isSlowConnection ? 800 : 1200, 
-            height: isSlowConnection ? 600 : 900, 
-            quality: isSlowConnection ? 70 : 85, 
+            width, 
+            height: Math.round(width * 0.75), 
+            quality, 
             resize: 'cover', 
             format: 'webp' 
           });
         }
       });
-    };
-
-    // Küçük bir gecikme ile preload et (ana görsel yüklendikten sonra)
-    const timer = setTimeout(preloadImages, 500);
+    }, 500);
+    
     return () => clearTimeout(timer);
   }, [ad.images, currentImageIndex, isSlowConnection]);
-
-  // Thumbnail preloading - sadece görünür olanları yükle
-  React.useEffect(() => {
-    if (ad.images.length <= 1) return;
-    
-    // Thumbnail'leri lazy loading ile yükle
-    const loadThumbnails = () => {
-      ad.images.forEach((image, index) => {
-        // Sadece mevcut görsel etrafındaki 3 thumbnail'i preload et
-        const distance = Math.abs(index - currentImageIndex);
-        if (distance <= 1 || (distance >= ad.images.length - 1)) {
-          const img = new Image();
-          img.src = buildImageUrl(image, { 
-            width: 200, 
-            height: 200, 
-            quality: 60, 
-            resize: 'cover', 
-            format: 'webp' 
-          });
-        }
-      });
-    };
-
-    const timer = setTimeout(loadThumbnails, 1000);
-    return () => clearTimeout(timer);
-  }, [ad.images, currentImageIndex]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
