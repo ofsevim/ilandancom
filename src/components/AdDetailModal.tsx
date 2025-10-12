@@ -230,7 +230,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   {/* Ultra-Fast Image Loading */}
                   <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
                     <img
-                      src={ad.images[currentImageIndex]}
+                      src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 900, quality: 80 })}
                       alt={ad.title}
                       className="w-full h-full object-cover cursor-zoom-in"
                       loading="eager"

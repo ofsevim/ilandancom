@@ -64,7 +64,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {ad.images.length > 0 ? (
           <img
-            src={ad.images[0]}
+            src={buildImageUrl(ad.images[0], { width: 400, height: 192, quality: 75 })}
             alt={ad.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading={priority ? "eager" : "lazy"}

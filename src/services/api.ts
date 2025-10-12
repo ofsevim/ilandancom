@@ -12,7 +12,7 @@ export const authService = {
           data: { name }
         }
       });
-      
+
       if (error) throw new Error(error.message);
       return data;
     } catch (error) {
@@ -27,7 +27,7 @@ export const authService = {
         email,
         password
       });
-      
+
       if (error) throw new Error(error.message);
       return data;
     } catch (error) {
@@ -75,7 +75,7 @@ export const userService = {
       }])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -86,7 +86,7 @@ export const userService = {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -98,7 +98,7 @@ export const userService = {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -114,12 +114,12 @@ export const publicUserService = {
         .select('id, name, avatar, phone, email')
         .eq('id', id)
         .single();
-      
+
       if (error) {
         console.warn('User fetch error:', error);
         return { id, name: 'Bilinmeyen Kullanıcı', avatar: null, phone: null, email: null };
       }
-      
+
       return data;
     } catch (error) {
       console.warn('User service error:', error);
@@ -135,7 +135,7 @@ export const categoryService = {
       .from('categories')
       .select('*')
       .order('name');
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -146,7 +146,7 @@ export const categoryService = {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -211,7 +211,7 @@ export const adService = {
     }
 
     const { data, error } = await query;
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -226,9 +226,9 @@ export const adService = {
       `)
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
-    
+
     // Flatten the response for easier consumption
     return {
       ...data,
@@ -276,7 +276,7 @@ export const adService = {
         }])
         .select()
         .single();
-      
+
       if (error) throw new Error(error.message);
       return data;
     } catch (error) {
@@ -311,7 +311,7 @@ export const adService = {
         .from('ads')
         .update(updateData)
         .eq('id', id);
-      
+
       if (error) throw new Error(error.message);
     } catch (error) {
       console.error('Update ad error:', error);
@@ -325,7 +325,7 @@ export const adService = {
         .from('ads')
         .delete()
         .eq('id', id);
-      
+
       if (error) throw new Error(error.message);
     } catch (error) {
       console.error('Delete ad error:', error);
@@ -337,7 +337,7 @@ export const adService = {
     try {
       // RPC fonksiyonu kullan (en güvenli yöntem)
       const { error } = await supabase.rpc('increment_view', { ad_id: id });
-      
+
       if (error) {
         console.warn('View count RPC error:', error);
         // Fallback: mevcut view_count'u al ve 1 artır
@@ -346,14 +346,14 @@ export const adService = {
           .select('view_count')
           .eq('id', id)
           .single();
-        
+
         const newViewCount = (currentAd?.view_count || 0) + 1;
-        
+
         const { error: updErr } = await supabase
           .from('ads')
           .update({ view_count: newViewCount })
           .eq('id', id);
-        
+
         if (updErr) {
           console.warn('View count update error:', updErr);
         }
@@ -374,7 +374,7 @@ export const adService = {
       `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -394,7 +394,7 @@ export const favoriteService = {
         )
       `)
       .eq('user_id', userId);
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -408,7 +408,7 @@ export const favoriteService = {
       }])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -419,7 +419,7 @@ export const favoriteService = {
       .delete()
       .eq('user_id', userId)
       .eq('ad_id', adId);
-    
+
     if (error) throw error;
   },
 
@@ -430,7 +430,7 @@ export const favoriteService = {
       .eq('user_id', userId)
       .eq('ad_id', adId)
       .single();
-    
+
     if (error && error.code !== 'PGRST116') throw error;
     return !!data;
   }
@@ -442,16 +442,23 @@ export const storageService = {
     const { data, error } = await supabase.storage
       .from('ad-images')
       .upload(path, file);
-    
+
     if (error) throw error;
     return data;
   },
 
-  async getImageUrl(path: string) {
+  async getImageUrl(path: string, transform?: { width?: number; height?: number; quality?: number }) {
     const { data } = supabase.storage
       .from('ad-images')
-      .getPublicUrl(path);
-    
+      .getPublicUrl(path, {
+        transform: transform ? {
+          width: transform.width,
+          height: transform.height,
+          quality: transform.quality,
+          format: 'webp'
+        } : undefined
+      });
+
     return data.publicUrl;
   },
 
@@ -459,7 +466,7 @@ export const storageService = {
     const { error } = await supabase.storage
       .from('ad-images')
       .remove([path]);
-    
+
     if (error) throw error;
   }
 };
@@ -584,7 +591,7 @@ export const messageService = {
       .select('*')
       .or(`sender_id.eq.${myId},receiver_id.eq.${myId}`)
       .order('created_at', { ascending: false });
-    
+
     if (messagesError) throw messagesError;
 
     // İlan ve kullanıcı bilgilerini ayrı ayrı getir
@@ -607,12 +614,12 @@ export const messageService = {
 
     // Konuşmaları grupla
     const conversationsMap = new Map();
-    
+
     (messages || []).forEach((m: any) => {
       const otherId = m.sender_id === myId ? m.receiver_id : m.sender_id;
       const adId = m.ad_id;
       const key = `${adId}-${otherId}`;
-      
+
       if (!conversationsMap.has(key)) {
         conversationsMap.set(key, {
           ad_id: adId,
@@ -635,7 +642,7 @@ export const messageService = {
       }
     });
 
-    return Array.from(conversationsMap.values()).sort((a, b) => 
+    return Array.from(conversationsMap.values()).sort((a, b) =>
       new Date(b.last_message_time).getTime() - new Date(a.last_message_time).getTime()
     );
   },
