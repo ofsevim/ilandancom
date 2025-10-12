@@ -15,7 +15,6 @@ import { useAuth } from './contexts/AuthContext';
 import { SearchFilters as SearchFiltersType } from './types';
 import { useAds } from './hooks/useAds';
 import { useCategories } from './hooks/useCategories';
-import { adService } from './services/api';
 
 const AdDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -27,49 +26,56 @@ const AdDetailPage: React.FC = () => {
     const load = async () => {
       if (!id) return;
       try {
-        const item: any = await adService.getAdById(id);
+        const item = await adService.getAdById(id);
         if (!mounted) return;
-        // Tek kayıt için güvenli dönüşüm
+
+        // Basit dönüşüm - API'den gelen data zaten doğru formatta olmalı
         const transformed: Ad = {
-          id: item?.id ?? '',
-          title: item?.title ?? '',
-          description: item?.description ?? '',
-          price: item?.price ?? 0,
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          price: item.price,
           category: {
-            id: item?.categories?.id ?? item?.category_id ?? 'unknown',
-            name: item?.categories?.name ?? 'Diğer',
-            slug: item?.categories?.slug ?? 'diger',
-            icon: item?.categories?.icon ?? 'tag'
+            id: item.category_id,
+            name: item.category_name || 'Diğer',
+            slug: item.category_slug || 'diger',
+            icon: item.category_icon || 'tag'
           },
           location: {
-            city: item?.city ?? '',
-            district: item?.district ?? '',
-            coordinates: item?.latitude && item?.longitude ? { lat: item.latitude, lng: item.longitude } : undefined
+            city: item.city,
+            district: item.district,
+            coordinates: item.latitude && item.longitude ? { lat: item.latitude, lng: item.longitude } : undefined
           },
-          images: Array.isArray(item?.images) ? item.images : [],
-          userId: item?.user_id ?? '',
+          images: item.images || [],
+          userId: item.user_id,
           user: {
-            id: item?.users?.id ?? item?.user_id ?? 'unknown',
-            email: item?.users?.email ?? '',
-            name: item?.users?.name ?? 'Gizli Kullanıcı',
-            phone: item?.users?.phone ?? '',
-            avatar: item?.users?.avatar ?? '',
-            role: item?.users?.role ?? 'user',
-            createdAt: item?.users?.created_at ?? item?.created_at ?? new Date().toISOString(),
-            isActive: item?.users?.is_active ?? true
+            id: item.user_id,
+            email: item.user_email || '',
+            name: item.user_name || 'Gizli Kullanıcı',
+            phone: item.user_phone || '',
+            avatar: item.user_avatar || '',
+            role: item.user_role || 'user',
+            createdAt: item.user_created_at || item.created_at,
+            isActive: item.user_is_active ?? true
           },
-          status: item?.status ?? 'active',
-          createdAt: item?.created_at ?? new Date().toISOString(),
-          updatedAt: item?.updated_at ?? item?.created_at ?? new Date().toISOString(),
-          viewCount: item?.view_count ?? 0,
-          featured: item?.featured ?? false
+          status: item.status,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at,
+          viewCount: item.view_count || 0,
+          featured: item.featured || false
         };
+
         setAd(transformed);
-        // görüntülenme sayısı
-        adService.incrementViewCount(id).catch(() => {});
-        // title
-        if (transformed?.title) document.title = `${transformed.title} - ilandan`;
-      } catch (e) {
+
+        // Görüntülenme sayısını artır
+        adService.incrementViewCount(id).catch(console.warn);
+
+        // Sayfa başlığını güncelle
+        if (transformed.title) {
+          document.title = `${transformed.title} - İlandan`;
+        }
+      } catch (error) {
+        console.error('İlan yüklenirken hata:', error);
         navigate('/');
       }
     };
@@ -89,10 +95,10 @@ const AdDetailPage: React.FC = () => {
 const AppContent: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
-  const [selectedAd, setSelectedAd] = useState<any>(null);
+  const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
   const [showNewAdModal, setShowNewAdModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editingAd, setEditingAd] = useState<any>(null);
+  const [editingAd, setEditingAd] = useState<Ad | null>(null);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
 
   const [filters, setFilters] = useState<SearchFiltersType>({
@@ -107,14 +113,14 @@ const AppContent: React.FC = () => {
   };
 
   const handleCategorySelect = (categoryId: string) => {
-    setFilters(prev => ({ 
-      ...prev, 
-      category: prev.category === categoryId ? undefined : categoryId 
+    setFilters(prev => ({
+      ...prev,
+      category: prev.category === categoryId ? undefined : categoryId
     }));
   };
 
   const navigate = useNavigate();
-  const handleAdClick = async (ad: any) => {
+  const handleAdClick = async (ad: Ad) => {
     navigate(`/ad/${ad.id}`);
   };
 
@@ -122,7 +128,7 @@ const AppContent: React.FC = () => {
     refreshAds();
   };
 
-  const handleEditAd = (ad: any) => {
+  const handleEditAd = (ad: Ad) => {
     setEditingAd(ad);
     setShowEditModal(true);
   };
@@ -171,8 +177,8 @@ const AppContent: React.FC = () => {
             <div className="lg:col-span-4">
               {/* Mobile Category Grid */}
               <div className="lg:hidden mb-6">
-                <CategoryGrid 
-                  onCategorySelect={handleCategorySelect} 
+                <CategoryGrid
+                  onCategorySelect={handleCategorySelect}
                   selectedCategoryId={filters.category}
                 />
               </div>
@@ -190,7 +196,7 @@ const AppContent: React.FC = () => {
                     </>
                   )}
                 </h2>
-                
+
                 {user?.role === 'admin' && (
                   <button
                     onClick={showAdminPanel}
@@ -202,9 +208,9 @@ const AppContent: React.FC = () => {
               </div>
 
               {/* Ads Grid */}
-              <AdGrid 
-                ads={ads} 
-                loading={loading} 
+              <AdGrid
+                ads={ads}
+                loading={loading}
                 onAdClick={handleAdClick}
                 showEditButton={!!user}
                 onEditClick={handleEditAd}

@@ -4,31 +4,46 @@ import { Ad, Category, User, SearchFilters } from '../types';
 // Auth Services
 export const authService = {
   async signUp(email: string, password: string, name: string) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { name }
-      }
-    });
-    
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name }
+        }
+      });
+      
+      if (error) throw new Error(error.message);
+      return data;
+    } catch (error) {
+      console.error('Sign up error:', error);
+      throw error;
+    }
   },
 
   async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) throw new Error(error.message);
+      return data;
+    } catch (error) {
+      console.error('Sign in error:', error);
+      throw error;
+    }
   },
 
   async signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw new Error(error.message);
+    } catch (error) {
+      console.error('Sign out error:', error);
+      throw error;
+    }
   },
 
   async getCurrentUser() {
@@ -141,8 +156,12 @@ export const categoryService = {
 export const adService = {
   async getAllAds(filters?: SearchFilters) {
     let query = supabase
-      .from('listings')
-      .select(`*`)
+      .from('ads')
+      .select(`
+        *,
+        categories (id, name, slug, icon),
+        users (id, name, email, phone, avatar, role, created_at, is_active)
+      `)
       .eq('status', 'active');
 
     // Apply filters
@@ -199,13 +218,32 @@ export const adService = {
 
   async getAdById(id: string) {
     const { data, error } = await supabase
-      .from('listings')
-      .select(`*`)
+      .from('ads')
+      .select(`
+        *,
+        categories (id, name, slug, icon),
+        users (id, name, email, phone, avatar, role, created_at, is_active)
+      `)
       .eq('id', id)
       .single();
     
     if (error) throw error;
-    return data;
+    
+    // Flatten the response for easier consumption
+    return {
+      ...data,
+      category_id: data.categories?.id || data.category_id,
+      category_name: data.categories?.name,
+      category_slug: data.categories?.slug,
+      category_icon: data.categories?.icon,
+      user_name: data.users?.name,
+      user_email: data.users?.email,
+      user_phone: data.users?.phone,
+      user_avatar: data.users?.avatar,
+      user_role: data.users?.role,
+      user_created_at: data.users?.created_at,
+      user_is_active: data.users?.is_active
+    };
   },
 
   async createAd(adData: {
@@ -218,28 +256,33 @@ export const adService = {
     images: string[];
     userId: string;
   }) {
-    const { data, error } = await supabase
-      .from('ads')
-      .insert([{
-        title: adData.title,
-        description: adData.description,
-        price: adData.price,
-        category_id: adData.categoryId,
-        city: adData.city,
-        district: adData.district,
-        images: adData.images || [],
-        user_id: adData.userId,
-        status: 'active', // İlanı aktif olarak oluştur
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        view_count: 0,
-        featured: false
-      }])
-      .select()
-      .single();
-    
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('ads')
+        .insert([{
+          title: adData.title,
+          description: adData.description,
+          price: adData.price,
+          category_id: adData.categoryId,
+          city: adData.city,
+          district: adData.district,
+          images: adData.images || [],
+          user_id: adData.userId,
+          status: 'active',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          view_count: 0,
+          featured: false
+        }])
+        .select()
+        .single();
+      
+      if (error) throw new Error(error.message);
+      return data;
+    } catch (error) {
+      console.error('Create ad error:', error);
+      throw error;
+    }
   },
 
   async updateAd(id: string, updates: {
@@ -251,33 +294,43 @@ export const adService = {
     district?: string;
     images?: string[];
   }) {
-    const updateData: any = {
-      updated_at: new Date().toISOString()
-    };
+    try {
+      const updateData: any = {
+        updated_at: new Date().toISOString()
+      };
 
-    if (updates.title !== undefined) updateData.title = updates.title;
-    if (updates.description !== undefined) updateData.description = updates.description;
-    if (updates.price !== undefined) updateData.price = updates.price;
-    if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
-    if (updates.city !== undefined) updateData.city = updates.city;
-    if (updates.district !== undefined) updateData.district = updates.district;
-    if (updates.images !== undefined) updateData.images = updates.images;
+      if (updates.title !== undefined) updateData.title = updates.title;
+      if (updates.description !== undefined) updateData.description = updates.description;
+      if (updates.price !== undefined) updateData.price = updates.price;
+      if (updates.categoryId !== undefined) updateData.category_id = updates.categoryId;
+      if (updates.city !== undefined) updateData.city = updates.city;
+      if (updates.district !== undefined) updateData.district = updates.district;
+      if (updates.images !== undefined) updateData.images = updates.images;
 
-    const { error } = await supabase
-      .from('ads')
-      .update(updateData)
-      .eq('id', id);
-    
-    if (error) throw error;
+      const { error } = await supabase
+        .from('ads')
+        .update(updateData)
+        .eq('id', id);
+      
+      if (error) throw new Error(error.message);
+    } catch (error) {
+      console.error('Update ad error:', error);
+      throw error;
+    }
   },
 
   async deleteAd(id: string) {
-    // Direkt ads tablosunu kullan
-    const { error } = await supabase
-      .from('ads')
-      .delete()
-      .eq('id', id);
-    if (error) throw error;
+    try {
+      const { error } = await supabase
+        .from('ads')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw new Error(error.message);
+    } catch (error) {
+      console.error('Delete ad error:', error);
+      throw error;
+    }
   },
 
   async incrementViewCount(id: string) {
@@ -287,9 +340,9 @@ export const adService = {
       
       if (error) {
         console.warn('View count RPC error:', error);
-        // Fallback: direkt listings tablosu (select=* olmadan, sadece update)
+        // Fallback: direkt ads tablosu güncelleme
         const { error: updErr } = await supabase
-          .from('listings')
+          .from('ads')
           .update({ view_count: supabase.raw('view_count + 1') })
           .eq('id', id);
         
@@ -305,8 +358,12 @@ export const adService = {
 
   async getUserAds(userId: string) {
     const { data, error } = await supabase
-      .from('listings')
-      .select(`*`)
+      .from('ads')
+      .select(`
+        *,
+        categories (id, name, slug, icon),
+        users (id, name, email, phone, avatar, role, created_at, is_active)
+      `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
     
