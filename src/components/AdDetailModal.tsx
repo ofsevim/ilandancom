@@ -27,6 +27,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   // Swipe state'leri
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  
+  // Network-aware loading
+  const [isSlowConnection, setIsSlowConnection] = useState(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -99,6 +102,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
     }
   };
 
+  // Network connection status check
+  React.useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'connection' in navigator) {
+      const connection = (navigator as any).connection;
+      const updateConnectionStatus = () => {
+        setIsSlowConnection(
+          connection.effectiveType === '2g' || 
+          connection.effectiveType === 'slow-2g' ||
+          connection.downlink < 1
+        );
+      };
+      
+      updateConnectionStatus();
+      connection.addEventListener('change', updateConnectionStatus);
+      
+      return () => connection.removeEventListener('change', updateConnectionStatus);
+    }
+  }, []);
+
   // Akıllı preloading - sadece sonraki ve önceki görselleri yükle
   React.useEffect(() => {
     if (ad.images.length <= 1) return;
@@ -126,27 +148,6 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
     const timer = setTimeout(preloadImages, 500);
     return () => clearTimeout(timer);
   }, [ad.images, currentImageIndex, isSlowConnection]);
-
-  // Network-aware loading
-  const [isSlowConnection, setIsSlowConnection] = React.useState(false);
-  
-  React.useEffect(() => {
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
-      const updateConnectionStatus = () => {
-        setIsSlowConnection(
-          connection.effectiveType === '2g' || 
-          connection.effectiveType === 'slow-2g' ||
-          connection.downlink < 1
-        );
-      };
-      
-      updateConnectionStatus();
-      connection.addEventListener('change', updateConnectionStatus);
-      
-      return () => connection.removeEventListener('change', updateConnectionStatus);
-    }
-  }, []);
 
   // Thumbnail preloading - sadece görünür olanları yükle
   React.useEffect(() => {
