@@ -63,6 +63,7 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
             onAdClick={onAdClick}
             showEditButton={showEditButton}
             onEditClick={onEditClick}
+            priority={index < 6}
           />
         </div>
       ))}

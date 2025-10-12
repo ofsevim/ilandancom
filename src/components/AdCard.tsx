@@ -10,9 +10,10 @@ interface AdCardProps {
   onAdClick: (ad: Ad) => void;
   showEditButton?: boolean;
   onEditClick?: (ad: Ad) => void;
+  priority?: boolean;
 }
 
-const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditClick }) => {
+const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditClick, priority = false }) => {
   const { favorites, toggleFavorite, user } = useAuth();
   const [isFavorite, setIsFavorite] = useState(favorites.includes(ad.id));
 
@@ -63,11 +64,12 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {ad.images.length > 0 ? (
           <img
-            src={buildImageUrl(ad.images[0], { width: 400, quality: 80, format: 'webp' })}
+            src={ad.images[0]}
             alt={ad.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
             decoding="async"
+            fetchPriority={priority ? "high" : "auto"}
             width="400"
             height="192"
           />
