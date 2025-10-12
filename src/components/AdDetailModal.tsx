@@ -237,8 +237,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                       decoding="async"
                       fetchPriority="high"
                       onClick={() => setIsFullscreen(true)}
-                      width="800"
-                      height="600"
+                      width="1200"
+                      height="900"
+                      style={{ aspectRatio: '4/3' }}
                     />
                   </div>
 

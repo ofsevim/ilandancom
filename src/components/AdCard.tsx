@@ -72,6 +72,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
             fetchPriority={priority ? "high" : "auto"}
             width="400"
             height="192"
+            style={{ aspectRatio: '400/192' }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
