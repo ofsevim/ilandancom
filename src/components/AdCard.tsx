@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 interface AdCardProps {
   ad: Ad;
@@ -40,6 +41,10 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
 
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!user) {
+      toast.error('Favorilere eklemek için önce giriş yapmalısınız');
+      return;
+    }
     try {
       await toggleFavorite(ad.id);
       setIsFavorite(!isFavorite);
