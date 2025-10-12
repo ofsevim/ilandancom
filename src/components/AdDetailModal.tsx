@@ -164,14 +164,6 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
     }).format(price);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('tr-TR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
   const nextImage = () => {
     setCurrentImageIndex((prev) => 
       prev === ad.images.length - 1 ? 0 : prev + 1
@@ -231,31 +223,33 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
-                  {/* Badges */}
+                  {/* Badges - Modern Design */}
                   <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
                     {ad.featured && (
-                      <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
-                        Öne Çıkan
+                      <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm flex items-center gap-1">
+                        <span>⭐</span>
+                        <span>Öne Çıkan</span>
                       </span>
                     )}
-                    <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
-                      Yeni
+                    <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm flex items-center gap-1">
+                      <span>✨</span>
+                      <span>Yeni</span>
                     </span>
                   </div>
 
-                  {/* Favorite Button */}
+                  {/* Favorite Button - Modern Design */}
                   <div className="absolute top-4 right-4 z-20">
                     <button
                       onClick={handleFavoriteClick}
                       aria-label="Favorilere ekle"
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-lg ${
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-sm ${
                         isFavorite 
-                          ? 'bg-red-500 text-white hover:bg-red-600' 
-                          : 'bg-white/90 text-gray-600 hover:bg-white hover:text-red-500'
+                          ? 'bg-gradient-to-br from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 scale-110' 
+                          : 'bg-white/95 text-gray-600 hover:bg-white hover:text-red-500 hover:scale-110'
                       }`}
                     >
                       <Heart
-                        size={18}
+                        size={20}
                         className={isFavorite ? 'fill-current' : ''}
                       />
                     </button>
@@ -317,19 +311,19 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     <button
                       onClick={prevImage}
                       aria-label="Önceki görsel"
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                     >
-                      <ChevronLeft size={20} className="text-gray-700" />
+                      <ChevronLeft size={24} className="text-gray-700" />
                     </button>
                     <button
                       onClick={nextImage}
                       aria-label="Sonraki görsel"
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
                     >
-                      <ChevronRight size={20} className="text-gray-700" />
+                      <ChevronRight size={24} className="text-gray-700" />
                     </button>
                     
-                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-900/90 to-black/90 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl backdrop-blur-sm">
                       {currentImageIndex + 1} / {ad.images.length}
                     </div>
                   </>
@@ -341,17 +335,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
             )}
 
-            {/* Thumbnail Images */}
+            {/* Thumbnail Images - Modern Design */}
             {ad.images.length > 1 && (
-                <div className="flex space-x-2 overflow-x-auto pb-1">
+                <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
                 {ad.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-12 h-12 lg:w-16 lg:h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                    className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-3 transition-all transform hover:scale-105 ${
                       index === currentImageIndex 
-                        ? 'border-blue-500 shadow-md' 
-                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
+                        ? 'border-blue-500 shadow-lg ring-2 ring-blue-300 dark:ring-blue-700 scale-105' 
+                        : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 shadow-md'
                     }`}
                   >
                     <div className="relative w-full h-full bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
@@ -380,115 +374,164 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
             )}
 
-              {/* Description Card - Moved below photo */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+              {/* Description Card - Modern Design */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-sm">📝</span>
+                  </div>
                   İlan Açıklaması
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
-                  {ad.description}
-                </p>
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 rounded-xl p-4">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
+                    {ad.description}
+                  </p>
+                </div>
               </div>
           </div>
 
             {/* Right Side - Info Grid */}
-            <div className="grid grid-cols-1 gap-3">
+            <div className="space-y-4">
               
-              {/* Title and Price Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                <h1 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-3">
-                  {ad.title}
-                </h1>
-                <div className="text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-4">
-                  {formatPrice(ad.price)}
+              {/* Title and Price Card - Modern Design */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg border border-blue-100 dark:border-gray-700">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                        {ad.category?.name || 'Diğer'}
+                      </span>
+                      {ad.featured && (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                          ⭐ Öne Çıkan
+                        </span>
+                      )}
+                    </div>
+                    <h1 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-3 leading-tight">
+                      {ad.title}
+                    </h1>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs lg:text-sm text-gray-600 dark:text-gray-400">
-                  <div className="flex items-center gap-1">
-                    <MapPin size={14} className="mr-1" />
-                    <span className="font-medium">{ad.location.district}, {ad.location.city}</span>
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Fiyat</div>
+                  <div className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                    {formatPrice(ad.price)}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
+                    <MapPin size={18} className="mx-auto mb-1 text-blue-600 dark:text-blue-400" />
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Konum</div>
+                    <div className="text-xs font-semibold text-gray-900 dark:text-white truncate">
+                      {ad.location.city}
+                    </div>
                   </div>
                   
-                  <div className="flex items-center gap-1">
-                    <Clock size={14} className="mr-1" />
-                    <span>{formatDate(ad.createdAt)}</span>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
+                    <Clock size={18} className="mx-auto mb-1 text-green-600 dark:text-green-400" />
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tarih</div>
+                    <div className="text-xs font-semibold text-gray-900 dark:text-white">
+                      {new Date(ad.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                    </div>
                   </div>
                   
-                  <div className="flex items-center gap-1">
-                    <Eye size={14} className="mr-1" />
-                    <span>{ad.viewCount} görüntülenme</span>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-3 text-center">
+                    <Eye size={18} className="mx-auto mb-1 text-purple-600 dark:text-purple-400" />
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Görüntülenme</div>
+                    <div className="text-xs font-semibold text-gray-900 dark:text-white">
+                      {ad.viewCount}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons Card - Only for owners */}
+              {/* Action Buttons Card - Only for owners - Modern Design */}
               {(user && (user.id === ad.userId || user.role === 'admin')) && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
-                    İşlemler
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg border border-orange-100 dark:border-gray-700">
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                      <span className="text-white text-sm">⚙️</span>
+                    </div>
+                    İlan Yönetimi
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="space-y-2">
                     <button
                       onClick={() => setShowEditModal(true)}
                       aria-label="İlanı Düzenle"
-                      className="flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 text-sm font-medium"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg font-semibold text-sm"
                     >
-                      <Edit size={14} />
-                      <span>Düzenle</span>
+                      <Edit size={16} />
+                      <span>İlanı Düzenle</span>
                     </button>
                     <button
                       onClick={handleDelete}
                       disabled={deleting}
                       aria-label="İlanı Kaldır"
-                      className="flex items-center justify-center gap-1 bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500 text-sm font-medium"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed font-semibold text-sm"
                     >
-                      <Trash2 size={14} />
-                      <span>Kaldır</span>
+                      <Trash2 size={16} />
+                      <span>{deleting ? 'Siliniyor...' : 'İlanı Sil'}</span>
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* Seller Info Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+              {/* Seller Info Card - Modern Design */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+                    <User size={16} className="text-white" />
+                  </div>
                   Satıcı Bilgileri
                 </h3>
                 
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                    <User size={16} className="text-gray-600 dark:text-gray-300" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white text-sm">
-                      {seller?.name || 'Satıcı'}
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 rounded-xl p-4 mb-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-lg">
+                      <span className="text-white text-xl font-bold">
+                        {(seller?.name || 'S')[0].toUpperCase()}
+                      </span>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">
-                      {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { year:'numeric', month:'long' })} tarihinde üye
+                    <div className="flex-1">
+                      <div className="font-bold text-gray-900 dark:text-white text-base">
+                        {seller?.name || 'Satıcı'}
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                        <Clock size={12} />
+                        {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { year:'numeric', month:'long' })} tarihinde üye
+                      </div>
                     </div>
                   </div>
+
+                  {/* Phone */}
+                  {seller?.phone && (
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between">
+                      <span className="text-gray-600 dark:text-gray-300 font-medium text-sm flex items-center gap-2">
+                        <span className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                          📞
+                        </span>
+                        Telefon
+                      </span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">
+                        {seller.phone}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Phone */}
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 dark:text-gray-300 font-medium text-sm">Telefon</span>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {seller?.phone || '+90 5XX XXX XX XX'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Action Buttons - Modern Design */}
+                <div className="space-y-2">
                   {seller?.phone && (
                     <a
                       href={`https://wa.me/90${seller.phone.replace(/\D/g,'').replace(/^90/, '')}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center justify-center gap-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg font-semibold text-sm group"
                     >
-                      <span>WhatsApp</span>
+                      <span className="text-lg">💬</span>
+                      <span>WhatsApp ile İletişime Geç</span>
                     </a>
                   )}
 
@@ -500,10 +543,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                       }
                       setShowMessages(true);
                     }}
-                    className="flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg font-semibold text-sm"
                   >
-                    <span>Soru Sor</span>
+                    <span className="text-lg">✉️</span>
+                    <span>Mesaj Gönder</span>
                   </button>
+                </div>
+
+                {/* Trust Indicators */}
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-1">
+                      <span className="text-green-500">✓</span>
+                      <span>Güvenli İletişim</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-blue-500">🛡️</span>
+                      <span>Doğrulanmış</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
