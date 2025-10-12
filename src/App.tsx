@@ -215,45 +215,40 @@ const AppContent: React.FC = () => {
                 </div>
               </div>
 
-              {/* Results Header - Modern Design */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg border border-blue-100 dark:border-gray-700">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                      {loading ? (
-                        <span className="flex items-center gap-2">
-                          <div className="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                          Yükleniyor...
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <span className="text-3xl">🏠</span>
-                          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                            {ads.length} İlan
+              {/* Results Header - Compact Design */}
+              <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
+                <div className="flex items-center gap-3">
+                  {loading ? (
+                    <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      Yükleniyor...
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                        {ads.length} ilan
+                      </span>
+                      {filters.category && categories.length > 0 && (
+                        <>
+                          <span className="text-gray-400">•</span>
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                            {categories.find(c => c.id === filters.category)?.name}
                           </span>
-                        </span>
+                        </>
                       )}
-                    </h2>
-                    {filters.category && categories.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Kategori:</span>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
-                          {categories.find(c => c.id === filters.category)?.name}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {user?.role === 'admin' && (
-                    <button
-                      onClick={showAdminPanel}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
-                    >
-                      <span className="text-lg">⚙️</span>
-                      <span>Admin Panel</span>
-                    </button>
+                    </>
                   )}
                 </div>
+
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={showAdminPanel}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all text-sm flex items-center gap-1.5"
+                  >
+                    <span>⚙️</span>
+                    <span>Admin</span>
+                  </button>
+                )}
               </div>
 
               {/* Ads Grid */}
