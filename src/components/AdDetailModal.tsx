@@ -6,6 +6,7 @@ import { adService, publicUserService } from '../services/api';
 import MessagesModal from './MessagesModal';
 import EditAdModal from './EditAdModal';
 import toast from 'react-hot-toast';
+import { buildImageUrl } from '../lib/images';
 
 interface AdDetailModalProps {
   ad: Ad;
@@ -229,13 +230,15 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   {/* Ultra-Fast Image Loading */}
                   <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
                     <img
-                      src={ad.images[currentImageIndex]}
+                      src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, quality: 85, format: 'webp' })}
                       alt={ad.title}
                       className="w-full h-full object-cover cursor-zoom-in"
                       loading="eager"
                       decoding="async"
                       fetchPriority="high"
                       onClick={() => setIsFullscreen(true)}
+                      width="800"
+                      height="600"
                     />
                   </div>
 

@@ -3,6 +3,7 @@ import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
+import { buildImageUrl } from '../lib/images';
 
 interface AdCardProps {
   ad: Ad;
@@ -62,11 +63,13 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {ad.images.length > 0 ? (
           <img
-            src={ad.images[0]}
+            src={buildImageUrl(ad.images[0], { width: 400, quality: 80, format: 'webp' })}
             alt={ad.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
             decoding="async"
+            width="400"
+            height="192"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
