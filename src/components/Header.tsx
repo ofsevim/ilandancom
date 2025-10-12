@@ -72,18 +72,21 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
     <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl fixed top-0 left-0 right-0 z-40 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - Modern Design */}
+          {/* Logo - Compact for Mobile */}
           <div className="flex items-center">
             <button
               onClick={() => { window.location.href = '/'; }}
               aria-label="Anasayfa"
-              className="flex items-center text-xl font-bold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white rounded-lg px-3 py-2 transition-all hover:bg-white/10"
+              className="flex items-center text-base sm:text-xl font-bold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white rounded-lg px-2 sm:px-3 py-2 transition-all hover:bg-white/10"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-2 shadow-lg">
-                <Home size={18} className="text-white" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-1.5 sm:mr-2 shadow-lg">
+                <Home size={16} className="text-white sm:w-[18px] sm:h-[18px]" />
               </div>
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent hidden xs:inline">
                 ilandan.online
+              </span>
+              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent xs:hidden">
+                ilandan
               </span>
             </button>
           </div>
@@ -104,40 +107,40 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             </form>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center space-x-3">
-            {/* New Ad Button - Modern Design */}
+          {/* Actions - Compact for Mobile */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2">
+            {/* New Ad Button - Compact */}
             <button
               onClick={handleShowNewAd}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-2.5 sm:px-4 py-2 rounded-lg font-semibold shadow-lg transition-all flex items-center gap-1.5"
             >
-              <Plus size={18} />
-              <span className="hidden sm:inline">İlan Ver</span>
+              <Plus size={16} />
+              <span className="hidden sm:inline text-sm">İlan Ver</span>
             </button>
 
-            {/* Messages Button - Modern Design */}
+            {/* Messages Button - Compact */}
             {user && (
               <button
                 onClick={() => { setShowConversationsModal(true); setUnreadCount(0); try { (async () => { (await import('../services/api')).messageService.markAllRead(); })(); } catch {} }}
-                className="relative p-2.5 text-white hover:bg-white/10 rounded-xl transition-all"
+                className="relative p-2 text-white hover:bg-white/10 rounded-lg transition-all"
                 title="Mesajlar"
               >
-                <MessageSquare size={20} />
+                <MessageSquare size={18} />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1.5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold leading-[20px] text-center shadow-lg animate-pulse">
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-[9px] font-bold leading-[18px] text-center shadow-lg animate-pulse">
                     {unreadCount}
                   </span>
                 )}
               </button>
             )}
 
-            {/* Dark Mode Toggle - Modern Design */}
+            {/* Dark Mode Toggle - Compact */}
             <button
               onClick={toggleDarkMode}
-              className="p-2.5 text-white hover:bg-white/10 rounded-xl transition-all"
+              className="p-2 text-white hover:bg-white/10 rounded-lg transition-all hidden sm:block"
               title={isDarkMode ? 'Açık Tema' : 'Koyu Tema'}
             >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
             {/* User Menu - Modern Design */}
@@ -231,9 +234,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             ) : (
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-2.5 rounded-xl font-semibold transition-all backdrop-blur-sm"
+                className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-2.5 sm:px-4 py-2 rounded-lg font-semibold transition-all backdrop-blur-sm text-sm"
               >
-                <User size={18} />
+                <User size={16} />
                 <span>Giriş</span>
               </button>
             )}
