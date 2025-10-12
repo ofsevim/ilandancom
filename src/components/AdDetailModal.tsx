@@ -22,7 +22,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   const [seller, setSeller] = useState(ad.user);
   const [showMessages, setShowMessages] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  
+
   // Swipe state'leri
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -91,7 +91,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
@@ -110,9 +110,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   // Minimal preloading - only next image
   React.useEffect(() => {
     if (ad.images.length <= 1) return;
-    
+
     const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
-    
+
     // Preload only next image
     if (ad.images[nextIndex]) {
       const img = new Image();
@@ -130,18 +130,22 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === ad.images.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === 0 ? ad.images.length - 1 : prev - 1
     );
   };
 
   const handleFavoriteClick = () => {
+    if (!user) {
+      toast.error('Favorilere eklemek için önce giriş yapmalısınız');
+      return;
+    }
     toggleFavorite(ad.id);
   };
 
@@ -178,16 +182,16 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
         <div className="p-4 lg:p-6 max-w-7xl mx-auto">
           {/* Main Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+
             {/* Left Side - Photo Gallery */}
             <div className="lg:col-span-2 space-y-3">
-            {ad.images.length > 0 ? (
-              <div 
-                className="relative touch-pan-y select-none"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
+              {ad.images.length > 0 ? (
+                <div
+                  className="relative touch-pan-y select-none"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
                   {/* Badges - Modern Design */}
                   <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
                     {ad.featured && (
@@ -196,10 +200,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                         <span>Öne Çıkan</span>
                       </span>
                     )}
-                    <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm flex items-center gap-1">
-                      <span>✨</span>
-                      <span>Yeni</span>
-                    </span>
+                    {/* Yeni Badge - Son 7 gün içinde eklenen ilanlar için */}
+                    {new Date().getTime() - new Date(ad.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000 && (
+                      <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm flex items-center gap-1">
+                        <span>✨</span>
+                        <span>Yeni</span>
+                      </span>
+                    )}
                   </div>
 
                   {/* Favorite Button - Modern Design */}
@@ -207,11 +214,10 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     <button
                       onClick={handleFavoriteClick}
                       aria-label="Favorilere ekle"
-                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-sm ${
-                        isFavorite 
-                          ? 'bg-gradient-to-br from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 scale-110' 
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-sm ${isFavorite
+                          ? 'bg-gradient-to-br from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 scale-110'
                           : 'bg-white/95 text-gray-600 hover:bg-white hover:text-red-500 hover:scale-110'
-                      }`}
+                        }`}
                     >
                       <Heart
                         size={20}
@@ -220,71 +226,70 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     </button>
                   </div>
 
-                {/* Ultra-Fast Image Loading */}
-                <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
-                  <img
-                    src={ad.images[currentImageIndex]}
-                    alt={ad.title}
-                    className="w-full h-full object-cover cursor-zoom-in"
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    onClick={() => setIsFullscreen(true)}
-                  />
-                </div>
-                
-                {ad.images.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevImage}
-                      aria-label="Önceki görsel"
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                    >
-                      <ChevronLeft size={24} className="text-gray-700" />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      aria-label="Sonraki görsel"
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                    >
-                      <ChevronRight size={24} className="text-gray-700" />
-                    </button>
-                    
-                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-900/90 to-black/90 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl backdrop-blur-sm">
-                      {currentImageIndex + 1} / {ad.images.length}
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <div className="w-full h-[450px] lg:h-[600px] bg-gray-200 dark:bg-gray-700 rounded-xl flex items-center justify-center">
-                <span className="text-gray-400">Fotoğraf Yok</span>
-              </div>
-            )}
-
-            {/* Thumbnail Images - Lazy Load Only Visible */}
-            {ad.images.length > 1 && (
-                <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
-                {ad.images.slice(0, 10).map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-3 transition-all ${
-                      index === currentImageIndex 
-                        ? 'border-blue-500 shadow-lg ring-2 ring-blue-300 dark:ring-blue-700' 
-                        : 'border-gray-300 dark:border-gray-600'
-                    }`}
-                  >
+                  {/* Ultra-Fast Image Loading */}
+                  <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
                     <img
-                      src={image}
-                      alt={`${ad.title} - ${index + 1}`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
+                      src={ad.images[currentImageIndex]}
+                      alt={ad.title}
+                      className="w-full h-full object-cover cursor-zoom-in"
+                      loading="eager"
+                      decoding="async"
+                      fetchPriority="high"
+                      onClick={() => setIsFullscreen(true)}
                     />
-                  </button>
-                ))}
-              </div>
-            )}
+                  </div>
+
+                  {ad.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        aria-label="Önceki görsel"
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                      >
+                        <ChevronLeft size={24} className="text-gray-700" />
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        aria-label="Sonraki görsel"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                      >
+                        <ChevronRight size={24} className="text-gray-700" />
+                      </button>
+
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-900/90 to-black/90 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl backdrop-blur-sm">
+                        {currentImageIndex + 1} / {ad.images.length}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="w-full h-[450px] lg:h-[600px] bg-gray-200 dark:bg-gray-700 rounded-xl flex items-center justify-center">
+                  <span className="text-gray-400">Fotoğraf Yok</span>
+                </div>
+              )}
+
+              {/* Thumbnail Images - Lazy Load Only Visible */}
+              {ad.images.length > 1 && (
+                <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
+                  {ad.images.slice(0, 10).map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-3 transition-all ${index === currentImageIndex
+                          ? 'border-blue-500 shadow-lg ring-2 ring-blue-300 dark:ring-blue-700'
+                          : 'border-gray-300 dark:border-gray-600'
+                        }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`${ad.title} - ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Description Card - Modern Design */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
@@ -300,11 +305,11 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   </p>
                 </div>
               </div>
-          </div>
+            </div>
 
             {/* Right Side - Info Sidebar */}
-            <div className="lg:col-span-1 space-y-6">
-              
+            <div className="lg:col-span-1 space-y-10">
+
               {/* Price Card */}
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700 sticky top-20">
                 <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-4">
@@ -331,13 +336,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     <MapPin size={16} className="flex-shrink-0" />
                     <span>{ad.location.district}, {ad.location.city}</span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Clock size={16} className="flex-shrink-0" />
                       <span>{new Date(ad.createdAt).toLocaleDateString('tr-TR')}</span>
                     </div>
-                    
+
                     <div className="flex items-center gap-1">
                       <Eye size={16} className="flex-shrink-0" />
                       <span>{ad.viewCount}</span>
@@ -387,7 +392,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     Satıcı Bilgileri
                   </h3>
                 </div>
-                
+
                 <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                   <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-lg font-bold">
@@ -399,7 +404,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                       {seller?.name || 'Satıcı'}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      Üye: {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { month:'short', year:'numeric' })}
+                      Üye: {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' })}
                     </div>
                   </div>
                 </div>
@@ -418,7 +423,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 <div className="space-y-2">
                   {seller?.phone && (
                     <a
-                      href={`https://wa.me/90${seller.phone.replace(/\D/g,'').replace(/^90/, '')}`}
+                      href={`https://wa.me/90${seller.phone.replace(/\D/g, '').replace(/^90/, '')}`}
                       target="_blank"
                       rel="noreferrer"
                       className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg transition-all font-semibold text-sm"
@@ -428,7 +433,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     </a>
                   )}
 
-                  <button 
+                  <button
                     onClick={() => {
                       if (!user) {
                         toast.error('Mesaj göndermek için önce giriş yapmalısınız');
@@ -464,7 +469,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
       {/* Fullscreen Image Viewer */}
       {isFullscreen && ad.images.length > 0 && (
-        <div 
+        <div
           className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center touch-pan-y select-none"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
