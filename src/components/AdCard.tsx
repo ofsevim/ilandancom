@@ -99,19 +99,54 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         >
         {ad.images.length > 0 ? (
           <>
-                          <img
-                src={buildImageUrl(ad.images[currentImageIndex], { width: 400, height: 300, quality: 60, resize: 'inside', format: 'webp' })}
-                alt={ad.title}
-                className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700"
+            {/* Progressive Image Loading */}
+            <div className="relative w-full h-full">
+              {/* Loading Skeleton */}
+              <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
+                <div className="text-gray-400 text-xs">Yükleniyor...</div>
+              </div>
+              
+              {/* Low Quality Placeholder */}
+              <img
+                src={buildImageUrl(ad.images[currentImageIndex], { 
+                  width: 50, 
+                  height: 40, 
+                  quality: 20, 
+                  resize: 'cover', 
+                  format: 'webp' 
+                })}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover blur-sm scale-110"
                 loading="lazy"
-              onLoad={(e) => {
-                e.currentTarget.style.opacity = '1';
-              }}
-              onError={(e) => {
-                e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBDMTE2LjU2OSA3MCAxMzAgODMuNDMxIDEzMCAxMDBDMTMwIDExNi41NjkgMTE2LjU2OSAxMzAgMTAwIDEzMEM4My40MzEgMTMwIDcwIDExNi41NjkgNzAgMTAwQzcwIDgzLjQzMSA4My40MzEgNzAgMTAwIDcwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
-              }}
-              style={{ opacity: 0 }}
-            />
+                style={{ filter: 'blur(8px)', transform: 'scale(1.1)' }}
+              />
+              
+              {/* High Quality Image */}
+              <img
+                src={buildImageUrl(ad.images[currentImageIndex], { 
+                  width: 400, 
+                  height: 300, 
+                  quality: 75, 
+                  resize: 'cover', 
+                  format: 'webp' 
+                })}
+                alt={ad.title}
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0"
+                loading="lazy"
+                decoding="async"
+                onLoad={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                  // Blur'lu placeholder'ı gizle
+                  const placeholder = e.currentTarget.previousElementSibling as HTMLElement;
+                  if (placeholder) {
+                    placeholder.style.opacity = '0';
+                  }
+                }}
+                onError={(e) => {
+                  e.currentTarget.src = '/placeholder-image.jpg';
+                }}
+              />
+            </div>
             
             {/* Click Navigation - Sadece birden fazla fotoğraf varsa */}
             {ad.images.length > 1 && (

@@ -99,23 +99,33 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
     }
   };
 
-  // Tüm görselleri arka planda preload et
+  // Akıllı preloading - sadece sonraki ve önceki görselleri yükle
   React.useEffect(() => {
-    if (ad.images.length > 1) {
-      ad.images.forEach((image, index) => {
-        if (index !== currentImageIndex) {
+    if (ad.images.length <= 1) return;
+    
+    const preloadImages = () => {
+      const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
+      const prevIndex = currentImageIndex === 0 ? ad.images.length - 1 : currentImageIndex - 1;
+      
+      // Sonraki ve önceki görselleri preload et
+      [nextIndex, prevIndex].forEach(index => {
+        if (ad.images[index]) {
           const img = new Image();
-          img.src = buildImageUrl(image, { 
-            width: 1200, 
-            height: 800, 
-            quality: 85, 
+          img.src = buildImageUrl(ad.images[index], { 
+            width: isSlowConnection ? 800 : 1200, 
+            height: isSlowConnection ? 600 : 900, 
+            quality: isSlowConnection ? 70 : 85, 
             resize: 'cover', 
             format: 'webp' 
           });
         }
       });
-    }
-  }, [ad.images, currentImageIndex]);
+    };
+
+    // Küçük bir gecikme ile preload et (ana görsel yüklendikten sonra)
+    const timer = setTimeout(preloadImages, 500);
+    return () => clearTimeout(timer);
+  }, [ad.images, currentImageIndex, isSlowConnection]);
 
   // Network-aware loading
   const [isSlowConnection, setIsSlowConnection] = React.useState(false);
@@ -138,29 +148,31 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
     }
   }, []);
 
-  // Sonraki ve önceki görseli preload et
+  // Thumbnail preloading - sadece görünür olanları yükle
   React.useEffect(() => {
-    const preloadImage = (index: number) => {
-      if (ad.images[index]) {
-        const img = new Image();
-        const quality = isSlowConnection ? 60 : 85;
-        const width = isSlowConnection ? 800 : 1200;
-        img.src = buildImageUrl(ad.images[index], { 
-          width, 
-          height: Math.round(width * 0.67), 
-          quality, 
-          resize: 'cover', 
-          format: 'webp' 
-        });
-      }
+    if (ad.images.length <= 1) return;
+    
+    // Thumbnail'leri lazy loading ile yükle
+    const loadThumbnails = () => {
+      ad.images.forEach((image, index) => {
+        // Sadece mevcut görsel etrafındaki 3 thumbnail'i preload et
+        const distance = Math.abs(index - currentImageIndex);
+        if (distance <= 1 || (distance >= ad.images.length - 1)) {
+          const img = new Image();
+          img.src = buildImageUrl(image, { 
+            width: 200, 
+            height: 200, 
+            quality: 60, 
+            resize: 'cover', 
+            format: 'webp' 
+          });
+        }
+      });
     };
 
-    const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
-    const prevIndex = currentImageIndex === 0 ? ad.images.length - 1 : currentImageIndex - 1;
-    
-    preloadImage(nextIndex);
-    preloadImage(prevIndex);
-  }, [currentImageIndex, ad.images, isSlowConnection]);
+    const timer = setTimeout(loadThumbnails, 1000);
+    return () => clearTimeout(timer);
+  }, [ad.images, currentImageIndex]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
@@ -268,32 +280,56 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     </button>
                   </div>
 
-                {/* Loading Skeleton */}
-                  <div className="w-full h-[450px] lg:h-[600px] bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse absolute inset-0"></div>
+                {/* Progressive Image Loading */}
+                <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
+                  {/* Loading Skeleton */}
+                  <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
+                    <div className="text-gray-400 text-sm">Yükleniyor...</div>
+                  </div>
                   
+                  {/* Low Quality Placeholder */}
                   <img
                     src={buildImageUrl(ad.images[currentImageIndex], { 
-                      width: isSlowConnection ? 1200 : 1600, 
-                      height: isSlowConnection ? 800 : 1000, 
-                      quality: isSlowConnection ? 60 : 85, 
+                      width: 50, 
+                      height: 50, 
+                      quality: 20, 
+                      resize: 'cover', 
+                      format: 'webp' 
+                    })}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover blur-sm scale-110 transition-opacity duration-300"
+                    loading="eager"
+                    style={{ filter: 'blur(10px)', transform: 'scale(1.1)' }}
+                  />
+                  
+                  {/* High Quality Image */}
+                  <img
+                    src={buildImageUrl(ad.images[currentImageIndex], { 
+                      width: isSlowConnection ? 800 : 1200, 
+                      height: isSlowConnection ? 600 : 900, 
+                      quality: isSlowConnection ? 70 : 85, 
                       resize: 'cover', 
                       format: 'webp' 
                     })}
                     alt={ad.title}
-                    className="w-full h-[450px] lg:h-[600px] object-cover rounded-xl cursor-zoom-in transition-all duration-300 relative z-10"
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                  onClick={() => setIsFullscreen(true)}
+                    className="absolute inset-0 w-full h-full object-cover cursor-zoom-in transition-opacity duration-500 opacity-0"
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    onClick={() => setIsFullscreen(true)}
                     onLoad={(e) => {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.previousElementSibling?.remove();
-                  }}
+                      e.currentTarget.style.opacity = '1';
+                      // Blur'lu placeholder'ı gizle
+                      const placeholder = e.currentTarget.previousElementSibling as HTMLElement;
+                      if (placeholder) {
+                        placeholder.style.opacity = '0';
+                      }
+                    }}
                     onError={(e) => {
-                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJ0dXJuIG9uIGphdmFzY3JpcHQgdG8gdmlldyB0aGlzIHBhZ2Uu';
-                  }}
-                    style={{ opacity: 0 }}
-                />
+                      e.currentTarget.src = '/placeholder-image.jpg';
+                    }}
+                  />
+                </div>
                 
                 {ad.images.length > 1 && (
                   <>
@@ -337,19 +373,27 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                         : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
                     }`}
                   >
-                    <img
-                        src={buildImageUrl(image, { width: 200, height: 200, quality: 60, resize: 'cover', format: 'webp' })}
-                      alt={ad.title}
-                      className="w-full h-full object-cover transition-opacity duration-200"
-                      loading="lazy"
+                    <div className="relative w-full h-full bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
+                      {/* Thumbnail placeholder */}
+                      <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
+                      
+                      <img
+                        src={buildImageUrl(image, { width: 150, height: 150, quality: 60, resize: 'cover', format: 'webp' })}
+                        alt={`${ad.title} - ${index + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0"
+                        loading="lazy"
                         onLoad={(e) => {
-                        e.currentTarget.style.opacity = '1';
-                      }}
+                          e.currentTarget.style.opacity = '1';
+                          const placeholder = e.currentTarget.previousElementSibling as HTMLElement;
+                          if (placeholder) {
+                            placeholder.style.display = 'none';
+                          }
+                        }}
                         onError={(e) => {
-                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyMkM0MC44MzY2IDIyIDQ4IDI5LjE2MzQgNDggMzhDNDggNDYuODM2NiA0MC44MzY2IDU0IDMyIDU0QzIzLjE2MzQgNTQgMTYgNDYuODM2NiAxNiAzOEMxNiAyOS4xNjM0IDIzLjE2MzQgMjIgMzIgMjJaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=';
-                      }}
-                        style={{ opacity: 0 }}
-                    />
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
                   </button>
                 ))}
               </div>
