@@ -13,11 +13,6 @@ interface AdCardProps {
 const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditClick }) => {
   const { favorites, toggleFavorite, user } = useAuth();
   const [isFavorite, setIsFavorite] = useState(favorites.includes(ad.id));
-  
-  // Fotoğraf galerisi state'leri
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // Favorites değiştiğinde local state'i güncelle
   useEffect(() => {
@@ -47,39 +42,9 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
     e.stopPropagation();
     try {
       await toggleFavorite(ad.id);
-      // Local state'i hemen güncelle
       setIsFavorite(!isFavorite);
     } catch (error) {
       console.error('Favori ekleme/çıkarma hatası:', error);
-    }
-  };
-
-  // Swipe fonksiyonları
-  const handleTouchStart = (e: React.TouchEvent) => {
-    e.stopPropagation();
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    e.stopPropagation();
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    e.stopPropagation();
-    if (!touchStart || !touchEnd) return;
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 30; // Daha küçük mesafe
-    const isRightSwipe = distance < -30;
-
-    if (isLeftSwipe && currentImageIndex < ad.images.length - 1) {
-      // Sola kaydırma - sonraki fotoğraf
-      setCurrentImageIndex(prev => prev + 1);
-    } else if (isRightSwipe && currentImageIndex > 0) {
-      // Sağa kaydırma - önceki fotoğraf
-      setCurrentImageIndex(prev => prev - 1);
     }
   };
 
@@ -90,52 +55,17 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
       style={{ minHeight: 420 }}
     >
       {/* Image */}
-      <div 
-          className="relative h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden touch-pan-y select-none"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
+      <div className="relative h-56 bg-gray-200 dark:bg-gray-700 overflow-hidden">
         {ad.images.length > 0 ? (
           <>
-            {/* Direct Image Loading - No transformation for speed */}
+            {/* Ultra-Fast Image Loading */}
             <img
-              src={ad.images[currentImageIndex]}
+              src={ad.images[0]}
               alt={ad.title}
-              className="w-full h-full object-cover transition-opacity duration-300"
+              className="w-full h-full object-cover"
               loading="lazy"
               decoding="async"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
             />
-            
-            {/* Click Navigation - Sadece birden fazla fotoğraf varsa */}
-            {ad.images.length > 1 && (
-              <>
-                {/* Sol taraftan tıklama - Önceki fotoğraf */}
-                <div 
-                  className="absolute left-0 top-0 w-1/3 h-full cursor-pointer z-20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (currentImageIndex > 0) {
-                      setCurrentImageIndex(prev => prev - 1);
-                    }
-                  }}
-                />
-                
-                {/* Sağ taraftan tıklama - Sonraki fotoğraf */}
-                <div 
-                  className="absolute right-0 top-0 w-1/3 h-full cursor-pointer z-20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (currentImageIndex < ad.images.length - 1) {
-                      setCurrentImageIndex(prev => prev + 1);
-                    }
-                  }}
-                />
-              </>
-            )}
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -177,26 +107,10 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
           </button>
         )}
 
-        {/* Image Count */}
+        {/* Image Count Badge */}
         {ad.images.length > 1 && (
-          <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs">
-            {currentImageIndex + 1} / {ad.images.length}
-          </div>
-        )}
-
-        {/* Navigation Dots - Sadece birden fazla fotoğraf varsa */}
-        {ad.images.length > 1 && (
-          <div className="absolute bottom-2 left-2 flex space-x-1">
-            {ad.images.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full ${
-                  index === currentImageIndex 
-                    ? 'bg-white' 
-                    : 'bg-white bg-opacity-40'
-                }`}
-              />
-            ))}
+          <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded-lg text-xs font-semibold backdrop-blur-sm">
+            📷 {ad.images.length}
           </div>
         )}
       </div>

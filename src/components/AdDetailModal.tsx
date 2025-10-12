@@ -100,24 +100,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
 
 
-  // Instant preloading - direct URLs for speed
+  // Minimal preloading - only next image
   React.useEffect(() => {
     if (ad.images.length <= 1) return;
     
-    const timer = setTimeout(() => {
-      const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
-      const prevIndex = currentImageIndex === 0 ? ad.images.length - 1 : currentImageIndex - 1;
-      
-      // Preload next and previous images - direct URLs
-      [nextIndex, prevIndex].forEach(index => {
-        if (ad.images[index]) {
-          const img = new Image();
-          img.src = ad.images[index]; // Direct URL, no transformation
-        }
-      });
-    }, 100); // Reduced delay for faster preload
+    const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
     
-    return () => clearTimeout(timer);
+    // Preload only next image
+    if (ad.images[nextIndex]) {
+      const img = new Image();
+      img.src = ad.images[nextIndex];
+    }
   }, [ad.images, currentImageIndex]);
 
   const formatPrice = (price: number) => {
@@ -220,33 +213,16 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     </button>
                   </div>
 
-                {/* Optimized Image Loading - Direct URL */}
+                {/* Ultra-Fast Image Loading */}
                 <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
-                  {/* Loading Skeleton */}
-                  <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
-                    <div className="text-gray-400 text-sm">Yükleniyor...</div>
-                  </div>
-                  
-                  {/* Direct Image - No transformation for speed */}
                   <img
                     src={ad.images[currentImageIndex]}
                     alt={ad.title}
-                    className="absolute inset-0 w-full h-full object-cover cursor-zoom-in transition-opacity duration-300 opacity-0"
+                    className="w-full h-full object-cover cursor-zoom-in"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
                     onClick={() => setIsFullscreen(true)}
-                    onLoad={(e) => {
-                      e.currentTarget.style.opacity = '1';
-                      const skeleton = e.currentTarget.previousElementSibling as HTMLElement;
-                      if (skeleton) {
-                        skeleton.style.display = 'none';
-                      }
-                    }}
-                    onError={(e) => {
-                      console.error('Image load error');
-                      e.currentTarget.style.display = 'none';
-                    }}
                   />
                 </div>
                 
@@ -279,31 +255,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
             )}
 
-            {/* Thumbnail Images - Modern Design */}
+            {/* Thumbnail Images - Lazy Load Only Visible */}
             {ad.images.length > 1 && (
                 <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
-                {ad.images.map((image, index) => (
+                {ad.images.slice(0, 10).map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-3 transition-all transform hover:scale-105 ${
+                    className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-3 transition-all ${
                       index === currentImageIndex 
-                        ? 'border-blue-500 shadow-lg ring-2 ring-blue-300 dark:ring-blue-700 scale-105' 
-                        : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 shadow-md'
+                        ? 'border-blue-500 shadow-lg ring-2 ring-blue-300 dark:ring-blue-700' 
+                        : 'border-gray-300 dark:border-gray-600'
                     }`}
                   >
-                    <div className="relative w-full h-full bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
-                      {/* Thumbnail - Direct URL for speed */}
-                      <img
-                        src={image}
-                        alt={`${ad.title} - ${index + 1}`}
-                        className="w-full h-full object-cover transition-opacity duration-200"
-                        loading="lazy"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
+                    <img
+                      src={image}
+                      alt={`${ad.title} - ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
                   </button>
                 ))}
               </div>
