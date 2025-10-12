@@ -97,6 +97,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
           <Heart
             size={16}
             className={isFavorite ? 'text-red-500 fill-current' : 'text-gray-600 dark:text-gray-400'}
+            style={{ width: '16px', height: '16px' }}
           />
         </button>
 
@@ -110,7 +111,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
             className="absolute top-2 left-2 w-8 h-8 bg-blue-500/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-md"
             title="İlanı Düzenle"
           >
-            <Edit size={16} className="text-white" />
+            <Edit size={16} className="text-white" style={{ width: '16px', height: '16px' }} />
           </button>
         )}
 
@@ -145,18 +146,18 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         {/* Location & Stats */}
         <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-1">
-            <MapPin size={12} className="flex-shrink-0" />
+            <MapPin size={12} className="flex-shrink-0" style={{ width: '12px', height: '12px' }} />
             <span className="truncate">{ad.location.city}</span>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
-              <Clock size={12} className="flex-shrink-0" />
+              <Clock size={12} className="flex-shrink-0" style={{ width: '12px', height: '12px' }} />
               <span>{formatDate(ad.createdAt)}</span>
             </div>
 
             <div className="flex items-center gap-1">
-              <Eye size={12} className="flex-shrink-0" />
+              <Eye size={12} className="flex-shrink-0" style={{ width: '12px', height: '12px' }} />
               <span>{ad.viewCount}</span>
             </div>
           </div>

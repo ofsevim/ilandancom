@@ -114,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
               onClick={handleShowNewAd}
               className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-2.5 sm:px-4 py-2 rounded-lg font-semibold shadow-lg transition-all flex items-center gap-1.5"
             >
-              <Plus size={16} />
+              <Plus size={16} className="flex-shrink-0" style={{ width: '16px', height: '16px' }} />
               <span className="hidden sm:inline text-sm">İlan Ver</span>
             </button>
 
@@ -140,7 +140,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
               className="p-2 text-white hover:bg-white/10 rounded-lg transition-all hidden sm:block"
               title={isDarkMode ? 'Açık Tema' : 'Koyu Tema'}
             >
-              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              {isDarkMode ? <Sun size={18} className="flex-shrink-0" style={{ width: '18px', height: '18px' }} /> : <Moon size={18} className="flex-shrink-0" style={{ width: '18px', height: '18px' }} />}
             </button>
 
             {/* User Menu - Modern Design */}
@@ -178,7 +178,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
                       className="w-full text-left px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 flex items-center gap-3 transition-all group"
                     >
                       <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <User size={16} className="text-blue-600 dark:text-blue-400" />
+                        <User size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0" style={{ width: '16px', height: '16px' }} />
                       </div>
                       <span className="font-medium">Profilim</span>
                     </button>
@@ -236,7 +236,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
                 onClick={() => setShowAuthModal(true)}
                 className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-2.5 sm:px-4 py-2 rounded-lg font-semibold transition-all backdrop-blur-sm text-sm"
               >
-                <User size={16} />
+                <User size={16} className="flex-shrink-0" style={{ width: '16px', height: '16px' }} />
                 <span>Giriş</span>
               </button>
             )}
