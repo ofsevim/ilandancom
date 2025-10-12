@@ -95,7 +95,7 @@ const AdDetailPage: React.FC = () => {
 const AppContent: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
-  const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
+
   const [showNewAdModal, setShowNewAdModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingAd, setEditingAd] = useState<Ad | null>(null);

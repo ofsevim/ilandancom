@@ -38,8 +38,8 @@ npm install
 `.env` dosyasını oluşturun:
 ```env
 # Supabase Configuration
-VITE_SUPABASE_URL=https://gomkznbxetaybvflsoev.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvbWt6bmJ4ZXRheWJ2Zmxzb2V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjg5NzcsImV4cCI6MjA3MTkwNDk3N30.3fQin2g9TAobit0ojLOOaPU5LZMsu-Qi7_UxbMRx1SU
+VITE_SUPABASE_URL=your_supabase_url_here
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
 # App Configuration
 VITE_APP_NAME=Sahibinden Clone

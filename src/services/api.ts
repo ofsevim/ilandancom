@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { Ad, Category, User, SearchFilters } from '../types';
+import { User, SearchFilters } from '../types';
 
 // Auth Services
 export const authService = {
@@ -52,7 +52,7 @@ export const authService = {
   },
 
   onAuthStateChange(callback: (user: any) => void) {
-    return supabase.auth.onAuthStateChange((event, session) => {
+    return supabase.auth.onAuthStateChange((_event, session) => {
       callback(session?.user || null);
     });
   }
@@ -340,10 +340,18 @@ export const adService = {
       
       if (error) {
         console.warn('View count RPC error:', error);
-        // Fallback: direkt ads tablosu güncelleme
+        // Fallback: mevcut view_count'u al ve 1 artır
+        const { data: currentAd } = await supabase
+          .from('ads')
+          .select('view_count')
+          .eq('id', id)
+          .single();
+        
+        const newViewCount = (currentAd?.view_count || 0) + 1;
+        
         const { error: updErr } = await supabase
           .from('ads')
-          .update({ view_count: supabase.raw('view_count + 1') })
+          .update({ view_count: newViewCount })
           .eq('id', id);
         
         if (updErr) {
@@ -584,7 +592,7 @@ export const messageService = {
     const userIds = [...new Set(messages?.flatMap(m => [m.sender_id, m.receiver_id]).filter(id => id !== myId) || [])];
 
     const { data: ads } = await supabase
-      .from('listings')
+      .from('ads')
       .select('id, title')
       .in('id', adIds);
 
