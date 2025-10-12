@@ -308,7 +308,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
             </div>
 
             {/* Right Side - Info Sidebar */}
-            <div className="lg:col-span-1 space-y-12">
+            <div className="lg:col-span-1 space-y-16">
 
               {/* Price Card */}
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700 sticky top-20">
