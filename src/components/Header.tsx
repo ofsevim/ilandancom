@@ -23,7 +23,6 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showMyAdsModal, setShowMyAdsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
-  const [showMessagesModal, setShowMessagesModal] = useState(false);
   const [showConversationsModal, setShowConversationsModal] = useState(false);
   const [currentConversation, setCurrentConversation] = useState<{receiverId: string, adId: string} | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -70,123 +69,139 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
   }, [user]);
 
   return (
-    <header className="bg-slate-800 shadow-sm fixed top-0 left-0 right-0 z-40">
+    <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl fixed top-0 left-0 right-0 z-40 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo - Modern Design */}
           <div className="flex items-center">
             <button
               onClick={() => { window.location.href = '/'; }}
               aria-label="Anasayfa"
-              className="flex items-center text-xl font-bold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white rounded"
+              className="flex items-center text-xl font-bold text-white hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white rounded-lg px-3 py-2 transition-all hover:bg-white/10"
             >
-              <Home size={24} className="mr-2" />
-              ilandan.online
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-2 shadow-lg">
+                <Home size={18} className="text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                ilandan.online
+              </span>
             </button>
           </div>
 
-          {/* Search Bar */}
+          {/* Search Bar - Modern Design */}
           <div className="hidden md:block flex-1 max-w-2xl mx-2 md:mx-8">
-            <form onSubmit={handleSearch} className="relative">
+            <form onSubmit={handleSearch} className="relative group">
               <input
                 type="text"
                 placeholder="Ne arıyorsunuz?"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
+                className="w-full pl-12 pr-4 py-3 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/10 backdrop-blur-sm text-white placeholder-gray-300 transition-all hover:bg-white/15"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300 group-hover:text-blue-400 transition-colors">
+                <Search size={20} />
+              </div>
             </form>
           </div>
 
           {/* Actions */}
           <div className="flex items-center space-x-3">
-            {/* New Ad Button */}
+            {/* New Ad Button - Modern Design */}
             <button
               onClick={handleShowNewAd}
-              className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 border border-white/20 items-center font-medium"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
             >
-              İlan Ver
+              <Plus size={18} />
+              <span className="hidden sm:inline">İlan Ver</span>
             </button>
 
-            {/* Messages Button */}
+            {/* Messages Button - Modern Design */}
             {user && (
               <button
                 onClick={() => { setShowConversationsModal(true); setUnreadCount(0); try { (async () => { (await import('../services/api')).messageService.markAllRead(); })(); } catch {} }}
-                className="relative p-2 text-white hover:text-gray-300"
+                className="relative p-2.5 text-white hover:bg-white/10 rounded-xl transition-all"
                 title="Mesajlar"
               >
                 <MessageSquare size={20} />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] leading-[18px] text-center">
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1.5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] font-bold leading-[20px] text-center shadow-lg animate-pulse">
                     {unreadCount}
                   </span>
                 )}
               </button>
             )}
 
-            {/* Dark Mode Toggle */}
+            {/* Dark Mode Toggle - Modern Design */}
             <button
               onClick={toggleDarkMode}
-              className="p-2 text-white hover:text-gray-300"
+              className="p-2.5 text-white hover:bg-white/10 rounded-xl transition-all"
+              title={isDarkMode ? 'Açık Tema' : 'Koyu Tema'}
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
-            {/* User Menu */}
+            {/* User Menu - Modern Design */}
             {user ? (
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 text-white hover:text-gray-300"
+                  className="flex items-center space-x-2 text-white hover:bg-white/10 px-3 py-2 rounded-xl transition-all"
                 >
-                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                  <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/20">
                     {user.avatar ? (
                       <img
                         src={user.avatar}
                         alt={user.name}
-                        className="w-8 h-8 rounded-full object-cover"
+                        className="w-9 h-9 rounded-full object-cover"
                       />
                     ) : (
-                      <User size={16} className="text-white" />
+                      <span className="text-white font-bold text-sm">
+                        {user.name[0].toUpperCase()}
+                      </span>
                     )}
                   </div>
-                  <span className="hidden md:block font-medium">
+                  <span className="hidden md:block font-semibold">
                     {user.name}
                   </span>
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                  <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 py-2 overflow-hidden">
                     <button
                       onClick={() => {
                         setShowProfileModal(true);
                         setShowUserMenu(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center"
+                      className="w-full text-left px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 flex items-center gap-3 transition-all group"
                     >
-                      <User size={16} className="mr-2" />
-                      Profilim
+                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <User size={16} className="text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <span className="font-medium">Profilim</span>
                     </button>
                     <button
                       onClick={() => {
                         setShowMyAdsModal(true);
                         setShowUserMenu(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center"
+                      className="w-full text-left px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-gray-700 dark:hover:to-gray-600 flex items-center gap-3 transition-all group"
                     >
-                      <Package size={16} className="mr-2" />
-                      İlanlarım
+                      <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Package size={16} className="text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <span className="font-medium">İlanlarım</span>
                     </button>
                     <button
                       onClick={() => {
                         setShowFavoritesModal(true);
                         setShowUserMenu(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center"
+                      className="w-full text-left px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-gray-700 dark:hover:to-gray-600 flex items-center gap-3 transition-all group"
                     >
-                      <Heart size={16} className="mr-2" />
-                      Favorilerim
+                      <div className="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Heart size={16} className="text-red-600 dark:text-red-400" />
+                      </div>
+                      <span className="font-medium">Favorilerim</span>
                     </button>
                     {user.role === 'admin' && (
                       <button
@@ -194,9 +209,10 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
                           window.location.href = '/admin';
                           setShowUserMenu(false);
                         }}
-                        className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 border-t border-gray-200"
+                        className="w-full text-left px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 dark:hover:from-gray-700 dark:hover:to-gray-600 flex items-center gap-3 border-t border-gray-200 dark:border-gray-700 transition-all"
                       >
-                        Admin Panel
+                        <span className="text-lg">⚙️</span>
+                        <span className="font-medium">Admin Panel</span>
                       </button>
                     )}
                     <button
@@ -204,9 +220,10 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
                         logout();
                         setShowUserMenu(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                      className="w-full text-left px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 border-t border-gray-200 dark:border-gray-700 transition-all font-medium"
                     >
-                      Çıkış Yap
+                      <span className="text-lg">🚪</span>
+                      <span>Çıkış Yap</span>
                     </button>
                   </div>
                 )}
@@ -214,9 +231,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             ) : (
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-2 text-white hover:text-gray-300 font-medium"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-semibold transition-all backdrop-blur-sm"
               >
-                <User size={18} className="md:hidden" />
+                <User size={18} />
                 <span className="hidden md:inline">Giriş Yap</span>
               </button>
             )}

@@ -159,28 +159,30 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
 
   return (
     <>
-      {/* Mobile Filter Button - Only visible on mobile */}
+      {/* Mobile Filter Button - Only visible on mobile - Modern Design */}
       <div className="lg:hidden mb-4">
         <button
           onClick={() => setIsMobileFiltersOpen(true)}
-          className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center font-medium shadow-lg"
+          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3.5 px-4 rounded-xl transition-all flex items-center justify-center font-bold shadow-xl hover:shadow-2xl hover:scale-105"
         >
           <Filter size={20} className="mr-2" />
           Filtreleri Göster
         </button>
       </div>
 
-      {/* Desktop Sidebar - Hidden on mobile */}
-      <div className="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      {/* Desktop Sidebar - Hidden on mobile - Modern Design */}
+      <div className="hidden lg:block bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <Filter size={20} className="mr-2" />
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+              <Filter size={16} className="text-white" />
+            </div>
             Filtreler
           </h3>
           <button
             onClick={clearFilters}
-            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
           >
             Temizle
           </button>

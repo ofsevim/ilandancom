@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, MapPin, Clock, Eye, Heart, ChevronLeft, ChevronRight, User, Trash2, Edit } from 'lucide-react';
 import { Ad } from '../types';
-import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
 import { adService, publicUserService } from '../services/api';
 import MessagesModal from './MessagesModal';
@@ -27,9 +26,6 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   // Swipe state'leri
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  
-  // Network-aware loading
-  const [isSlowConnection, setIsSlowConnection] = useState(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -102,32 +98,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
     }
   };
 
-  // Network connection status check
-  React.useEffect(() => {
-    if (typeof navigator !== 'undefined' && 'connection' in navigator) {
-      try {
-        const connection = (navigator as any).connection;
-        if (connection) {
-          const updateConnectionStatus = () => {
-            setIsSlowConnection(
-              connection.effectiveType === '2g' || 
-              connection.effectiveType === 'slow-2g' ||
-              connection.downlink < 1
-            );
-          };
-          
-          updateConnectionStatus();
-          connection.addEventListener('change', updateConnectionStatus);
-          
-          return () => connection.removeEventListener('change', updateConnectionStatus);
-        }
-      } catch (e) {
-        // Ignore connection API errors
-      }
-    }
-  }, []);
 
-  // Akıllı preloading - sadece sonraki ve önceki görselleri yükle
+
+  // Instant preloading - direct URLs for speed
   React.useEffect(() => {
     if (ad.images.length <= 1) return;
     
@@ -135,25 +108,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
       const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
       const prevIndex = currentImageIndex === 0 ? ad.images.length - 1 : currentImageIndex - 1;
       
-      // Sonraki ve önceki görselleri preload et
+      // Preload next and previous images - direct URLs
       [nextIndex, prevIndex].forEach(index => {
         if (ad.images[index]) {
           const img = new Image();
-          const quality = isSlowConnection ? 70 : 85;
-          const width = isSlowConnection ? 800 : 1200;
-          img.src = buildImageUrl(ad.images[index], { 
-            width, 
-            height: Math.round(width * 0.75), 
-            quality, 
-            resize: 'cover', 
-            format: 'webp' 
-          });
+          img.src = ad.images[index]; // Direct URL, no transformation
         }
       });
-    }, 500);
+    }, 100); // Reduced delay for faster preload
     
     return () => clearTimeout(timer);
-  }, [ad.images, currentImageIndex, isSlowConnection]);
+  }, [ad.images, currentImageIndex]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
@@ -255,53 +220,32 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     </button>
                   </div>
 
-                {/* Progressive Image Loading */}
+                {/* Optimized Image Loading - Direct URL */}
                 <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
                   {/* Loading Skeleton */}
                   <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
                     <div className="text-gray-400 text-sm">Yükleniyor...</div>
                   </div>
                   
-                  {/* Low Quality Placeholder */}
+                  {/* Direct Image - No transformation for speed */}
                   <img
-                    src={buildImageUrl(ad.images[currentImageIndex], { 
-                      width: 50, 
-                      height: 50, 
-                      quality: 20, 
-                      resize: 'cover', 
-                      format: 'webp' 
-                    })}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover blur-sm scale-110 transition-opacity duration-300"
-                    loading="eager"
-                    style={{ filter: 'blur(10px)', transform: 'scale(1.1)' }}
-                  />
-                  
-                  {/* High Quality Image */}
-                  <img
-                    src={buildImageUrl(ad.images[currentImageIndex], { 
-                      width: isSlowConnection ? 800 : 1200, 
-                      height: isSlowConnection ? 600 : 900, 
-                      quality: isSlowConnection ? 70 : 85, 
-                      resize: 'cover', 
-                      format: 'webp' 
-                    })}
+                    src={ad.images[currentImageIndex]}
                     alt={ad.title}
-                    className="absolute inset-0 w-full h-full object-cover cursor-zoom-in transition-opacity duration-500 opacity-0"
+                    className="absolute inset-0 w-full h-full object-cover cursor-zoom-in transition-opacity duration-300 opacity-0"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
                     onClick={() => setIsFullscreen(true)}
                     onLoad={(e) => {
                       e.currentTarget.style.opacity = '1';
-                      // Blur'lu placeholder'ı gizle
-                      const placeholder = e.currentTarget.previousElementSibling as HTMLElement;
-                      if (placeholder) {
-                        placeholder.style.opacity = '0';
+                      const skeleton = e.currentTarget.previousElementSibling as HTMLElement;
+                      if (skeleton) {
+                        skeleton.style.display = 'none';
                       }
                     }}
                     onError={(e) => {
-                      e.currentTarget.src = '/placeholder-image.jpg';
+                      console.error('Image load error');
+                      e.currentTarget.style.display = 'none';
                     }}
                   />
                 </div>
@@ -349,21 +293,12 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     }`}
                   >
                     <div className="relative w-full h-full bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
-                      {/* Thumbnail placeholder */}
-                      <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
-                      
+                      {/* Thumbnail - Direct URL for speed */}
                       <img
-                        src={buildImageUrl(image, { width: 150, height: 150, quality: 60, resize: 'cover', format: 'webp' })}
+                        src={image}
                         alt={`${ad.title} - ${index + 1}`}
-                        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0"
+                        className="w-full h-full object-cover transition-opacity duration-200"
                         loading="lazy"
-                        onLoad={(e) => {
-                          e.currentTarget.style.opacity = '1';
-                          const placeholder = e.currentTarget.previousElementSibling as HTMLElement;
-                          if (placeholder) {
-                            placeholder.style.display = 'none';
-                          }
-                        }}
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
                         }}
@@ -603,7 +538,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
             </>
           )}
           <img
-            src={buildImageUrl(ad.images[currentImageIndex], { width: 2000, height: 1600, quality: 90, resize: 'inside', format: 'webp' })}
+            src={ad.images[currentImageIndex]}
             alt={ad.title}
             className="max-w-[95vw] max-h-[90vh] object-contain"
             loading="lazy"

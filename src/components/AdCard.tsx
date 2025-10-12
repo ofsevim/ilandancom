@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Eye, Heart, Clock, Edit } from 'lucide-react';
 import { Ad } from '../types';
-import { buildImageUrl } from '../lib/images';
 import { useAuth } from '../contexts/AuthContext';
 
 interface AdCardProps {
@@ -99,54 +98,17 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
         >
         {ad.images.length > 0 ? (
           <>
-            {/* Progressive Image Loading */}
-            <div className="relative w-full h-full">
-              {/* Loading Skeleton */}
-              <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
-                <div className="text-gray-400 text-xs">Yükleniyor...</div>
-              </div>
-              
-              {/* Low Quality Placeholder */}
-              <img
-                src={buildImageUrl(ad.images[currentImageIndex], { 
-                  width: 50, 
-                  height: 40, 
-                  quality: 20, 
-                  resize: 'cover', 
-                  format: 'webp' 
-                })}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover blur-sm scale-110"
-                loading="lazy"
-                style={{ filter: 'blur(8px)', transform: 'scale(1.1)' }}
-              />
-              
-              {/* High Quality Image */}
-              <img
-                src={buildImageUrl(ad.images[currentImageIndex], { 
-                  width: 400, 
-                  height: 300, 
-                  quality: 75, 
-                  resize: 'cover', 
-                  format: 'webp' 
-                })}
-                alt={ad.title}
-                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0"
-                loading="lazy"
-                decoding="async"
-                onLoad={(e) => {
-                  e.currentTarget.style.opacity = '1';
-                  // Blur'lu placeholder'ı gizle
-                  const placeholder = e.currentTarget.previousElementSibling as HTMLElement;
-                  if (placeholder) {
-                    placeholder.style.opacity = '0';
-                  }
-                }}
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder-image.jpg';
-                }}
-              />
-            </div>
+            {/* Direct Image Loading - No transformation for speed */}
+            <img
+              src={ad.images[currentImageIndex]}
+              alt={ad.title}
+              className="w-full h-full object-cover transition-opacity duration-300"
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
             
             {/* Click Navigation - Sadece birden fazla fotoğraf varsa */}
             {ad.images.length > 1 && (
