@@ -27,6 +27,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
+  // Scroll to top when modal opens
+  React.useEffect(() => {
+    if (asPage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [asPage]);
+
   React.useEffect(() => {
     let isMounted = true;
     const loadSeller = async () => {

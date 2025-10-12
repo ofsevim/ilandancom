@@ -21,6 +21,11 @@ const AdDetailPage: React.FC = () => {
   const [ad, setAd] = useState<Ad | null>(null);
   const navigate = useNavigate();
 
+  // Scroll to top when component mounts
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   React.useEffect(() => {
     let mounted = true;
     const load = async () => {

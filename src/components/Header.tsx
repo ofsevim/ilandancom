@@ -231,10 +231,10 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
             ) : (
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-semibold transition-all backdrop-blur-sm"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-2.5 rounded-xl font-semibold transition-all backdrop-blur-sm"
               >
                 <User size={18} />
-                <span className="hidden md:inline">Giriş Yap</span>
+                <span>Giriş</span>
               </button>
             )}
           </div>
