@@ -12,10 +12,11 @@
     <link rel="preconnect" href="https://qwibvwbhpmtrjutuelea.supabase.co" crossorigin>
     <link rel="dns-prefetch" href="https://qwibvwbhpmtrjutuelea.supabase.co">
     
-    <!-- Fonts -->
+    <!-- Fonts - Optimized -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
     
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1223537635524816"
@@ -24,5 +25,11 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Prevent layout shift -->
+    <style>
+      #root { min-height: 100vh; }
+      body { overflow-y: scroll; }
+    </style>
   </body>
 </html>

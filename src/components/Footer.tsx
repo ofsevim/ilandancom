@@ -29,8 +29,8 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-slate-800 mt-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" style={{ minHeight: '320px' }}>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8" style={{ minHeight: '200px' }}>
           {/* Brand */}
           <div>
             <h3 className="text-lg font-semibold text-white">ilandan.online</h3>
@@ -94,16 +94,16 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold text-white mb-3">İletişim</h4>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li className="flex items-center"><Mail size={16} className="mr-2" /> omersvm0606@gmail.com</li>
-              <li className="flex items-center"><Phone size={16} className="mr-2" /> +90 312 000 00 00</li>
-              <li className="flex items-center"><MapPin size={16} className="mr-2" /> Ankara, Türkiye</li>
+              <li className="flex items-center"><Mail size={16} className="mr-2 flex-shrink-0" style={{ width: '16px', height: '16px' }} /> omersvm0606@gmail.com</li>
+              <li className="flex items-center"><Phone size={16} className="mr-2 flex-shrink-0" style={{ width: '16px', height: '16px' }} /> +90 312 000 00 00</li>
+              <li className="flex items-center"><MapPin size={16} className="mr-2 flex-shrink-0" style={{ width: '16px', height: '16px' }} /> Ankara, Türkiye</li>
             </ul>
           </div>
         </div>
       </div>
 
       <div className="border-t border-gray-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-400" style={{ minHeight: '60px' }}>
           <p>© {new Date().getFullYear()} ilandan.online Tüm hakları saklıdır.</p>
           <div className="mt-2 md:mt-0 space-x-4">
             <a href="#" className="hover:text-white">Yardım</a>
