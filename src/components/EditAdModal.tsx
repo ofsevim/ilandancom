@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { useCities } from '../hooks/useCities';
 import { useDistricts } from '../hooks/useDistricts';
 import { Ad } from '../types';
+import { compressImage } from '../lib/imageCompression';
 
 // Yardımcı fonksiyon: Dosya adını Supabase dostu hale getir
 const sanitizeFileName = (fileName: string) => {
@@ -126,14 +127,16 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
     try {
       setLoading(true);
 
-      // Yeni resimleri yükle
+      // Yeni resimleri yükle - Compress first
       const newImageUrls: string[] = [];
       for (let i = 0; i < formData.images.length; i++) {
         const file = formData.images[i];
-        const fileName = `${Date.now()}-${i}-${file.name}`;
+        // Compress image before upload
+        const compressedFile = await compressImage(file, 1920, 0.85);
+        const fileName = `${Date.now()}-${i}-${file.name.replace(/\.[^/.]+$/, '.jpg')}`;
         // Dosya adını sanitize et
         const sanitizedFileName = sanitizeFileName(fileName);
-        await storageService.uploadImage(file, sanitizedFileName);
+        await storageService.uploadImage(compressedFile, sanitizedFileName);
         const url = await storageService.getImageUrl(sanitizedFileName);
         newImageUrls.push(url);
       }

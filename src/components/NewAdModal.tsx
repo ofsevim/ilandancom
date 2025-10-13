@@ -6,6 +6,7 @@ import { adService, storageService } from '../services/api';
 import toast from 'react-hot-toast';
 import { useCities } from '../hooks/useCities';
 import { useDistricts } from '../hooks/useDistricts';
+import { compressImage } from '../lib/imageCompression';
 
 interface NewAdModalProps {
   onClose: () => void;
@@ -87,12 +88,14 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
     try {
       setLoading(true);
 
-      // Upload images
+      // Upload images - Compress first
       const imageUrls: string[] = [];
       for (let i = 0; i < formData.images.length; i++) {
         const file = formData.images[i];
-        const fileName = `${Date.now()}-${i}-${file.name}`;
-        await storageService.uploadImage(file, fileName);
+        // Compress image before upload
+        const compressedFile = await compressImage(file, 1920, 0.85);
+        const fileName = `${Date.now()}-${i}-${file.name.replace(/\.[^/.]+$/, '.jpg')}`;
+        await storageService.uploadImage(compressedFile, fileName);
         const url = await storageService.getImageUrl(fileName);
         imageUrls.push(url);
       }
