@@ -153,12 +153,6 @@ const AppContent: React.FC = () => {
     setShowEditModal(true);
   };
 
-  const showAdminPanel = () => {
-    if (user?.role === 'admin') {
-      setShowAdminDashboard(true);
-    }
-  };
-
   if (error) {
     return (
       <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)}>
