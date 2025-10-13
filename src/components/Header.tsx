@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel
   const [showMyAdsModal, setShowMyAdsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showConversationsModal, setShowConversationsModal] = useState(false);
-  const [currentConversation, setCurrentConversation] = useState<{receiverId: string, adId: string} | null>(null);
+  const [currentConversation, setCurrentConversation] = useState<{ receiverId: string, adId: string } | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel
       try {
         const count = await (await import('../services/api')).messageService.getUnreadCount();
         setUnreadCount(count);
-      } catch {}
+      } catch { }
     })();
     const channel = supabase
       .channel('messages-header-realtime')
@@ -83,12 +83,14 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel
               <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-1.5 sm:mr-2 shadow-lg">
                 <Home size={16} className="text-white sm:w-[18px] sm:h-[18px]" />
               </div>
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent hidden xs:inline">
-                ilandan.online
-              </span>
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent xs:hidden">
-                ilandan
-              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                  ilandan
+                </span>
+                <span className="text-[10px] sm:text-xs text-blue-300 -mt-1">
+                  online
+                </span>
+              </div>
             </button>
           </div>
 
@@ -122,7 +124,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel
             {/* Messages Button - Compact */}
             {user && (
               <button
-                onClick={() => { setShowConversationsModal(true); setUnreadCount(0); try { (async () => { (await import('../services/api')).messageService.markAllRead(); })(); } catch {} }}
+                onClick={() => { setShowConversationsModal(true); setUnreadCount(0); try { (async () => { (await import('../services/api')).messageService.markAllRead(); })(); } catch { } }}
                 className="relative p-2 text-white hover:bg-white/10 rounded-lg transition-all"
                 title="Mesajlar"
               >
@@ -249,24 +251,24 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel
       {showAuthModal && (
         <AuthModal onClose={() => setShowAuthModal(false)} />
       )}
-      
+
       {showProfileModal && (
         <ProfileModal onClose={() => setShowProfileModal(false)} />
       )}
-      
+
       {showMyAdsModal && (
-        <MyAdsModal 
-          onClose={() => setShowMyAdsModal(false)} 
+        <MyAdsModal
+          onClose={() => setShowMyAdsModal(false)}
           onShowNewAd={handleShowNewAd}
         />
       )}
-      
+
       {showFavoritesModal && (
         <FavoritesModal onClose={() => setShowFavoritesModal(false)} />
       )}
 
       {showConversationsModal && (
-        <ConversationsModal 
+        <ConversationsModal
           onClose={() => setShowConversationsModal(false)}
           onOpenConversation={(receiverId, adId) => {
             setCurrentConversation({ receiverId, adId });
@@ -274,12 +276,12 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel
           }}
         />
       )}
-      
+
       {currentConversation && (
-        <MessagesModal 
-          receiverId={currentConversation.receiverId} 
+        <MessagesModal
+          receiverId={currentConversation.receiverId}
           adId={currentConversation.adId}
-          onClose={() => setCurrentConversation(null)} 
+          onClose={() => setCurrentConversation(null)}
         />
       )}
     </header>
