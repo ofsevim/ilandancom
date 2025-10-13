@@ -87,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel
                 <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                   ilandan
                 </span>
-                <span className="text-[10px] sm:text-xs text-blue-300 -mt-1 tracking-[0.5em]">
+                <span className="text-[10px] sm:text-xs text-blue-300 -mt-1 tracking-[0.5em] pl-1">
                   online
                 </span>
               </div>
