@@ -9,6 +9,7 @@ import { Ad } from './types';
 import NewAdModal from './components/NewAdModal';
 import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
+import AdminPanel from './components/AdminPanel';
 import SidebarFilters from './components/SidebarFilters';
 import CategoryGrid from './components/CategoryGrid';
 import { useAuth } from './contexts/AuthContext';
@@ -105,6 +106,20 @@ const AppContent: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingAd, setEditingAd] = useState<Ad | null>(null);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
+  // Admin panel kısayolu: Ctrl+Shift+A
+  React.useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        if (user?.role === 'admin') {
+          setShowAdminPanel(true);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [user]);
 
   const [filters, setFilters] = useState<SearchFiltersType>({
     sortBy: 'newest',
@@ -242,7 +257,7 @@ const AppContent: React.FC = () => {
 
                 {user?.role === 'admin' && (
                   <button
-                    onClick={showAdminPanel}
+                    onClick={() => setShowAdminPanel(true)}
                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all text-sm flex items-center gap-1.5"
                   >
                     <span>⚙️</span>
@@ -290,6 +305,12 @@ const AppContent: React.FC = () => {
       {showAdminDashboard && (
         <AdminDashboard
           onClose={() => setShowAdminDashboard(false)}
+        />
+      )}
+
+      {showAdminPanel && (
+        <AdminPanel
+          onClose={() => setShowAdminPanel(false)}
         />
       )}
 
