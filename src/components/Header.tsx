@@ -14,9 +14,10 @@ import toast from 'react-hot-toast';
 interface HeaderProps {
   onSearch?: (query: string) => void;
   onShowNewAd?: () => void;
+  onShowAdminPanel?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
+const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd, onShowAdminPanel }) => {
   const { user, logout } = useAuth();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -209,7 +210,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onShowNewAd }) => {
                     {user.role === 'admin' && (
                       <button
                         onClick={() => {
-                          window.location.href = '/admin';
+                          if (onShowAdminPanel) onShowAdminPanel();
                           setShowUserMenu(false);
                         }}
                         className="w-full text-left px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 dark:hover:from-gray-700 dark:hover:to-gray-600 flex items-center gap-3 border-t border-gray-200 dark:border-gray-700 transition-all"

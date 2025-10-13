@@ -155,7 +155,7 @@ const AppContent: React.FC = () => {
 
   if (error) {
     return (
-      <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)}>
+      <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)} onShowAdminPanel={() => setShowAdminPanel(true)}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-2xl p-12 border-2 border-red-200 dark:border-red-800">
             <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
@@ -176,7 +176,7 @@ const AppContent: React.FC = () => {
   const isAdPage = location.pathname.startsWith('/ad/');
 
   return (
-    <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)}>
+    <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)} onShowAdminPanel={() => setShowAdminPanel(true)}>
       {isAdPage ? (
         <Routes>
           <Route path="/ad/:id" element={<AdDetailPage />} />
