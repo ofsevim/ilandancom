@@ -69,6 +69,60 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     }
   };
 
+  const handleApproveAd = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('ads')
+        .update({ status: 'active' })
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      toast.success('İlan onaylandı');
+      setAds(prev => prev.map((a: any) => a.id === id ? { ...a, status: 'active' } : a));
+    } catch (e: any) {
+      toast.error(e.message || 'Onaylama başarısız');
+    }
+  };
+
+  const handleViewAd = (id: string) => {
+    window.open(`/ad/${id}`, '_blank');
+  };
+
+  const handleBanUser = async (userId: string) => {
+    if (!confirm('Bu kullanıcıyı engellemek istediğinize emin misiniz?')) return;
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ is_active: false })
+        .eq('id', userId);
+      
+      if (error) throw error;
+      
+      toast.success('Kullanıcı engellendi');
+      setUsers(prev => prev.map((u: any) => u.id === userId ? { ...u, is_active: false } : u));
+    } catch (e: any) {
+      toast.error(e.message || 'Engelleme başarısız');
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm('Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) return;
+    try {
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', userId);
+      
+      if (error) throw error;
+      
+      toast.success('Kullanıcı silindi');
+      setUsers(prev => prev.filter((u: any) => u.id !== userId));
+    } catch (e: any) {
+      toast.error(e.message || 'Silme başarısız');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const colors = {
       active: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
@@ -324,13 +378,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex space-x-2">
-                              <button className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1 rounded">
+                              <button 
+                                onClick={() => handleViewAd(ad.id)}
+                                className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1 rounded"
+                                title="İlanı Görüntüle"
+                              >
                                 <Eye size={16} />
                               </button>
-                              <button className="text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded">
-                                <Check size={16} />
-                              </button>
-                              <button onClick={() => handleDeleteAd(ad.id)} className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
+                              {ad.status !== 'active' && (
+                                <button 
+                                  onClick={() => handleApproveAd(ad.id)}
+                                  className="text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded"
+                                  title="İlanı Onayla"
+                                >
+                                  <Check size={16} />
+                                </button>
+                              )}
+                              <button 
+                                onClick={() => handleDeleteAd(ad.id)} 
+                                className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded"
+                                title="İlanı Sil"
+                              >
                                 <Trash2 size={16} />
                               </button>
                             </div>
@@ -418,10 +486,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex space-x-2">
-                              <button className="text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 p-1 rounded">
-                                <Ban size={16} />
-                              </button>
-                              <button className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
+                              {user.is_active && (
+                                <button 
+                                  onClick={() => handleBanUser(user.id)}
+                                  className="text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 p-1 rounded"
+                                  title="Kullanıcıyı Engelle"
+                                >
+                                  <Ban size={16} />
+                                </button>
+                              )}
+                              <button 
+                                onClick={() => handleDeleteUser(user.id)}
+                                className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded"
+                                title="Kullanıcıyı Sil"
+                              >
                                 <Trash2 size={16} />
                               </button>
                             </div>
