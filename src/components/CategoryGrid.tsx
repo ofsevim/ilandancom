@@ -1,6 +1,7 @@
 import React from 'react';
 import { Home, Car, ShoppingBag, Briefcase, Wrench, Smartphone, TreePine, Users } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
+import { motion } from 'framer-motion';
 
 interface CategoryGridProps {
   onCategorySelect: (categoryId: string) => void;
@@ -26,11 +27,9 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ onCategorySelect, selectedC
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 h-24"></div>
-          </div>
+          <div key={i} className="animate-pulse bg-primary-100 dark:bg-primary-800/50 rounded-3xl h-28"></div>
         ))}
       </div>
     );
@@ -38,52 +37,79 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ onCategorySelect, selectedC
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-600">Kategoriler yüklenirken hata oluştu</p>
+      <div className="text-center py-12 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-900/20">
+        <p className="text-red-600 dark:text-red-400 font-bold uppercase tracking-[0.2em] text-[10px]">Kategoriler yüklenemedi</p>
       </div>
     );
   }
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.04
+      }
+    }
+  };
+
+  const item: any = {
+    hidden: { opacity: 0, y: 20, scale: 0.9 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20
+      }
+    }
+  };
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6"
+    >
       {categories.map((category) => {
         const IconComponent = getIcon(category.icon);
         const isSelected = selectedCategoryId === category.id;
         return (
-          <button
+          <motion.div
+            variants={item}
             key={category.id}
             onClick={() => onCategorySelect(category.id)}
-            className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 group transform hover:scale-105 ${
-              isSelected 
-                ? 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border-blue-500 dark:border-blue-400 shadow-lg scale-105' 
-                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xl'
-            }`}
+            className="flex flex-col items-center gap-4 group cursor-pointer"
           >
-            <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-3 transition-all ${
-              isSelected
-                ? 'bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg'
-                : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 group-hover:from-blue-500 group-hover:to-indigo-600'
-            }`}>
-              <IconComponent 
-                size={28} 
-                className={`transition-colors ${
-                  isSelected 
-                    ? 'text-white' 
-                    : 'text-gray-600 dark:text-gray-300 group-hover:text-white'
+            {/* Premium Category Icon Box */}
+            <div
+              className={`w-20 h-20 md:w-24 md:h-24 rounded-3xl flex items-center justify-center transition-all duration-500 relative
+                ${isSelected
+                  ? 'bg-neon-indigo text-white shadow-xl shadow-indigo-600/30 scale-105 ring-2 ring-white/20'
+                  : 'glass-premium text-primary-500 dark:text-primary-400 group-hover:bg-white/10 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-indigo-600/20 group-active:scale-95'
                 }`}
-              />
+            >
+              <div className={`absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 ${isSelected ? 'hidden' : ''}`}></div>
+              <IconComponent size={28} className={`transition-all duration-500 ${isSelected ? 'scale-110' : 'group-hover:text-indigo-500 group-hover:scale-110'}`} />
             </div>
-            <span className={`text-xs font-semibold text-center leading-tight ${
-              isSelected 
-                ? 'text-blue-600 dark:text-blue-400' 
-                : 'text-gray-900 dark:text-white'
-            }`}>
+
+            {/* Label */}
+            <span
+              className={`text-[13px] font-bold text-center leading-tight transition-all duration-300 uppercase tracking-widest
+                ${isSelected
+                  ? 'text-indigo-600 dark:text-indigo-400 scale-105'
+                  : 'text-primary-500 dark:text-primary-400 group-hover:text-primary-900 dark:group-hover:text-white'
+                }`}
+            >
               {category.name}
             </span>
-          </button>
+          </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 };
 

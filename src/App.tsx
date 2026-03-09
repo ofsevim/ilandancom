@@ -6,6 +6,7 @@ import AdDetailModal from './components/AdDetailModal';
 import { Routes, Route, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { adService } from './services/api';
 import { Ad } from './types';
+import SearchCenter from './components/SearchCenter';
 import NewAdModal from './components/NewAdModal';
 import EditAdModal from './components/EditAdModal';
 import AdminDashboard from './components/AdminDashboard';
@@ -106,6 +107,7 @@ const AppContent: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingAd, setEditingAd] = useState<Ad | null>(null);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [filters, setFilters] = useState<SearchFiltersType>({
     sortBy: 'newest',
@@ -141,7 +143,7 @@ const AppContent: React.FC = () => {
 
   if (error) {
     return (
-      <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)} onShowAdminPanel={() => setShowAdminDashboard(true)}>
+      <Layout onShowNewAd={() => setShowNewAdModal(true)} onShowAdminPanel={() => setShowAdminDashboard(true)}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-2xl p-12 border-2 border-red-200 dark:border-red-800">
             <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
@@ -162,98 +164,115 @@ const AppContent: React.FC = () => {
   const isAdPage = location.pathname.startsWith('/ad/');
 
   return (
-    <Layout onSearch={handleSearch} onShowNewAd={() => setShowNewAdModal(true)} onShowAdminPanel={() => setShowAdminDashboard(true)}>
+    <Layout onShowNewAd={() => setShowNewAdModal(true)} onShowAdminPanel={() => setShowAdminDashboard(true)}>
       {isAdPage ? (
         <Routes>
           <Route path="/ad/:id" element={<AdDetailPage />} />
         </Routes>
       ) : (
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Desktop Category Grid - Hidden on mobile */}
-          <div className="hidden lg:block mb-8">
-            <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-xl border border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-sm">📂</span>
-                </div>
-                Kategoriler
-              </h2>
-              <CategoryGrid
-                onCategorySelect={handleCategorySelect}
-                selectedCategoryId={filters.category}
-              />
-            </div>
-          </div>
+        <div className="w-full">
+          <SearchCenter
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearch={handleSearch}
+            onCategoryClick={(catName) => {
+              const cat = categories.find(c => c.name.toLowerCase() === catName.toLowerCase());
+              if (cat) handleCategorySelect(cat.id);
+            }}
+          />
 
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            {/* Left Sidebar - Filters */}
-            <div className="lg:col-span-1">
-              <SidebarFilters filters={filters} onFiltersChange={setFilters} />
-            </div>
 
-            {/* Right Content - Ads */}
-            <div className="lg:col-span-4 space-y-6">
-              {/* Mobile Category Grid */}
-              <div className="lg:hidden">
-                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-4 shadow-lg border border-gray-200 dark:border-gray-700">
-                  <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <div className="w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                      <span className="text-white text-xs">📂</span>
-                    </div>
-                    Kategoriler
-                  </h2>
-                  <CategoryGrid
-                    onCategorySelect={handleCategorySelect}
-                    selectedCategoryId={filters.category}
-                  />
-                </div>
-              </div>
 
-              {/* Results Header - Compact Design */}
-              <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
-                <div className="flex items-center gap-3">
-                  {loading ? (
-                    <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                      Yükleniyor...
-                    </span>
-                  ) : (
-                    <>
-                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                        {ads.length} ilan
-                      </span>
-                      {filters.category && categories.length > 0 && (
-                        <>
-                          <span className="text-gray-400">•</span>
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                            {categories.find(c => c.id === filters.category)?.name}
-                          </span>
-                        </>
-                      )}
-                    </>
+          {/* MAIN CONTENT AREA: FILTER SIDEBAR + ADS GRID */}
+          <div className="w-full px-6 md:px-10 py-6">
+            <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10 items-start">
+
+              {/* Left Sidebar: Independent Filter Panel */}
+              <aside className="filter-sidebar z-30 hidden lg:block">
+                <SidebarFilters
+                  filters={filters}
+                  onFiltersChange={(newFilters) => {
+                    setFilters(newFilters);
+                    setSearchQuery(newFilters.query || '');
+                  }}
+                />
+              </aside>
+
+              {/* Right Content: Stats + Ad Grid */}
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="page-title !text-primary-900 dark:!text-white flex items-center gap-2">
+                      {filters.query ? `"${filters.query}"` : 'Tüm İlanlar'}
+                    </h2>
+                    {filters.category && (
+                      <>
+                        <span className="text-primary-300 dark:text-primary-600 text-2xl">/</span>
+                        <span className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold bg-accent-premium/10 text-accent-premium border border-accent-premium/20 uppercase tracking-wider">
+                          {categories.find(c => c.id === filters.category)?.name}
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {user?.role === 'admin' && (
+                    <button
+                      onClick={() => setShowAdminDashboard(true)}
+                      className="admin-btn flex items-center gap-2 text-sm uppercase tracking-widest"
+                    >
+                      <span>⚙️</span>
+                      <span>Admin Paneli</span>
+                    </button>
                   )}
                 </div>
 
-                {user?.role === 'admin' && (
-                  <button
-                    onClick={() => setShowAdminDashboard(true)}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all text-sm flex items-center gap-1.5"
-                  >
-                    <span>⚙️</span>
-                    <span>Admin</span>
-                  </button>
-                )}
-              </div>
+                {/* Mobile Category Grid */}
+                <div className="lg:hidden mb-10">
+                  <div className="bg-white dark:bg-primary-900 rounded-2xl p-4 shadow-sm border border-primary-200 dark:border-primary-800">
+                    <CategoryGrid
+                      onCategorySelect={handleCategorySelect}
+                      selectedCategoryId={filters.category}
+                    />
+                  </div>
+                </div>
 
-              {/* Ads Grid */}
-              <AdGrid
-                ads={ads}
-                loading={loading}
-                onAdClick={handleAdClick}
-                showEditButton={!!user}
-                onEditClick={handleEditAd}
-              />
+                {/* Results Header - Compact Design */}
+                <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
+                  <div className="flex items-center gap-3">
+                    {loading ? (
+                      <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        Yükleniyor...
+                      </span>
+                    ) : (
+                      <>
+                        <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                          {ads.length} ilan
+                        </span>
+                        {filters.category && categories.length > 0 && (
+                          <>
+                            <span className="text-gray-400">•</span>
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                              {categories.find(c => c.id === filters.category)?.name}
+                            </span>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+
+                </div>
+
+                {/* Ads Grid */}
+                <AdGrid
+                  ads={ads}
+                  loading={loading}
+                  onAdClick={handleAdClick}
+                  showEditButton={!!user}
+                  onEditClick={handleEditAd}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -293,20 +312,27 @@ const AppContent: React.FC = () => {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#363636',
+            background: 'rgba(15, 23, 42, 0.9)',
             color: '#fff',
+            backdropFilter: 'blur(12px)',
+            borderRadius: '1.25rem',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '1rem 1.5rem',
+            fontWeight: '600',
+            fontSize: '14px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
           },
           success: {
             duration: 3000,
             iconTheme: {
-              primary: '#10B981',
-              secondary: '#fff',
+              primary: '#fbbf24',
+              secondary: '#0f172a',
             },
           },
           error: {
             duration: 5000,
             iconTheme: {
-              primary: '#EF4444',
+              primary: '#ef4444',
               secondary: '#fff',
             },
           },

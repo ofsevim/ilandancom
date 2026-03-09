@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, MapPin, Clock, Eye, Heart, ChevronLeft, ChevronRight, Trash2, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -7,6 +7,7 @@ import MessagesModal from './MessagesModal';
 import EditAdModal from './EditAdModal';
 import toast from 'react-hot-toast';
 import { buildImageUrl } from '../lib/images';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AdDetailModalProps {
   ad: Ad;
@@ -24,23 +25,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   const [showMessages, setShowMessages] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // Swipe state'leri
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-
-  // Scroll to top when modal opens
-  React.useEffect(() => {
+  useEffect(() => {
     if (asPage) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [asPage]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let isMounted = true;
     const loadSeller = async () => {
       try {
         if (!ad.userId) return;
-        // Public view üzerinden herkese açık satıcı bilgisi
         const sellerData = await publicUserService.getPublicUserById(ad.userId);
         if (!isMounted) return;
         setSeller({
@@ -54,18 +49,16 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           isActive: (sellerData as any).is_active || (sellerData as any).isActive
         });
       } catch {
-        // ignore, fallback ad.user
+        // fallback to ad.user
       }
     };
     loadSeller();
     return () => { isMounted = false; };
   }, [ad.userId]);
 
-  // View count artırma
-  React.useEffect(() => {
+  useEffect(() => {
     const incrementView = async () => {
       try {
-        // Sadece ilan sahibi değilse view count artır
         if (!user || user.id !== ad.userId) {
           await adService.incrementViewCount(ad.id);
         }
@@ -73,73 +66,24 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
         console.warn('View count artırılamadı:', error);
       }
     };
-
-    // İlan açıldığında view count artır
     incrementView();
   }, [ad.id, ad.userId, user]);
 
   const isFavorite = favorites.includes(ad.id);
 
-  // Swipe fonksiyonları
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe && currentImageIndex < ad.images.length - 1) {
-      // Sola kaydırma - sonraki fotoğraf
-      setCurrentImageIndex(prev => prev + 1);
-    } else if (isRightSwipe && currentImageIndex > 0) {
-      // Sağa kaydırma - önceki fotoğraf
-      setCurrentImageIndex(prev => prev - 1);
-    }
-  };
-
-
-
-  // Minimal preloading - only next image
-  React.useEffect(() => {
-    if (ad.images.length <= 1) return;
-
-    const nextIndex = currentImageIndex === ad.images.length - 1 ? 0 : currentImageIndex + 1;
-
-    // Preload only next image
-    if (ad.images[nextIndex]) {
-      const img = new Image();
-      img.src = ad.images[nextIndex];
-    }
-  }, [ad.images, currentImageIndex]);
-
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(price) + ' TL';
   };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === ad.images.length - 1 ? 0 : prev + 1
-    );
+    setCurrentImageIndex((prev) => (prev === ad.images.length - 1 ? 0 : prev + 1));
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? ad.images.length - 1 : prev - 1
-    );
+    setCurrentImageIndex((prev) => (prev === 0 ? ad.images.length - 1 : prev - 1));
   };
 
   const handleFavoriteClick = () => {
@@ -161,367 +105,265 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
       onClose();
     } catch (e) {
       console.error('İlan silinirken hata:', e);
-      alert('İlan silinirken bir hata oluştu.');
+      toast.error('İlan silinirken bir hata oluştu.');
     } finally {
       setDeleting(false);
     }
   };
 
+  const modalVariants: any = {
+    hidden: { opacity: 0, scale: 0.95, y: 20 },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } },
+    exit: { opacity: 0, scale: 0.95, y: 20 }
+  };
+
   return (
-    <div className={asPage ? "max-w-full mx-auto p-2 lg:p-4" : "fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 p-2 overflow-y-auto"}>
-      <div className={asPage ? "bg-white dark:bg-gray-800 rounded-xl w-full relative overflow-hidden shadow-lg" : "bg-white dark:bg-gray-800 rounded-xl max-w-full w-full my-4 relative overflow-hidden shadow-lg"}>
+    <div className={asPage ? "w-full max-w-7xl mx-auto py-8 px-4 lg:px-8" : "fixed inset-0 bg-primary-950/80 backdrop-blur-md flex items-start justify-center z-50 p-4 overflow-y-auto"}>
+      <motion.div
+        variants={modalVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className={`bg-white dark:bg-primary-900 rounded-[2.5rem] w-full relative overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800 ${asPage ? '' : 'max-w-6xl my-4'}`}
+      >
         {!asPage && (
           <button
             onClick={onClose}
-            aria-label="Kapat"
-            className="absolute top-2 right-2 md:top-4 md:right-4 z-50 w-12 h-12 md:w-10 md:h-10 bg-white dark:bg-gray-800 bg-opacity-95 dark:bg-opacity-95 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-opacity-100 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 shadow-lg border border-gray-200 dark:border-gray-600"
+            className="absolute top-6 right-6 z-50 w-12 h-12 glass rounded-full flex items-center justify-center text-primary-600 dark:text-white hover:scale-110 active:scale-95 transition-all shadow-premium border-white/20"
           >
             <X size={20} />
           </button>
         )}
 
-        <div className="p-4 lg:p-6 max-w-7xl mx-auto">
-          {/* Main Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="flex flex-col lg:flex-row min-h-[700px]">
+          {/* Left Side - Photo Gallery */}
+          <div className="lg:w-[60%] relative bg-primary-50 dark:bg-black/20 flex flex-col">
+            <div className="relative flex-1 min-h-[400px] lg:min-h-0 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentImageIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 900, quality: 85 })}
+                  alt={ad.title}
+                  className="w-full h-full object-cover cursor-zoom-in"
+                  onClick={() => setIsFullscreen(true)}
+                />
+              </AnimatePresence>
 
-            {/* Left Side - Photo Gallery */}
-            <div className="lg:col-span-2 space-y-3">
-              {ad.images.length > 0 ? (
-                <div
-                  className="relative touch-pan-y select-none"
-                  onTouchStart={handleTouchStart}
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
-                >
-                  {/* Badges - Modern Design */}
-                  <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-                    {ad.featured && (
-                      <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm flex items-center gap-1">
-                        <span>⭐</span>
-                        <span>Öne Çıkan</span>
-                      </span>
-                    )}
-                    {/* Yeni Badge - Son 7 gün içinde eklenen ilanlar için */}
-                    {new Date().getTime() - new Date(ad.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000 && (
-                      <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm flex items-center gap-1">
-                        <span>✨</span>
-                        <span>Yeni</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Favorite Button - Modern Design */}
-                  <div className="absolute top-4 right-4 z-20">
-                    <button
-                      onClick={handleFavoriteClick}
-                      aria-label="Favorilere ekle"
-                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-sm ${isFavorite
-                          ? 'bg-gradient-to-br from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 scale-110'
-                          : 'bg-white/95 text-gray-600 hover:bg-white hover:text-red-500 hover:scale-110'
-                        }`}
-                    >
-                      <Heart
-                        size={20}
-                        className={isFavorite ? 'fill-current' : ''}
-                      />
-                    </button>
-                  </div>
-
-                  {/* Ultra-Fast Image Loading */}
-                  <div className="relative w-full h-[450px] lg:h-[600px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
-                    <img
-                      src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 900, quality: 80 })}
-                      alt={ad.title}
-                      className="w-full h-full object-cover cursor-zoom-in"
-                      loading="eager"
-                      decoding="async"
-                      fetchPriority="high"
-                      onClick={() => setIsFullscreen(true)}
-                      width="1200"
-                      height="900"
-                      style={{ aspectRatio: '4/3' }}
-                    />
-                  </div>
-
-                  {ad.images.length > 1 && (
-                    <>
-                      <button
-                        onClick={prevImage}
-                        aria-label="Önceki görsel"
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                      >
-                        <ChevronLeft size={24} className="text-gray-700" />
-                      </button>
-                      <button
-                        onClick={nextImage}
-                        aria-label="Sonraki görsel"
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
-                      >
-                        <ChevronRight size={24} className="text-gray-700" />
-                      </button>
-
-                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-900/90 to-black/90 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl backdrop-blur-sm">
-                        {currentImageIndex + 1} / {ad.images.length}
-                      </div>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div className="w-full h-[450px] lg:h-[600px] bg-gray-200 dark:bg-gray-700 rounded-xl flex items-center justify-center">
-                  <span className="text-gray-400">Fotoğraf Yok</span>
-                </div>
-              )}
-
-              {/* Thumbnail Images - Lazy Load Only Visible */}
+              {/* Navigation Arrows */}
               {ad.images.length > 1 && (
-                <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
-                  {ad.images.slice(0, 10).map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-3 transition-all ${index === currentImageIndex
-                          ? 'border-blue-500 shadow-lg ring-2 ring-blue-300 dark:ring-blue-700'
-                          : 'border-gray-300 dark:border-gray-600'
-                        }`}
-                    >
-                      <img
-                        src={image}
-                        alt={`${ad.title} - ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <button onClick={prevImage} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button onClick={nextImage} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
+                    <ChevronRight size={24} />
+                  </button>
+                </>
               )}
 
-              {/* Description Card - Modern Design */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm">📝</span>
+              {/* Top Badges */}
+              <div className="absolute top-6 left-6 flex flex-col gap-3">
+                {ad.featured && (
+                  <div className="gold-gradient text-primary-950 px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase shadow-premium">
+                    PREMIUM VİTRİN
                   </div>
-                  İlan Açıklaması
-                </h3>
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 rounded-xl p-4">
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
-                    {ad.description}
-                  </p>
+                )}
+                <div className="glass px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase text-white shadow-premium border-white/20">
+                  {ad.category?.name || 'GENEL'}
                 </div>
+              </div>
+
+              {/* Image Counter */}
+              <div className="absolute bottom-6 right-6 glass px-4 py-2 rounded-2xl text-[10px] font-black tracking-widest text-white border-white/20">
+                {currentImageIndex + 1} / {ad.images.length}
               </div>
             </div>
 
-            {/* Right Side - Info Sidebar */}
-            <div className="lg:col-span-1 space-y-16">
+            {/* Thumbnails Sidebar/Bottom */}
+            {ad.images.length > 1 && (
+              <div className="p-6 overflow-x-auto flex gap-4 scrollbar-hide bg-white dark:bg-primary-900/50 backdrop-blur-xl border-t border-primary-100 dark:border-white/5">
+                {ad.images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${idx === currentImageIndex
+                      ? 'border-accent-premium shadow-premium scale-105'
+                      : 'border-transparent opacity-50 hover:opacity-100'
+                      }`}
+                  >
+                    <img src={buildImageUrl(img, { width: 200, height: 200, quality: 60 })} className="w-full h-full object-cover" alt="" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
-              {/* Price Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700 sticky top-20">
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-4">
-                  {formatPrice(ad.price)}
+          {/* Right Side - Info Section */}
+          <div className="lg:w-[40%] flex flex-col h-full bg-white dark:bg-primary-900 border-l border-primary-100 dark:border-primary-800">
+            <div className="p-8 lg:p-10 flex-1 overflow-y-auto">
+              {/* Header Info */}
+              <div className="space-y-6 mb-10 pb-8 border-b border-primary-100 dark:border-primary-800">
+                <div className="flex items-center gap-4 text-[10px] font-black tracking-widest uppercase text-accent-premium">
+                  <div className="flex items-center gap-1.5">
+                    <Clock size={12} />
+                    {new Date(ad.createdAt).toLocaleDateString('tr-TR')}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Eye size={12} />
+                    {ad.viewCount} Görüntüleme
+                  </div>
                 </div>
 
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white mb-3 leading-tight">
+                <h1 className="text-3xl font-black text-primary-950 dark:text-white leading-[1.2] tracking-tight">
                   {ad.title}
                 </h1>
 
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">
-                    {ad.category?.name || 'Diğer'}
-                  </span>
-                  {ad.featured && (
-                    <span className="inline-block px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 rounded text-xs font-bold">
-                      ⭐ VİTRİN
-                    </span>
-                  )}
+                <div className="flex items-center justify-between">
+                  <div className="text-4xl font-black text-accent-premium gold-text">
+                    {formatPrice(ad.price)}
+                  </div>
+                  <button
+                    onClick={handleFavoriteClick}
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-premium border-2 active:scale-95 ${isFavorite
+                      ? 'bg-red-500 border-red-500 text-white'
+                      : 'bg-white dark:bg-primary-800 border-primary-100 dark:border-primary-700 text-primary-400 hover:text-red-500 hover:border-red-500'
+                      }`}
+                  >
+                    <Heart size={24} className={isFavorite ? 'fill-current' : ''} />
+                  </button>
                 </div>
 
-                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 pb-4 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center gap-2">
-                    <MapPin size={16} className="flex-shrink-0" />
-                    <span>{ad.location.district}, {ad.location.city}</span>
+                <div className="flex items-center gap-3 p-4 bg-primary-50 dark:bg-primary-800/50 rounded-2xl border border-primary-100 dark:border-primary-800 transition-colors group">
+                  <div className="w-10 h-10 bg-accent-premium rounded-xl flex items-center justify-center text-white shadow-premium transition-transform group-hover:rotate-12">
+                    <MapPin size={20} />
                   </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Clock size={16} className="flex-shrink-0" />
-                      <span>{new Date(ad.createdAt).toLocaleDateString('tr-TR')}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <Eye size={16} className="flex-shrink-0" />
-                      <span>{ad.viewCount}</span>
+                  <div className="flex-1">
+                    <div className="text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-0.5">Konum</div>
+                    <div className="text-sm font-black text-primary-900 dark:text-white uppercase">
+                      {ad.location.district}, {ad.location.city}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons Card - Only for owners - Modern Design */}
-              {(user && (user.id === ad.userId || user.role === 'admin')) && (
-                <div className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg border border-orange-100 dark:border-gray-700">
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                      <span className="text-white text-sm">⚙️</span>
-                    </div>
-                    İlan Yönetimi
-                  </h3>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => setShowEditModal(true)}
-                      aria-label="İlanı Düzenle"
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg font-semibold text-sm"
-                    >
-                      <Edit size={16} />
-                      <span>İlanı Düzenle</span>
-                    </button>
-                    <button
-                      onClick={handleDelete}
-                      disabled={deleting}
-                      aria-label="İlanı Kaldır"
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed font-semibold text-sm"
-                    >
-                      <Trash2 size={16} />
-                      <span>{deleting ? 'Siliniyor...' : 'İlanı Sil'}</span>
-                    </button>
-                  </div>
+              {/* Description */}
+              <div className="mb-10">
+                <h3 className="text-xs font-black text-primary-400 uppercase tracking-[0.25em] mb-6">İlan Detayları</h3>
+                <div className="text-primary-700 dark:text-primary-300 leading-[1.8] text-sm whitespace-pre-wrap font-medium">
+                  {ad.description}
                 </div>
-              )}
+              </div>
 
-              {/* Seller Info Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
-                  <div className="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-xs">👤</span>
-                  </div>
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white">
-                    Satıcı Bilgileri
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-lg font-bold">
+              {/* Seller Info */}
+              <div className="mb-10">
+                <h3 className="text-xs font-black text-primary-400 uppercase tracking-[0.25em] mb-6">Yayınlayan</h3>
+                <div className="flex items-center gap-5 p-6 rounded-[2rem] bg-gradient-premium border border-white/5 shadow-premium">
+                  <div className="w-16 h-16 rounded-2xl bg-accent-premium flex items-center justify-center shadow-premium ring-4 ring-white/10">
+                    <span className="text-2xl font-black text-white">
                       {(seller?.name || 'S')[0].toUpperCase()}
                     </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-gray-900 dark:text-white text-sm truncate">
-                      {seller?.name || 'Satıcı'}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      Üye: {new Date(seller?.createdAt || ad.createdAt).toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' })}
+                  <div className="flex-1">
+                    <div className="text-lg font-black text-white mb-1">{seller?.name || 'Satıcı'}</div>
+                    <div className="text-xs font-bold text-white/50 uppercase tracking-widest flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                      Online Satıcı
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Phone */}
-                {seller?.phone && (
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-3">
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Telefon</div>
-                    <div className="text-sm font-bold text-gray-900 dark:text-white">
-                      {seller.phone}
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="space-y-2">
-                  {seller?.phone && (
-                    <a
-                      href={`https://wa.me/90${seller.phone.replace(/\D/g, '').replace(/^90/, '')}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg transition-all font-semibold text-sm"
-                    >
-                      <span>💬</span>
-                      <span>WhatsApp</span>
-                    </a>
-                  )}
-
+              {/* Management Buttons (If Owner) */}
+              {user && (user.id === ad.userId || user.role === 'admin') && (
+                <div className="mb-10 grid grid-cols-2 gap-4">
                   <button
-                    onClick={() => {
-                      if (!user) {
-                        toast.error('Mesaj göndermek için önce giriş yapmalısınız');
-                        return;
-                      }
-                      setShowMessages(true);
-                    }}
-                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-all font-semibold text-sm"
+                    onClick={() => setShowEditModal(true)}
+                    className="flex items-center justify-center gap-2 py-4 bg-primary-50 dark:bg-primary-800 text-primary-900 dark:text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white dark:hover:bg-primary-700 transition-all border border-primary-100 dark:border-primary-800 shadow-sm"
                   >
-                    <span>✉️</span>
-                    <span>Mesaj Gönder</span>
+                    <Edit size={16} className="text-accent-premium" />
+                    Düzenle
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="flex items-center justify-center gap-2 py-4 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm disabled:opacity-50"
+                  >
+                    <Trash2 size={16} />
+                    {deleting ? 'Siliniyor' : 'İlanı Sil'}
                   </button>
                 </div>
+              )}
+            </div>
 
-                {/* Trust Indicators */}
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center gap-1">
-                      <span className="text-green-500">✓</span>
-                      <span>Güvenli İletişim</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-blue-500">🛡️</span>
-                      <span>Doğrulanmış</span>
-                    </div>
-                  </div>
-                </div>
+            {/* Footer Actions */}
+            <div className="p-8 lg:p-10 border-t border-primary-100 dark:border-primary-800 bg-white dark:bg-primary-900/80 backdrop-blur-xl">
+              <div className="flex flex-col gap-4">
+                {seller?.phone && (
+                  <a
+                    href={`tel:${seller.phone}`}
+                    className="w-full flex items-center justify-center gap-4 py-5 bg-primary-900 dark:bg-white text-white dark:text-primary-950 rounded-2xl font-black text-sm uppercase tracking-widest shadow-premium transition-all hover:-translate-y-1 active:scale-95"
+                  >
+                    <span>💬</span>
+                    {seller.phone}
+                  </a>
+                )}
+                <button
+                  onClick={() => {
+                    if (!user) {
+                      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
+                      return;
+                    }
+                    setShowMessages(true);
+                  }}
+                  className="w-full flex items-center justify-center gap-4 py-5 bg-accent-premium text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-premium transition-all hover:-translate-y-1 active:scale-95 gold-gradient"
+                >
+                  <span>✉️</span>
+                  Mesaj Gönder
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Fullscreen Image Viewer */}
-      {isFullscreen && ad.images.length > 0 && (
-        <div
-          className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center touch-pan-y select-none"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <button
-            onClick={() => setIsFullscreen(false)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
-            aria-label="Kapat"
+      {/* Fullscreen Viewer */}
+      <AnimatePresence>
+        {isFullscreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 lg:p-12"
           >
-            <X size={20} />
-          </button>
-          {ad.images.length > 1 && (
-            <>
-              <button
-                onClick={prevImage}
-                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
-                aria-label="Önceki"
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <button
-                onClick={nextImage}
-                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
-                aria-label="Sonraki"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </>
-          )}
-          <img
-            src={ad.images[currentImageIndex]}
-            alt={ad.title}
-            className="max-w-[95vw] max-h-[90vh] object-contain"
-            loading="lazy"
-          />
-        </div>
-      )}
+            <button
+              onClick={() => setIsFullscreen(false)}
+              className="absolute top-10 right-10 w-14 h-14 glass rounded-full flex items-center justify-center text-white active:scale-90 transition-all z-[110]"
+            >
+              <X size={28} />
+            </button>
+            <img
+              src={ad.images[currentImageIndex]}
+              alt={ad.title}
+              className="max-w-full max-h-full object-contain rounded-3xl"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {showMessages && (
         <MessagesModal receiverId={ad.userId} adId={ad.id} onClose={() => setShowMessages(false)} />
       )}
+
       {showEditModal && (
         <EditAdModal
           ad={ad}
           onClose={() => setShowEditModal(false)}
           onAdUpdated={() => {
             setShowEditModal(false);
-            // İlan güncellendiğinde sayfayı yenile
             window.location.reload();
           }}
         />

@@ -24,7 +24,7 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
 
   const fetchFavorites = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
       const data = await favoriteService.getUserFavorites(user.id);
@@ -75,7 +75,7 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
 
   const handleRemoveFavorite = async (adId: string) => {
     if (!user) return;
-    
+
     try {
       await favoriteService.removeFromFavorites(user.id, adId);
       toast.success('Favorilerden kaldırıldı');
@@ -99,96 +99,104 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">
+      <div className="bg-white dark:bg-primary-900 rounded-[2.5rem] shadow-premium max-w-6xl w-full max-h-[90vh] overflow-y-auto relative border border-primary-100 dark:border-primary-800">
+
+        {/* Close Button - Premium */}
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
+        >
+          <X size={20} />
+        </button>
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-3">
-            <Heart size={24} className="text-red-500" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Favorilerim ({favorites.length})
-            </h2>
+        <div className="p-8 md:p-10 border-b border-primary-100 dark:border-primary-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-neon-indigo rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
+              <Heart size={24} className="text-white fill-current" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-primary-950 dark:text-white tracking-tight">
+                Favorilerim <span className="text-indigo-500">({favorites.length})</span>
+              </h2>
+              <p className="text-primary-500 text-xs font-bold uppercase tracking-widest mt-1">Beğendiğiniz tüm ilanlar burada</p>
+            </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          >
-            <X size={24} />
-          </button>
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-8 md:p-10">
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
-              <span className="ml-3 text-gray-600 dark:text-gray-400">Favoriler yükleniyor...</span>
+            <div className="flex flex-col items-center justify-center py-24 gap-4">
+              <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
+              <span className="text-primary-500 font-bold uppercase tracking-widest text-[10px]">Favoriler yükleniyor...</span>
             </div>
           ) : favorites.length === 0 ? (
-            <div className="text-center py-12">
-              <Heart size={64} className="mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <div className="text-center py-24">
+              <div className="w-20 h-20 bg-primary-50 dark:bg-primary-800/50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <Heart size={32} className="text-primary-300 dark:text-primary-600" />
+              </div>
+              <h3 className="text-xl font-black text-primary-950 dark:text-white mb-2 tracking-tight">
                 Henüz favori ilanınız yok
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-primary-500 text-sm font-medium mb-10 max-w-xs mx-auto">
                 Beğendiğiniz ilanları favorilere ekleyerek daha sonra kolayca bulabilirsiniz
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {favorites.map((ad) => (
-                <div key={ad.id} className="bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
+                <div key={ad.id} className="group glass-premium rounded-[2rem] border border-primary-100 dark:border-primary-800 overflow-hidden hover:border-indigo-500/30 transition-all duration-500">
                   {/* Image */}
-                  <div className="relative h-48 bg-gray-200 dark:bg-gray-600 overflow-hidden">
+                  <div className="relative h-56 bg-primary-50 dark:bg-black/20 overflow-hidden">
                     {ad.images.length > 0 ? (
                       <img
                         src={ad.images[0]}
                         alt={ad.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        Fotoğraf Yok
+                      <div className="w-full h-full flex flex-col items-center justify-center text-primary-300 gap-2">
+                        <Heart size={32} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Fotoğraf Yok</span>
                       </div>
                     )}
-                    
+
                     {/* Favorite Button */}
                     <button
                       onClick={() => handleRemoveFavorite(ad.id)}
-                      className="absolute top-2 right-2 w-8 h-8 bg-white dark:bg-gray-800 bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all"
+                      className="absolute top-4 right-4 w-10 h-10 bg-white/90 dark:bg-primary-900/90 rounded-xl flex items-center justify-center hover:bg-white dark:hover:bg-primary-900 transition-all shadow-lg active:scale-90"
                       title="Favorilerden Kaldır"
                     >
                       <Heart
-                        size={16}
+                        size={18}
                         className="text-red-500 fill-current"
                       />
                     </button>
 
                     {/* Featured Badge */}
                     {ad.featured && (
-                      <div className="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded text-xs font-medium">
+                      <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">
                         VİTRİN
                       </div>
                     )}
                   </div>
 
                   {/* Content */}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                  <div className="p-6">
+                    <h3 className="font-bold text-primary-950 dark:text-white mb-3 line-clamp-1 text-lg tracking-tight">
                       {ad.title}
                     </h3>
-                    <p className="text-lg font-bold text-blue-600 mb-2">
+                    <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400 mb-4 tracking-tighter">
                       {formatPrice(ad.price)}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                      {ad.location.city}, {ad.location.district}
-                    </p>
-                    
+                    </div>
+
                     {/* Stats */}
-                    <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                      <span className="flex items-center">
-                        <Eye size={14} className="mr-1" />
-                        {ad.viewCount} görüntülenme
+                    <div className="flex items-center justify-between text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-6 border-y border-primary-50 dark:border-primary-800 py-3">
+                      <span className="flex items-center gap-1.5">
+                        <Eye size={14} className="text-indigo-500" />
+                        {ad.viewCount}
                       </span>
                       <span>
                         {new Date(ad.createdAt).toLocaleDateString('tr-TR')}
@@ -196,20 +204,20 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex space-x-2">
+                    <div className="flex gap-3">
                       <button
                         onClick={() => handleAdClick(ad)}
-                        className="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 flex items-center justify-center"
+                        className="flex-1 bg-primary-100 dark:bg-primary-800 text-primary-900 dark:text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2"
                       >
-                        <Eye size={14} className="mr-1" />
-                        Görüntüle
+                        <Eye size={14} />
+                        İncele
                       </button>
                       <button
                         onClick={() => handleRemoveFavorite(ad.id)}
-                        className="bg-red-600 text-white p-2 rounded hover:bg-red-700"
+                        className="w-12 h-12 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
                         title="Favorilerden Kaldır"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
@@ -222,21 +230,16 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
 
       {/* Ad Detail Modal */}
       {selectedAd && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                İlan Detayı
-              </h3>
-              <button
-                onClick={() => setSelectedAd(null)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            <div className="p-6">
-              <AdCard ad={selectedAd} onAdClick={() => {}} />
+        <div className="fixed inset-0 bg-primary-950/80 backdrop-blur-xl flex items-center justify-center z-[1100] p-4">
+          <div className="bg-white dark:bg-primary-900 rounded-[2.5rem] shadow-premium max-w-4xl w-full max-h-[90vh] overflow-y-auto relative border border-primary-100 dark:border-primary-800">
+            <button
+              onClick={() => setSelectedAd(null)}
+              className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
+            >
+              <X size={20} />
+            </button>
+            <div className="p-10">
+              <AdCard ad={selectedAd} onAdClick={() => { }} />
             </div>
           </div>
         </div>

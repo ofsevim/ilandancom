@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Twitter, Facebook, ArrowUpRight } from 'lucide-react';
 import AboutModal from './AboutModal';
 import ContactModal from './ContactModal';
 import PolicyModal from './PolicyModal';
+import { motion } from 'framer-motion';
 
 const Footer: React.FC = () => {
   const [showAbout, setShowAbout] = useState(false);
@@ -27,88 +28,141 @@ const Footer: React.FC = () => {
     }
   } as const;
 
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-slate-800 mt-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8" style={{ minHeight: '200px' }}>
-          {/* Brand */}
-          <div>
-            <h3 className="text-lg font-semibold text-white">ilandan.online</h3>
-            <p className="mt-2 text-sm text-gray-300">
-              Türkiye'nin modern ilan platformu. Emlak, araç, elektronik ve daha fazlası.
-            </p>
-          </div>
+    <footer className="relative mt-24 overflow-hidden">
+      {/* Premium Decorative Gradient */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-accent-premium/30 to-transparent"></div>
 
-          {/* Kurumsal */}
-          <div>
-            <h4 className="text-sm font-semibold text-white mb-3">Kurumsal</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <button onClick={() => setShowAbout(true)} className="text-left text-gray-300 hover:text-white">
-                  Hakkımızda
-                </button>
-              </li>
-              <li>
-                <button onClick={() => setShowContact(true)} className="text-left text-gray-300 hover:text-white">
-                  İletişim
-                </button>
-              </li>
-              <li>
-                <a className="text-gray-300 hover:text-white" href="#">Kariyer</a>
-              </li>
-            </ul>
-          </div>
+      <div className="bg-primary-950 text-white relative">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+            {/* Brand Section */}
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2">
+                <div className="w-10 h-10 bg-accent-premium rounded-xl flex items-center justify-center shadow-md">
+                  <span className="text-white font-black text-xl">i</span>
+                </div>
+                <h3 className="text-2xl font-black tracking-tight text-white outfit-font">ilandan<span className="text-accent-premium">.online</span></h3>
+              </div>
+              <p className="text-primary-400 text-sm font-medium leading-relaxed max-w-xs">
+                Türkiye'nin en seçkin ilan platformu. Emlak, araç ve değerli eşyalarınız için premium satış deneyimi.
+              </p>
+              <div className="flex items-center gap-4">
+                {[Facebook, Twitter, Instagram].map((Icon, i) => (
+                  <motion.a
+                    key={i}
+                    href="#"
+                    whileHover={{ y: -3 }}
+                    className="w-10 h-10 glass rounded-full flex items-center justify-center text-primary-400 hover:text-accent-premium transition-colors"
+                  >
+                    <Icon size={18} />
+                  </motion.a>
+                ))}
+              </div>
+            </div>
 
-          {/* Politikalar */}
-          <div>
-            <h4 className="text-sm font-semibold text-white mb-3">Politikalar</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <button
-                  onClick={() => setPolicy(policies.privacy)}
-                  className="text-left text-gray-300 hover:text-white"
-                >
-                  Gizlilik Politikası
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setPolicy(policies.terms)}
-                  className="text-left text-gray-300 hover:text-white"
-                >
-                  Kullanım Koşulları
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setPolicy(policies.cookies)}
-                  className="text-left text-gray-300 hover:text-white"
-                >
-                  Çerez Politikası
-                </button>
-              </li>
-            </ul>
-          </div>
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-accent-premium mb-8">Kurumsal</h4>
+              <ul className="space-y-4">
+                {[
+                  { label: 'Hakkımızda', onClick: () => setShowAbout(true) },
+                  { label: 'İletişim', onClick: () => setShowContact(true) },
+                  { label: 'Kariyer', onClick: () => setShowAbout(true) }
+                ].map((link, i) => (
+                  <li key={i}>
+                    <button
+                      onClick={link.onClick}
+                      className="text-primary-400 hover:text-white transition-colors text-sm font-semibold flex items-center group"
+                    >
+                      {link.label}
+                      <ArrowUpRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 -translate-y-1 translate-x-1 transition-all" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* İletişim */}
-          <div>
-            <h4 className="text-sm font-semibold text-white mb-3">İletişim</h4>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li className="flex items-center"><Mail size={16} className="mr-2 flex-shrink-0" style={{ width: '16px', height: '16px' }} /> omersvm0606@gmail.com</li>
-              <li className="flex items-center"><Phone size={16} className="mr-2 flex-shrink-0" style={{ width: '16px', height: '16px' }} /> +90 312 000 00 00</li>
-              <li className="flex items-center"><MapPin size={16} className="mr-2 flex-shrink-0" style={{ width: '16px', height: '16px' }} /> Ankara, Türkiye</li>
-            </ul>
+            {/* Legal Links */}
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-accent-premium mb-8">Hukuki</h4>
+              <ul className="space-y-4">
+                {[
+                  { label: 'Gizlilik Politikası', policy: policies.privacy },
+                  { label: 'Kullanım Koşulları', policy: policies.terms },
+                  { label: 'Çerez Politikası', policy: policies.cookies }
+                ].map((link, i) => (
+                  <li key={i}>
+                    <button
+                      onClick={() => setPolicy(link.policy)}
+                      className="text-primary-400 hover:text-white transition-colors text-sm font-semibold flex items-center group"
+                    >
+                      {link.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact Section */}
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-accent-premium mb-8">İletişim</h4>
+              <ul className="space-y-6">
+                <li className="flex items-start gap-4 group">
+                  <div className="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center text-accent-light shrink-0 transition-all border border-primary-800">
+                    <Mail size={18} />
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">E-posta</span>
+                    <a href="mailto:omersvm0606@gmail.com" className="text-sm font-bold text-primary-100 hover:text-white transition-colors">omersvm0606@gmail.com</a>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4 group">
+                  <div className="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center text-accent-light shrink-0 transition-all border border-primary-800">
+                    <Phone size={18} />
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Telefon</span>
+                    <a href="tel:+905070000000" className="text-sm font-bold text-primary-100 hover:text-white transition-colors">+90 507 000 00 00</a>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4 group">
+                  <div className="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center text-accent-light shrink-0 transition-all border border-primary-800">
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Merkez</span>
+                    <p className="text-sm font-bold text-primary-100">Ankara, Türkiye</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="border-t border-gray-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-400" style={{ minHeight: '60px' }}>
-          <p>© {new Date().getFullYear()} ilandan.online Tüm hakları saklıdır.</p>
-          <div className="mt-2 md:mt-0 space-x-4">
-            <a href="#" className="hover:text-white">Yardım</a>
-            <a href="#" className="hover:text-white">Güvenlik</a>
-            <a href="#" className="hover:text-white">SSS</a>
+        {/* Bottom Bar */}
+        <div className="border-t border-primary-900 bg-black/50">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <p className="text-primary-500 text-sm font-medium">
+              © {currentYear} <span className="text-primary-300">ilandan.online</span>. Tüm hakları saklıdır.
+            </p>
+            <div className="flex items-center gap-8">
+              {[
+                { label: 'Yardım', onClick: () => setShowContact(true) },
+                { label: 'Güvenlik', onClick: () => setPolicy(policies.privacy) },
+                { label: 'SSS', onClick: () => setShowAbout(true) }
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  onClick={item.onClick}
+                  className="text-primary-500 hover:text-accent-premium text-xs font-black uppercase tracking-widest transition-colors"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

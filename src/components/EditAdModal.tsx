@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { X, Upload, Plus, Trash2, Edit } from 'lucide-react';
+import { X, Upload, Trash2, Edit } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCategories } from '../hooks/useCategories';
 import { adService, storageService } from '../services/api';
@@ -8,8 +8,8 @@ import { useCities } from '../hooks/useCities';
 import { useDistricts } from '../hooks/useDistricts';
 import { Ad } from '../types';
 import { compressImage } from '../lib/imageCompression';
+import { motion } from 'framer-motion';
 
-// Yardımcı fonksiyon: Dosya adını Supabase dostu hale getir
 const sanitizeFileName = (fileName: string) => {
   return fileName.replace(/[^a-zA-Z0-9_.-]/g, '-');
 };
@@ -43,7 +43,6 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
 
   const { districts } = useDistricts(selectedCityId);
 
-  // Form verilerini mevcut ilan bilgileriyle doldur
   useEffect(() => {
     setFormData({
       title: ad.title,
@@ -91,7 +90,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error('Giriş yapmanız gerekiyor');
       return;
@@ -127,24 +126,19 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
     try {
       setLoading(true);
 
-      // Yeni resimleri yükle - Compress first
       const newImageUrls: string[] = [];
       for (let i = 0; i < formData.images.length; i++) {
         const file = formData.images[i];
-        // Compress image before upload
         const compressedFile = await compressImage(file, 1920, 0.85);
         const fileName = `${Date.now()}-${i}-${file.name.replace(/\.[^/.]+$/, '.jpg')}`;
-        // Dosya adını sanitize et
         const sanitizedFileName = sanitizeFileName(fileName);
         await storageService.uploadImage(compressedFile, sanitizedFileName);
         const url = await storageService.getImageUrl(sanitizedFileName);
         newImageUrls.push(url);
       }
 
-      // Tüm resimleri birleştir
       const allImages = [...formData.existingImages, ...newImageUrls];
 
-      // İlanı güncelle
       await adService.updateAd(ad.id, {
         title: formData.title,
         description: formData.description,
@@ -160,258 +154,246 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
       onClose();
     } catch (error) {
       console.error('Error updating ad:', error);
-      toast.error('İlan güncellenirken bir sorun oluştu. Lütfen internet bağlantınızı kontrol edin veya reklam engelleyici eklentilerinizi geçici olarak devre dışı bırakmayı deneyin.');
+      toast.error('İlan güncellenirken bir sorun oluştu');
     } finally {
       setLoading(false);
     }
   };
 
-  const selectedCategory = categories.find(c => c.id === formData.categoryId);
+  const modalVariants: any = {
+    hidden: { opacity: 0, scale: 0.95, y: 30 },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } },
+    exit: { opacity: 0, scale: 0.95, y: 30 }
+  };
+
+  const hasDistrictList = !!(districts && districts.length);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-            <Edit size={20} className="mr-2" />
-            İlan Düzenle
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-          >
-            <X size={24} />
-          </button>
+    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-8 overflow-y-auto">
+      <motion.div
+        variants={modalVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="bg-white dark:bg-primary-900 rounded-[2.5rem] max-w-4xl w-full max-h-full overflow-hidden flex flex-col shadow-premium border border-primary-100 dark:border-primary-800"
+      >
+        {/* Close Button - Premium */}
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
+        >
+          <X size={20} />
+        </button>
+
+        <div className="flex items-center justify-between p-8 border-b border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-neon-indigo rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
+              <Edit size={24} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-primary-950 dark:text-white tracking-tight">İlanı Düzenle</h2>
+              <p className="text-primary-500 text-[10px] font-bold uppercase tracking-widest mt-1">İlan bilgilerinizi güncelleyin</p>
+            </div>
+          </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              İlan Başlığı *
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              placeholder="İlan başlığını girin"
-              maxLength={100}
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="p-8 lg:p-10 space-y-8 overflow-y-auto flex-1 scrollbar-hide">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div>
+                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">İlan Başlığı</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
+                  placeholder="İlan başlığı"
+                  maxLength={100}
+                />
+              </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Açıklama * (En az 60 karakter)
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              placeholder="İlan detaylarını açıklayın"
-              maxLength={1000}
-            />
-            <div className="text-sm text-gray-500 mt-1">
-              {formData.description.length}/1000 karakter
-            </div>
-          </div>
-
-          {/* Price and Category */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Fiyat (TL) *
-              </label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                placeholder="0"
-                min="0"
-                step="0.01"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Kategori *
-              </label>
-              <select
-                name="categoryId"
-                value={formData.categoryId}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              >
-                <option value="">Kategori seçin</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Location */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Şehir *
-              </label>
-              <select
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              >
-                <option value="">Şehir seçin</option>
-                {cities.map((city) => (
-                  <option key={city.id} value={city.name}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                İlçe {districts && districts.length > 0 ? '*' : ''}
-              </label>
-              <select
-                name="district"
-                value={formData.district}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                disabled={!districts || districts.length === 0}
-              >
-                <option value="">İlçe seçin</option>
-                {districts?.map((district) => (
-                  <option key={district.id} value={district.name}>
-                    {district.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Images */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Resimler * (En az 1, en fazla 10)
-            </label>
-            
-            {/* Existing Images */}
-            {formData.existingImages.length > 0 && (
-              <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Mevcut Resimler</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {formData.existingImages.map((image, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={image}
-                        alt={`Resim ${index + 1}`}
-                        className="w-full h-24 object-cover rounded border border-gray-200 dark:border-gray-600"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index, 'existing')}
-                        className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  ))}
+              <div>
+                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Açıklama</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={6}
+                  className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all resize-none"
+                  placeholder="İlan açıklaması (En az 60 karakter)"
+                  maxLength={1000}
+                />
+                <div className="mt-2 text-[10px] font-bold text-primary-400 text-right pr-4">
+                  {formData.description.length} / 1000
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* New Images */}
-            {formData.images.length > 0 && (
-              <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Yeni Resimler</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {formData.images.map((file, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Yeni resim ${index + 1}`}
-                        className="w-full h-24 object-cover rounded border border-gray-200 dark:border-gray-600"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index, 'new')}
-                        className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  ))}
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Fiyat (TL)</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Kategori</label>
+                  <select
+                    name="categoryId"
+                    value={formData.categoryId}
+                    onChange={handleInputChange}
+                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="">Kategori Seçin</option>
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
-            )}
 
-            {/* Upload Button */}
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Şehir</label>
+                  <select
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="">Şehir Seçin</option>
+                    {cities.map((c: any) => (
+                      <option key={c.id} value={c.name}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">İlçe</label>
+                  {hasDistrictList ? (
+                    <select
+                      name="district"
+                      value={formData.district}
+                      onChange={handleInputChange}
+                      className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
+                      required
+                    >
+                      <option value="">İlçe Seçin</option>
+                      {districts.map((d: any) => (
+                        <option key={d.id} value={d.name}>{d.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      name="district"
+                      value={formData.district}
+                      onChange={handleInputChange}
+                      className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
+                      placeholder="İlçe girin"
+                      required={!!formData.city}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-4 block pl-4">Görseller (Mevcut & Yeni)</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               <input
                 type="file"
-                accept="image/*"
                 multiple
+                accept="image/*"
                 onChange={handleImageUpload}
                 className="hidden"
-                id="image-upload"
+                id="image-upload-edit"
               />
               <label
-                htmlFor="image-upload"
-                className="cursor-pointer flex flex-col items-center"
+                htmlFor="image-upload-edit"
+                className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-primary-200 dark:border-primary-700 rounded-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-800 transition-all group"
               >
-                <Upload size={24} className="text-gray-400 mb-2" />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Resim yüklemek için tıklayın veya sürükleyin
-                </span>
-                <span className="text-xs text-gray-500 mt-1">
-                  PNG, JPG, WEBP (Max 10MB)
-                </span>
+                <Upload className="h-8 w-8 text-primary-400 group-hover:text-accent-premium transition-colors" />
+                <span className="text-[10px] font-bold text-primary-400 mt-2 uppercase">Ekle</span>
               </label>
+
+              {formData.existingImages.map((image, index) => (
+                <div key={`existing-${index}`} className="relative aspect-square rounded-3xl overflow-hidden shadow-sm group">
+                  <img
+                    src={image}
+                    alt=""
+                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                  />
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-primary-950/50 text-white text-[8px] font-bold rounded-full backdrop-blur-sm">MEVCUT</div>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index, 'existing')}
+                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all hover:bg-red-600"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+
+              {formData.images.map((file, index) => (
+                <div key={`new-${index}`} className="relative aspect-square rounded-3xl overflow-hidden shadow-sm group">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt=""
+                    className="w-full h-full object-cover transition-transform group-hover:scale-110 border-2 border-accent-premium/30"
+                  />
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-accent-premium/80 text-primary-950 text-[8px] font-bold rounded-full backdrop-blur-sm">YENİ</div>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index, 'new')}
+                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all hover:bg-red-600"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              İptal
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Güncelleniyor...
-                </>
-              ) : (
-                <>
-                  <Edit size={16} className="mr-2" />
-                  Güncelle
-                </>
-              )}
-            </button>
-          </div>
         </form>
-      </div>
+
+        <div className="p-8 border-t border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20 flex flex-col sm:flex-row justify-end gap-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-8 py-4 bg-white dark:bg-primary-800 text-primary-900 dark:text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-100 dark:hover:bg-primary-700 transition-all border border-primary-100 dark:border-primary-800 shadow-sm"
+          >
+            İptal
+          </button>
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="px-10 py-4 gold-gradient text-primary-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:-translate-y-1 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+          >
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-950"></div>
+                <span>Güncelleniyor...</span>
+              </>
+            ) : (
+              <>
+                <Edit size={18} />
+                <span>Güncelle</span>
+              </>
+            )}
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 };

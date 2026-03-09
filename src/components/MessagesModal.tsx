@@ -65,7 +65,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
       await messageService.sendMessage({ receiverId, adId, content: input.trim() });
       setInput('');
       await load();
-      try { await messageService.markConversationRead(receiverId, adId); } catch {}
+      try { await messageService.markConversationRead(receiverId, adId); } catch { }
     } catch (e: any) {
       toast.error(e.message || 'Mesaj gönderilemedi');
     } finally {
@@ -74,23 +74,41 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-lg shadow-xl">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Mesajlaşma</h3>
-          <button onClick={onClose} aria-label="Kapat" className="w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center">
-            <X size={18} className="text-gray-600 dark:text-gray-300" />
-          </button>
+    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[1100] p-4">
+      <div className="bg-white dark:bg-primary-900 rounded-[2.5rem] w-full max-w-lg shadow-premium border border-primary-100 dark:border-primary-800 relative overflow-hidden flex flex-col">
+
+        {/* Close Button - Premium */}
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
+        >
+          <X size={20} />
+        </button>
+
+        {/* Header */}
+        <div className="p-8 border-b border-primary-100 dark:border-primary-800">
+          <h3 className="text-xl font-black text-primary-950 dark:text-white tracking-tight">Mesajlaşma</h3>
+          <p className="text-primary-500 text-[10px] font-bold uppercase tracking-widest mt-1">Güvenli Sohbet</p>
         </div>
-        <div ref={listRef} className="p-4 max-h-[50vh] overflow-y-auto space-y-2">
+
+        {/* Message List */}
+        <div ref={listRef} className="p-8 max-h-[50vh] overflow-y-auto space-y-4 scrollbar-hide bg-primary-50/30 dark:bg-black/10">
           {messages.length === 0 ? (
-            <div className="text-center text-sm text-gray-500 dark:text-gray-400">Henüz mesaj yok</div>
+            <div className="text-center py-10 flex flex-col items-center gap-3">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-800 rounded-full flex items-center justify-center">
+                <Send size={24} className="text-primary-300" />
+              </div>
+              <p className="text-primary-400 text-xs font-bold uppercase tracking-widest">Henüz mesaj yok</p>
+            </div>
           ) : (
             messages.map((m) => {
               const isMine = myId && m.sender_id === myId;
               return (
                 <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`px-3 py-2 rounded-lg text-sm ${isMine ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'}`}>
+                  <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-sm font-medium shadow-sm ${isMine
+                      ? 'bg-neon-indigo text-white rounded-br-none'
+                      : 'bg-white dark:bg-primary-800 text-primary-950 dark:text-white rounded-bl-none border border-primary-100 dark:border-primary-700'
+                    }`}>
                     {m.content}
                   </div>
                 </div>
@@ -98,21 +116,23 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
             })
           )}
         </div>
-        <div className="p-3 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">
+
+        {/* Input Area */}
+        <div className="p-6 border-t border-primary-100 dark:border-primary-800 bg-white dark:bg-primary-900 flex items-center gap-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
-            className="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Mesaj yazın"
+            className="flex-1 px-6 py-4 rounded-2xl bg-primary-50 dark:bg-primary-800 border border-transparent focus:border-indigo-500/50 outline-none text-primary-950 dark:text-white font-bold transition-all placeholder:text-primary-400"
+            placeholder="Mesajınızı yazın..."
           />
           <button
             onClick={send}
-            disabled={sending}
-            className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-60 flex items-center gap-1"
+            disabled={sending || !input.trim()}
+            className="w-14 h-14 bg-neon-indigo text-white rounded-2xl shadow-lg shadow-indigo-600/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-40"
           >
-            <Send size={16} /> Gönder
+            <Send size={20} />
           </button>
         </div>
       </div>
@@ -121,5 +141,3 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
 };
 
 export default MessagesModal;
-
-

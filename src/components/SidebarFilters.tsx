@@ -10,6 +10,8 @@ interface SidebarFiltersProps {
   onFiltersChange: (filters: SearchFilters) => void;
 }
 
+import { motion, AnimatePresence } from 'framer-motion';
+
 const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChange }) => {
   const { categories } = useCategories();
   const { cities } = useCities();
@@ -27,7 +29,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
     onFiltersChange({
       ...filters,
       city,
-      district: undefined // Şehir değişince ilçeyi sıfırla
+      district: undefined
     });
   };
 
@@ -38,151 +40,178 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
   };
 
   const renderFilters = () => (
-    <div className="space-y-6">
-      {/* Arama */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <Search size={16} className="inline mr-2" />
-          Arama
-        </label>
-        <input
-          type="text"
-          placeholder="Anahtar kelime..."
-          value={filters.query || ''}
-          onChange={(e) => handleInputChange('query', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-        />
-      </div>
-
+    <div className="flex flex-col">
       {/* Kategori */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <Tag size={16} className="inline mr-2" />
+      <div className="filter-section relative">
+        <label className="dark-section-title flex items-center gap-2 text-[12px] uppercase tracking-widest mb-2.5">
+          <Tag size={15} className="text-indigo-500" />
           Kategori
         </label>
-        <select
-          value={filters.category || ''}
-          onChange={(e) => handleInputChange('category', e.target.value || undefined)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-        >
-          <option value="">Tümü</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Lokasyon */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <MapPin size={16} className="inline mr-2" />
-          Lokasyon
-        </label>
-        
-        {/* Şehir */}
-        <select
-          value={filters.city || ''}
-          onChange={(e) => handleCityChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white mb-2"
-        >
-          <option value="">Şehir seçin</option>
-          {cities.map((city) => (
-            <option key={city.id} value={city.name}>
-              {city.name}
-            </option>
-          ))}
-        </select>
-
-        {/* İlçe */}
-        {filters.city && districts && districts.length > 0 && (
+        <div className="relative">
           <select
-            value={filters.district || ''}
-            onChange={(e) => handleInputChange('district', e.target.value || undefined)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            value={filters.category || ''}
+            onChange={(e) => handleInputChange('category', e.target.value || undefined)}
+            className="dark-filter-select w-full px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all duration-300 cursor-pointer appearance-none"
           >
-            <option value="">İlçe seçin</option>
-            {districts.map((district) => (
-              <option key={district.id} value={district.name}>
-                {district.name}
+            <option value="" className="bg-white dark:bg-primary-900">Tümü</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id} className="bg-white dark:bg-primary-900">
+                {category.name}
               </option>
             ))}
           </select>
-        )}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary-400">
+            <SortAsc size={14} className="rotate-90" />
+          </div>
+        </div>
+      </div>
+
+      {/* Arama */}
+      <div className="filter-section relative">
+        <label className="dark-section-title flex items-center gap-2 text-[12px] uppercase tracking-widest mb-2.5">
+          <Search size={15} className="text-indigo-500" />
+          Arama
+        </label>
+        <div className="relative group">
+          <input
+            type="text"
+            placeholder="Anahtar kelime..."
+            value={filters.query || ''}
+            onChange={(e) => handleInputChange('query', e.target.value)}
+            className="dark-filter-input w-full px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all duration-300"
+          />
+        </div>
+      </div>
+
+      {/* Lokasyon */}
+      <div className="filter-section relative">
+        <label className="dark-section-title flex items-center gap-2 text-[12px] uppercase tracking-widest mb-2.5">
+          <MapPin size={15} className="text-indigo-500" />
+          Lokasyon
+        </label>
+
+        <div className="space-y-3">
+          <div className="relative">
+            <select
+              value={filters.city || ''}
+              onChange={(e) => handleCityChange(e.target.value)}
+              className="dark-filter-select w-full px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all duration-300 cursor-pointer appearance-none"
+            >
+              <option value="" className="bg-white dark:bg-primary-900">Şehir seçin</option>
+              {cities.map((city) => (
+                <option key={city.id} value={city.name} className="bg-white dark:bg-primary-900">
+                  {city.name}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary-400">
+              <SortAsc size={14} className="rotate-90" />
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {filters.city && districts && districts.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="relative"
+              >
+                <select
+                  value={filters.district || ''}
+                  onChange={(e) => handleInputChange('district', e.target.value || undefined)}
+                  className="dark-filter-select w-full px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all duration-300 cursor-pointer appearance-none"
+                >
+                  <option value="" className="bg-white dark:bg-primary-900">İlçe seçin</option>
+                  {districts.map((district) => (
+                    <option key={district.id} value={district.name} className="bg-white dark:bg-primary-900">
+                      {district.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary-400">
+                  <SortAsc size={14} className="rotate-90" />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Fiyat Aralığı */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <DollarSign size={16} className="inline mr-2" />
+      <div className="filter-section relative">
+        <label className="dark-section-title flex items-center gap-2 text-[12px] uppercase tracking-widest mb-2.5">
+          <DollarSign size={15} className="text-indigo-500" />
           Fiyat Aralığı
         </label>
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
           <input
             type="number"
-            placeholder="Min fiyat"
+            placeholder="Min"
             value={filters.minPrice || ''}
             onChange={(e) => handleInputChange('minPrice', e.target.value ? parseFloat(e.target.value) : undefined)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            className="dark-filter-input w-full px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all"
           />
           <input
             type="number"
-            placeholder="Max fiyat"
+            placeholder="Max"
             value={filters.maxPrice || ''}
             onChange={(e) => handleInputChange('maxPrice', e.target.value ? parseFloat(e.target.value) : undefined)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            className="dark-filter-input w-full px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all"
           />
         </div>
       </div>
 
       {/* Sıralama */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          <SortAsc size={16} className="inline mr-2" />
+      <div className="filter-section">
+        <label className="dark-section-title flex items-center gap-2 text-[12px] uppercase tracking-widest mb-2.5">
+          <SortAsc size={15} className="text-indigo-500" />
           Sıralama
         </label>
-        <select
-          value={filters.sortBy}
-          onChange={(e) => handleInputChange('sortBy', e.target.value as any)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-        >
-          <option value="newest">En Yeni</option>
-          <option value="oldest">En Eski</option>
-          <option value="price_low">Fiyat (Düşük → Yüksek)</option>
-          <option value="price_high">Fiyat (Yüksek → Düşük)</option>
-          <option value="most_viewed">En Çok Görüntülenen</option>
-        </select>
+        <div className="relative">
+          <select
+            value={filters.sortBy}
+            onChange={(e) => handleInputChange('sortBy', e.target.value as any)}
+            className="dark-filter-select w-full px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all duration-300 appearance-none cursor-pointer"
+          >
+            <option value="newest" className="bg-white dark:bg-primary-900">En Yeni</option>
+            <option value="oldest" className="bg-white dark:bg-primary-900">En Eski</option>
+            <option value="price_low" className="bg-white dark:bg-primary-900">Fiyat (Artan)</option>
+            <option value="price_high" className="bg-white dark:bg-primary-900">Fiyat (Azalan)</option>
+            <option value="most_viewed" className="bg-white dark:bg-primary-900">En Popüler</option>
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary-400">
+            <SortAsc size={14} className="rotate-90" />
+          </div>
+        </div>
       </div>
     </div>
   );
 
   return (
     <>
-      {/* Mobile Filter Button - Only visible on mobile - Modern Design */}
-      <div className="lg:hidden mb-4">
+      {/* Mobile Filter Button */}
+      <div className="lg:hidden mb-6">
         <button
           onClick={() => setIsMobileFiltersOpen(true)}
-          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3.5 px-4 rounded-xl transition-all flex items-center justify-center font-bold shadow-xl hover:shadow-2xl hover:scale-105"
+          className="w-full bg-primary-900 dark:bg-accent-premium text-white py-4 px-6 rounded-2xl transition-all flex items-center justify-center font-bold shadow-premium active:scale-95"
         >
           <Filter size={20} className="mr-2" />
-          Filtreleri Göster
+          Filtreleri Düzenle
         </button>
       </div>
 
-      {/* Desktop Sidebar - Hidden on mobile - Modern Design */}
-      <div className="hidden lg:block bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-              <Filter size={16} className="text-white" />
-            </div>
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block w-full premium-sidebar-bg p-6 pb-8">
+
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+          <h3 className="text-xl font-bold text-white flex items-center gap-3">
+            <Filter size={20} className="text-indigo-500" />
             Filtreler
           </h3>
           <button
             onClick={clearFilters}
-            className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            className="clear-btn text-[10px] font-bold uppercase tracking-widest"
           >
             Temizle
           </button>
@@ -192,46 +221,59 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
       </div>
 
       {/* Mobile Filter Modal */}
-      {isMobileFiltersOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-start z-50 lg:hidden p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto ml-0">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-                <Filter size={24} className="mr-2" />
-                Filtreler
-              </h3>
-              <button
-                onClick={() => setIsMobileFiltersOpen(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Mobile Filters Content */}
-            <div className="p-6">
-              {renderFilters()}
-
-              {/* Mobile Actions */}
-              <div className="flex space-x-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <button
-                  onClick={clearFilters}
-                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
-                >
-                  Temizle
-                </button>
+      <AnimatePresence>
+        {isMobileFiltersOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-primary-950/80 backdrop-blur-md flex items-end justify-center z-50 lg:hidden"
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="premium-sidebar-bg w-full max-h-[90vh] overflow-y-auto"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-primary-100 dark:border-primary-800">
+                <h3 className="text-lg font-black text-primary-950 dark:text-white flex items-center">
+                  <Filter size={20} className="mr-3 text-accent-premium" />
+                  Filtreler
+                </h3>
                 <button
                   onClick={() => setIsMobileFiltersOpen(false)}
-                  className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  className="w-8 h-8 bg-primary-100 dark:bg-primary-800 rounded-full flex items-center justify-center text-primary-500 hover:text-primary-900 dark:hover:text-white transition-colors"
                 >
-                  Uygula
+                  <X size={20} />
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+
+              {/* Mobile Filters Content */}
+              <div className="p-5 pb-32">
+                {renderFilters()}
+
+                {/* Mobile Actions */}
+                <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white dark:from-primary-900 via-white dark:via-primary-900 to-transparent flex space-x-3">
+                  <button
+                    onClick={clearFilters}
+                    className="flex-1 px-4 py-3 bg-primary-100 dark:bg-primary-800 text-primary-900 dark:text-white rounded-xl font-bold transition-all text-sm"
+                  >
+                    Temizle
+                  </button>
+                  <button
+                    onClick={() => setIsMobileFiltersOpen(false)}
+                    className="flex-[2] bg-primary-900 dark:bg-accent-premium text-white py-3 px-4 rounded-xl text-sm font-bold shadow-md transition-all"
+                  >
+                    Uygula
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
