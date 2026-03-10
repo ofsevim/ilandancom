@@ -15,17 +15,17 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
   if (loading) {
     return (
       <div
-        className="grid gap-4 sm:gap-5"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}
+        className="grid gap-3 sm:gap-4 md:gap-5"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}
       >
         {[...Array(6)].map((_, index) => (
           <div
             key={index}
-            className="premium-card animate-pulse"
-            style={{ minHeight: '350px' }}
+            className="premium-card animate-pulse flex flex-col"
+            style={{ minHeight: '280px' }}
           >
-            <div className="h-44 bg-primary-200 dark:bg-primary-800"></div>
-            <div className="p-4 space-y-4">
+            <div className="h-32 sm:h-44 bg-primary-200 dark:bg-primary-800"></div>
+            <div className="p-3 sm:p-4 flex-1 space-y-3 sm:space-y-4">
               <div className="h-5 bg-primary-200 dark:bg-primary-800 rounded-lg w-3/4"></div>
               <div className="h-4 bg-primary-200 dark:bg-primary-800 rounded-lg w-1/2"></div>
               <div className="pt-4 border-t border-primary-100 dark:border-primary-800 flex justify-between">
@@ -74,8 +74,8 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
       variants={container}
       initial="hidden"
       animate="show"
-      className="grid gap-4 sm:gap-5"
-      style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}
+      className="grid gap-3 sm:gap-4 md:gap-5"
+      style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}
     >
       {ads.map((ad, index) => (
         <AdCard

@@ -78,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ onShowNewAd, onShowAdminPanel }) => {
                 <Home size={20} className="text-white" />
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-2xl font-black tracking-tighter text-primary-950 dark:text-white outfit-font">
+                <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary-950 dark:text-white outfit-font">
                   ilandan<span className="text-accent-premium">.online</span>
                 </span>
               </div>

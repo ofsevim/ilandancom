@@ -184,8 +184,8 @@ const AppContent: React.FC = () => {
 
 
           {/* MAIN CONTENT AREA: FILTER SIDEBAR + ADS GRID */}
-          <div className="w-full px-6 md:px-10 py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10 items-start">
+          <div className="w-full px-4 md:px-6 lg:px-10 py-4 md:py-6">
+            <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 lg:gap-10 items-start">
 
               {/* Left Sidebar: Independent Filter Panel */}
               <aside className="filter-sidebar z-30 hidden lg:block">

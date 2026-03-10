@@ -7,13 +7,75 @@
 :root {
   --toast-bg: #ffffff;
   --toast-color: #334155;
-  --accent-base: #4f46e5;
-  /* Indigo */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --text-primary: #1e293b;
+  --text-secondary: rgba(30,41,59,0.7);
+  --border-color: rgba(30,41,59,0.1);
+  --accent-color: #6366f1;
 }
 
 .dark {
   --toast-bg: #0f172a;
   --toast-color: #f8fafc;
+  --bg-primary: #0a0e27;
+  --bg-secondary: #1a1e3a;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.7);
+  --border-color: rgba(255,255,255,0.1);
+  --accent-color: #6366f1;
+}
+
+/* Base Light Theme Overrides (Applied when not dark) */
+html:not(.dark) .filter-panel, 
+html:not(.dark) .premium-sidebar-bg {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+}
+
+html:not(.dark) .filter-input, 
+html:not(.dark) .filter-select,
+html:not(.dark) .dark-filter-input,
+html:not(.dark) .dark-filter-select {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+html:not(.dark) .filter-input::placeholder,
+html:not(.dark) .dark-filter-input::placeholder {
+  color: rgba(30,41,59,0.5) !important;
+}
+
+html:not(.dark) .section-title,
+html:not(.dark) .dark-section-title {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .search-bar {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+html:not(.dark) .popular-tag {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+html:not(.dark) .popular-tag:hover {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+html:not(.dark) .listing-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+html:not(.dark) .listing-card:hover {
+  border-color: #6366f1;
 }
 
 body {

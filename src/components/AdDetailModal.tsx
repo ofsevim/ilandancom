@@ -156,17 +156,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               {/* Navigation Arrows */}
               {ad.images.length > 1 && (
                 <>
-                  <button onClick={prevImage} className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
-                    <ChevronLeft size={24} />
+                  <button onClick={prevImage} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
+                    <ChevronLeft size={20} className="md:w-6 md:h-6" />
                   </button>
-                  <button onClick={nextImage} className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
-                    <ChevronRight size={24} />
+                  <button onClick={nextImage} className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
+                    <ChevronRight size={20} className="md:w-6 md:h-6" />
                   </button>
                 </>
               )}
 
               {/* Top Badges */}
-              <div className="absolute top-6 left-6 flex flex-col gap-3">
+              <div className="absolute top-4 left-4 md:top-6 md:left-6 flex flex-col gap-2 md:gap-3">
                 {ad.featured && (
                   <div className="gold-gradient text-primary-950 px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase shadow-premium">
                     PREMIUM VİTRİN
@@ -178,7 +178,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
 
               {/* Image Counter */}
-              <div className="absolute bottom-6 right-6 glass px-4 py-2 rounded-2xl text-[10px] font-black tracking-widest text-white border-white/20">
+              <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 glass px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-[10px] font-black tracking-widest text-white border-white/20">
                 {currentImageIndex + 1} / {ad.images.length}
               </div>
             </div>
@@ -341,9 +341,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           >
             <button
               onClick={() => setIsFullscreen(false)}
-              className="absolute top-10 right-10 w-14 h-14 glass rounded-full flex items-center justify-center text-white active:scale-90 transition-all z-[110]"
+              className="absolute top-4 right-4 md:top-10 md:right-10 w-10 h-10 md:w-14 md:h-14 glass rounded-full flex items-center justify-center text-white active:scale-90 transition-all z-[110]"
             >
-              <X size={28} />
+              <X size={24} className="md:w-7 md:h-7" />
             </button>
             <img
               src={ad.images[currentImageIndex]}

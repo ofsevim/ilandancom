@@ -234,7 +234,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="premium-sidebar-bg w-full max-h-[90vh] overflow-y-auto"
+              className="premium-sidebar-bg w-full sm:w-[420px] sm:mb-8 mx-auto max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-5 border-b border-primary-100 dark:border-primary-800">

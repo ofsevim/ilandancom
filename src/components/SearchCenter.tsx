@@ -10,8 +10,8 @@ interface SearchCenterProps {
 
 const SearchCenter: React.FC<SearchCenterProps> = ({ searchQuery, setSearchQuery, handleSearch, onCategoryClick }) => {
     return (
-        <section className="top-bar border-b border-primary-100/50 dark:border-white/5 py-6 px-6 bg-white/40 dark:bg-primary-900/40 backdrop-blur-xl">
-            <div className="max-w-7xl mx-auto flex flex-col gap-4">
+        <section className="top-bar border-b border-primary-100/50 dark:border-white/5 py-4 px-4 md:py-6 md:px-6 bg-white/40 dark:bg-primary-900/40 backdrop-blur-xl">
+            <div className="max-w-7xl mx-auto flex flex-col gap-3 md:gap-4">
                 <div className="search-bar w-full flex items-center gap-3 relative group">
                     <div className="text-primary-400 group-focus-within:text-indigo-500 transition-colors shrink-0">
                         <Search size={22} />
