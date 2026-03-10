@@ -118,13 +118,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   };
 
   return (
-    <div className={asPage ? "w-full max-w-7xl mx-auto py-8 px-4 lg:px-8" : "fixed inset-0 bg-primary-950/80 backdrop-blur-md flex items-start justify-center z-50 p-4 overflow-y-auto"}>
+    <div className={asPage ? "w-full mx-auto" : "fixed inset-0 bg-primary-950/80 backdrop-blur-md flex items-start justify-center z-50 p-4 overflow-y-auto"}>
       <motion.div
         variants={modalVariants}
         initial="hidden"
         animate="visible"
         exit="exit"
-        className={`bg-white dark:bg-primary-900 rounded-[2.5rem] w-full relative overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800 ${asPage ? '' : 'max-w-6xl my-4'}`}
+        className={`bg-white dark:bg-primary-900 rounded-[2.5rem] w-full relative overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800 ${asPage ? '' : 'max-w-[95vw] my-4'}`}
       >
         {!asPage && (
           <button
@@ -156,10 +156,10 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               {/* Navigation Arrows */}
               {ad.images.length > 1 && (
                 <>
-                  <button onClick={prevImage} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
+                  <button onClick={prevImage} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-primary-900 dark:text-white hover:scale-110 transition-all shadow-premium border border-primary-200 dark:border-white/20">
                     <ChevronLeft size={20} className="md:w-6 md:h-6" />
                   </button>
-                  <button onClick={nextImage} className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 glass rounded-full flex items-center justify-center text-white hover:scale-110 transition-all shadow-premium border-white/20">
+                  <button onClick={nextImage} className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-primary-900 dark:text-white hover:scale-110 transition-all shadow-premium border border-primary-200 dark:border-white/20">
                     <ChevronRight size={20} className="md:w-6 md:h-6" />
                   </button>
                 </>
@@ -172,13 +172,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     PREMIUM VİTRİN
                   </div>
                 )}
-                <div className="glass px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase text-white shadow-premium border-white/20">
+                <div className="bg-primary-900/90 dark:bg-black/50 backdrop-blur-sm px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase text-white shadow-premium border border-white/20">
                   {ad.category?.name || 'GENEL'}
                 </div>
               </div>
 
               {/* Image Counter */}
-              <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 glass px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-[10px] font-black tracking-widest text-white border-white/20">
+              <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 bg-primary-900/90 dark:bg-black/50 backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-[10px] font-black tracking-widest text-white border border-white/20 shadow-premium">
                 {currentImageIndex + 1} / {ad.images.length}
               </div>
             </div>
@@ -242,7 +242,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     <MapPin size={20} />
                   </div>
                   <div className="flex-1">
-                    <div className="text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-0.5">Konum</div>
+                    <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-0.5">Konum</div>
                     <div className="text-sm font-black text-primary-900 dark:text-white uppercase">
                       {ad.location.district}, {ad.location.city}
                     </div>
@@ -252,7 +252,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
               {/* Description */}
               <div className="mb-10">
-                <h3 className="text-xs font-black text-primary-400 uppercase tracking-[0.25em] mb-6">İlan Detayları</h3>
+                <h3 className="text-xs font-black text-primary-700 dark:text-primary-400 uppercase tracking-[0.25em] mb-6">İlan Detayları</h3>
                 <div className="text-primary-700 dark:text-primary-300 leading-[1.8] text-sm whitespace-pre-wrap font-medium">
                   {ad.description}
                 </div>
@@ -260,7 +260,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
               {/* Seller Info */}
               <div className="mb-10">
-                <h3 className="text-xs font-black text-primary-400 uppercase tracking-[0.25em] mb-6">Yayınlayan</h3>
+                <h3 className="text-xs font-black text-primary-700 dark:text-primary-400 uppercase tracking-[0.25em] mb-6">Yayınlayan</h3>
                 <div className="flex items-center gap-5 p-6 rounded-[2rem] bg-gradient-premium border border-white/5 shadow-premium">
                   <div className="w-16 h-16 rounded-2xl bg-accent-premium flex items-center justify-center shadow-premium ring-4 ring-white/10">
                     <span className="text-2xl font-black text-white">
