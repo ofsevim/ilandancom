@@ -78,6 +78,19 @@ html:not(.dark) .listing-card:hover {
   border-color: #6366f1;
 }
 
+html:not(.dark) .clear-btn {
+  color: rgba(30, 41, 59, 0.6) !important;
+}
+
+html:not(.dark) .clear-btn:hover {
+  color: #1e293b !important;
+  background: rgba(30, 41, 59, 0.05) !important;
+}
+
+html:not(.dark) .filter-header-border {
+  border-color: #e2e8f0 !important;
+}
+
 body {
   @apply bg-primary-50 dark:bg-primary-950 text-primary-900 dark:text-primary-50;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";

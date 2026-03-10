@@ -204,8 +204,8 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
       {/* Desktop Sidebar */}
       <div className="hidden lg:block w-full premium-sidebar-bg p-6 pb-8">
 
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-          <h3 className="text-xl font-bold text-white flex items-center gap-3">
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5 filter-header-border">
+          <h3 className="text-xl font-bold text-primary-950 dark:text-white flex items-center gap-3">
             <Filter size={20} className="text-indigo-500" />
             Filtreler
           </h3>

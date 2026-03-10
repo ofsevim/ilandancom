@@ -47,7 +47,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
 
   const modalVariants: any = {
     hidden: { opacity: 0, scale: 0.9, y: 20 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 30, stiffness: 500, mass: 0.8 } },
     exit: { opacity: 0, scale: 0.9, y: 20 }
   };
 
