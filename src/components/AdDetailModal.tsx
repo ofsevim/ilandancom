@@ -124,7 +124,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
         initial="hidden"
         animate="visible"
         exit="exit"
-        className={`bg-white dark:bg-primary-900 rounded-[2.5rem] w-full relative overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800 ${asPage ? '' : 'max-w-[95vw] my-4'}`}
+        className={`bg-white dark:bg-primary-900 rounded-[2.5rem] w-full relative overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800 ${asPage ? 'scale-90 origin-top' : 'max-w-[95vw] my-4'}`}
       >
         {!asPage && (
           <button
@@ -137,7 +137,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
         <div className="flex flex-col lg:flex-row min-h-[700px]">
           {/* Left Side - Photo Gallery */}
-          <div className="lg:w-[60%] relative bg-primary-50 dark:bg-black/20 flex flex-col">
+          <div className="lg:w-[50%] relative bg-primary-50 dark:bg-black/20 flex flex-col">
             <div className="relative flex-1 min-h-[400px] lg:min-h-0 overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.img
@@ -203,7 +203,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </div>
 
           {/* Right Side - Info Section */}
-          <div className="lg:w-[40%] flex flex-col h-full bg-white dark:bg-primary-900 border-l border-primary-100 dark:border-primary-800">
+          <div className="lg:w-[50%] flex flex-col h-full bg-white dark:bg-primary-900 border-l border-primary-100 dark:border-primary-800">
             <div className="p-8 lg:p-10 flex-1 overflow-y-auto">
               {/* Header Info */}
               <div className="space-y-6 mb-10 pb-8 border-b border-primary-100 dark:border-primary-800">
@@ -261,15 +261,15 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               {/* Seller Info */}
               <div className="mb-10">
                 <h3 className="text-xs font-black text-primary-700 dark:text-primary-400 uppercase tracking-[0.25em] mb-6">Yayınlayan</h3>
-                <div className="flex items-center gap-5 p-6 rounded-[2rem] bg-gradient-premium border border-white/5 shadow-premium">
-                  <div className="w-16 h-16 rounded-2xl bg-accent-premium flex items-center justify-center shadow-premium ring-4 ring-white/10">
+                <div className="flex items-center gap-5 p-6 rounded-[2rem] bg-primary-100 dark:bg-gradient-premium border border-primary-200 dark:border-white/5 shadow-premium">
+                  <div className="w-16 h-16 rounded-2xl bg-accent-premium flex items-center justify-center shadow-premium ring-4 ring-primary-200/50 dark:ring-white/10">
                     <span className="text-2xl font-black text-white">
                       {(seller?.name || 'S')[0].toUpperCase()}
                     </span>
                   </div>
                   <div className="flex-1">
-                    <div className="text-lg font-black text-white mb-1">{seller?.name || 'Satıcı'}</div>
-                    <div className="text-xs font-bold text-white/50 uppercase tracking-widest flex items-center gap-2">
+                    <div className="text-lg font-black text-primary-900 dark:text-white mb-1">{seller?.name || 'Satıcı'}</div>
+                    <div className="text-xs font-bold text-primary-600 dark:text-white/50 uppercase tracking-widest flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
                       Online Satıcı
                     </div>
@@ -301,13 +301,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
             {/* Footer Actions */}
             <div className="p-8 lg:p-10 border-t border-primary-100 dark:border-primary-800 bg-white dark:bg-primary-900/80 backdrop-blur-xl">
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 {seller?.phone && (
                   <a
                     href={`tel:${seller.phone}`}
-                    className="w-full flex items-center justify-center gap-4 py-5 bg-primary-900 dark:bg-white text-white dark:text-primary-950 rounded-2xl font-black text-sm uppercase tracking-widest shadow-premium transition-all hover:-translate-y-1 active:scale-95"
+                    className="w-full flex items-center justify-center gap-3 py-4 bg-white dark:bg-primary-800 text-primary-900 dark:text-white rounded-xl font-bold text-sm border-2 border-primary-200 dark:border-primary-700 shadow-sm transition-all hover:border-primary-300 dark:hover:border-primary-600 active:scale-98"
                   >
-                    <span>💬</span>
+                    <span className="text-lg">💬</span>
                     {seller.phone}
                   </a>
                 )}
@@ -319,9 +319,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                     }
                     setShowMessages(true);
                   }}
-                  className="w-full flex items-center justify-center gap-4 py-5 bg-accent-premium text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-premium transition-all hover:-translate-y-1 active:scale-95 gold-gradient"
+                  className="w-full flex items-center justify-center gap-3 py-4 bg-accent-premium hover:bg-accent-premium/90 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-98"
                 >
-                  <span>✉️</span>
+                  <span className="text-lg">✉️</span>
                   Mesaj Gönder
                 </button>
               </div>
