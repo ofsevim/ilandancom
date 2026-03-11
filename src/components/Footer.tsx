@@ -47,21 +47,6 @@ const Footer: React.FC = () => {
               <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-xs">
                 Türkiye'nin en modern ve kullanıcı dostu ilan platformu. Emlak, vasıta ve tüm alışveriş kategorilerinde güvenle ilanlarınızı yayınlayın.
               </p>
-              <div className="flex gap-4">
-                {[
-                  { icon: 'share', label: 'Sosyal Medya' },
-                  { icon: 'language', label: 'Web' },
-                  { icon: 'public', label: 'Global' }
-                ].map((social, i) => (
-                  <a 
-                    key={i}
-                    href="#" 
-                    className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group"
-                  >
-                    <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">{social.icon}</span>
-                  </a>
-                ))}
-              </div>
             </div>
 
             <div className="lg:ml-auto">

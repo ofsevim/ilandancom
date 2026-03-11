@@ -74,8 +74,27 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
               className="flex items-center gap-3 cursor-pointer shrink-0 group"
               onClick={() => navigate('/')}
             >
-              <div className="w-10 h-10 bg-neon-indigo rounded-[14px] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg shadow-primary-500/20">
-                <span className="material-symbols-outlined text-xl">layers</span>
+              <div className="w-10 h-10 group-hover:scale-105 transition-transform flex-shrink-0">
+                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="hbg" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#6d28d9" />
+                      <stop offset="100%" stopColor="#4f46e5" />
+                    </linearGradient>
+                    <linearGradient id="hglam" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#ffffff" />
+                      <stop offset="100%" stopColor="#ddd6fe" />
+                    </linearGradient>
+                  </defs>
+                  <rect width="512" height="512" rx="120" fill="url(#hbg)" />
+                  <path d="M108 100 L108 348 Q108 380 140 380 L320 380 Q348 380 364 358 L434 268 Q450 250 434 232 L364 142 Q348 120 320 120 L140 120 Q108 120 108 100 Z" fill="url(#hglam)" opacity="0.95" />
+                  <circle cx="164" cy="250" r="30" fill="url(#hbg)" />
+                  <circle cx="164" cy="250" r="22" fill="url(#hglam)" opacity="0.6" />
+                  <rect x="210" y="198" width="140" height="18" rx="9" fill="url(#hbg)" opacity="0.4" />
+                  <rect x="210" y="234" width="108" height="14" rx="7" fill="url(#hbg)" opacity="0.3" />
+                  <rect x="210" y="264" width="124" height="14" rx="7" fill="url(#hbg)" opacity="0.25" />
+                  <rect x="210" y="294" width="88" height="14" rx="7" fill="url(#hbg)" opacity="0.2" />
+                </svg>
               </div>
               <h1 className="text-lg md:text-xl font-black tracking-tighter text-slate-900 dark:text-white">
                 ilandan<span className="text-neon-indigo">.online</span>
@@ -133,7 +152,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                             <div className="px-3 space-y-1">
                               {[
                                 { icon: 'person', label: 'Profil Bilgilerim', action: () => setShowProfileModal(true) },
-                                { icon: 'inventory_2', label: 'İlanlarım Yönet', path: '/dashboard' },
+                                { icon: 'inventory_2', label: 'İlanlarım Yönet', action: () => setShowMyAdsModal(true) },
                                 { icon: 'favorite', label: 'Favorilerim', path: '/favoriler' },
                                 { icon: 'chat', label: 'Mesajlarım', path: '/mesajlar' }
                               ].map((item, i) => (

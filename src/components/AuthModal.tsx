@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Lock, Mail, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 
 interface AuthModalProps {
   onClose: () => void;
@@ -11,6 +12,7 @@ interface AuthModalProps {
 const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgot, setIsForgot] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -23,7 +25,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
     setIsLoading(true);
 
     try {
-      if (isLogin) {
+      if (isForgot) {
+        const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+          redirectTo: `${window.location.origin}/`
+        });
+        if (error) throw new Error(error.message);
+        toast.success('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.');
+        setIsForgot(false);
+      } else if (isLogin) {
         await login(formData.email, formData.password);
         onClose();
       } else {
@@ -73,16 +82,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
             <Lock size={32} className="text-primary-950" />
           </div>
           <h2 className="text-3xl font-black text-primary-950 dark:text-white tracking-tight">
-            {isLogin ? 'Tekrar Hoşgeldiniz' : 'Yeni Hesap Oluştur'}
+            {isForgot ? 'Şifreni Sıfırla' : isLogin ? 'Tekrar Hoşgeldiniz' : 'Yeni Hesap Oluştur'}
           </h2>
           <p className="text-primary-500 dark:text-primary-400 mt-3 font-medium text-sm">
-            {isLogin ? 'Premium ilan dünyasına giriş yapın' : 'Avantajlı satış ve alışverişe başlayın'}
+            {isForgot ? 'E-posta adresinize sıfırlama bağlantısı göndereceğiz' : isLogin ? 'Premium ilan dünyasına giriş yapın' : 'Avantajlı satış ve alışverişe başlayın'}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <AnimatePresence mode="popLayout">
-            {!isLogin && (
+            {!isLogin && !isForgot && (
               <motion.div
                 initial={{ opacity: 0, height: 0, marginBottom: 0 }}
                 animate={{ opacity: 1, height: 'auto', marginBottom: 20 }}
@@ -120,20 +129,34 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
             />
           </div>
 
-          <div className="relative">
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-400">
-              <Lock size={20} />
+          {!isForgot && (
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-400">
+                <Lock size={20} />
+              </div>
+              <input
+                type="password"
+                name="password"
+                placeholder="Şifreniz"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full pl-12 pr-6 py-4 bg-primary-50 dark:bg-primary-800/50 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium focus:border-transparent outline-none text-primary-950 dark:text-white font-semibold transition-all placeholder:text-primary-300"
+              />
             </div>
-            <input
-              type="password"
-              name="password"
-              placeholder="Şifreniz"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full pl-12 pr-6 py-4 bg-primary-50 dark:bg-primary-800/50 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium focus:border-transparent outline-none text-primary-950 dark:text-white font-semibold transition-all placeholder:text-primary-300"
-            />
-          </div>
+          )}
+
+          {isLogin && !isForgot && (
+            <div className="text-right -mt-2">
+              <button
+                type="button"
+                onClick={() => setIsForgot(true)}
+                className="text-xs font-bold text-primary-400 hover:text-accent-premium transition-colors"
+              >
+                Şifremi Unuttum
+              </button>
+            </div>
+          )}
 
           <div className="pt-4">
             <button
@@ -143,25 +166,36 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
             >
               {isLoading
                 ? 'İşlem yapılıyor...'
-                : (isLogin ? 'Giriş Yap' : 'Hemen Katıl')
+                : isForgot ? 'Sıfırlama Bağlantısı Gönder' : (isLogin ? 'Giriş Yap' : 'Hemen Katıl')
               }
             </button>
           </div>
         </form>
 
-        <div className="mt-10 text-center">
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-primary-500 dark:text-primary-400 font-bold hover:text-accent-premium transition-colors text-sm"
-          >
-            {isLogin
-              ? 'Henüz hesabınız yok mu? '
-              : 'Zaten üyeliğiniz var mı? '
-            }
-            <span className="text-accent-premium border-b-2 border-accent-premium/30 pb-0.5 ml-1">
-              {isLogin ? 'Kayıt Ol' : 'Giriş Yap'}
-            </span>
-          </button>
+        <div className="mt-10 text-center space-y-3">
+          {isForgot ? (
+            <button
+              onClick={() => setIsForgot(false)}
+              className="text-primary-500 dark:text-primary-400 font-bold hover:text-accent-premium transition-colors text-sm"
+            >
+              ← Giriş ekranına dön
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-primary-500 dark:text-primary-400 font-bold hover:text-accent-premium transition-colors text-sm"
+              >
+                {isLogin
+                  ? 'Henüz hesabınız yok mu? '
+                  : 'Zaten üyeliğiniz var mı? '
+                }
+                <span className="text-accent-premium border-b-2 border-accent-premium/30 pb-0.5 ml-1">
+                  {isLogin ? 'Kayıt Ol' : 'Giriş Yap'}
+                </span>
+              </button>
+            </>
+          )}
         </div>
       </motion.div>
     </div>

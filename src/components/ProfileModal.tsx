@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { userService, adService } from '../services/api';
+import { userService, adService, storageService } from '../services/api';
 import { User, Edit, Save, X, Camera, Mail, Phone, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -12,6 +12,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
   const { user, logout, favorites } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -34,7 +35,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
         if (!mounted) return;
         const activeAds = (myAds || []).filter(a => a.status === 'active').length;
         const soldAds = (myAds || []).filter(a => a.status === 'sold').length;
-        const totalViews = (myAds || []).reduce((sum, a) => sum + (a.view_count || 0), 0);
+        const totalViews = (myAds || []).reduce((sum, a) => sum + (a.viewCount || a.view_count || 0), 0);
         setStats({ activeAds, soldAds, totalViews });
       } catch {
         if (!mounted) return;
@@ -44,6 +45,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
     loadStats();
     return () => { mounted = false; };
   }, [user]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const fileName = `avatar-${user.id}-${Date.now()}.${ext}`;
+      await storageService.uploadImage(file, fileName);
+      const url = await storageService.getImageUrl(fileName);
+      const newFormData = { ...formData, avatar: url };
+      setFormData(newFormData);
+      await userService.updateUser(user.id, { avatar: url });
+      toast.success('Profil fotoğrafı güncellendi!');
+    } catch (err) {
+      toast.error('Fotoğraf yüklenemedi');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -102,9 +123,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
                 )}
               </div>
               {isEditing && (
-                <button className="absolute -bottom-2 -right-2 bg-white text-indigo-600 p-3 rounded-2xl shadow-xl hover:scale-110 active:scale-95 transition-all border border-indigo-100">
-                  <Camera size={18} />
-                </button>
+                <label className="absolute -bottom-2 -right-2 bg-white text-indigo-600 p-3 rounded-2xl shadow-xl hover:scale-110 active:scale-95 transition-all border border-indigo-100 cursor-pointer">
+                  {uploadingAvatar ? (
+                    <div className="w-[18px] h-[18px] border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin" />
+                  ) : (
+                    <Camera size={18} />
+                  )}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+                </label>
               )}
             </div>
             <h3 className="text-3xl font-black text-primary-950 dark:text-white mb-2 tracking-tight">

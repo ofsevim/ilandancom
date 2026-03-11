@@ -1,31 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#818cf8" />
-      <stop offset="50%" stop-color="#4f46e5" />
-      <stop offset="100%" stop-color="#312e81" />
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6d28d9" />
+      <stop offset="100%" stop-color="#4f46e5" />
     </linearGradient>
-    <linearGradient id="glam" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-      <stop offset="100%" stop-color="#e0e7ff" stop-opacity="0.9" />
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
     </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#020617" flood-opacity="0.5" />
-    </filter>
+    <linearGradient id="glam" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#ddd6fe" />
+    </linearGradient>
   </defs>
-  
-  <rect width="512" height="512" rx="128" fill="url(#bg)" />
-  
-  <g filter="url(#shadow)">
-    <!-- Stylized 'i' -->
-    <circle cx="256" cy="144" r="52" fill="url(#glam)" />
-    <!-- Rounded rectangle for the stem -->
-    <rect x="212" y="224" width="88" height="196" rx="44" fill="url(#glam)" />
-    
-    <!-- Sparkle 1 (Top right) -->
-    <path d="M370,80 Q380,105 405,115 Q380,125 370,150 Q360,125 335,115 Q360,105 370,80 Z" fill="#c7d2fe" />
-    
-    <!-- Sparkle 2 (Bottom left) -->
-    <path d="M120,320 Q130,335 145,345 Q130,355 120,370 Q110,355 95,345 Q110,335 120,320 Z" fill="#e0e7ff" />
-  </g>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="120" fill="url(#bg)" />
+
+  <!-- Shine overlay -->
+  <rect width="512" height="512" rx="120" fill="url(#shine)" />
+
+  <!-- Tag shape (price tag / ilan) -->
+  <!-- Main tag body -->
+  <path d="M108 100 L108 348 Q108 380 140 380 L320 380 Q348 380 364 358 L434 268 Q450 250 434 232 L364 142 Q348 120 320 120 L140 120 Q108 120 108 100 Z"
+        fill="url(#glam)" opacity="0.95" />
+
+  <!-- Tag hole -->
+  <circle cx="164" cy="250" r="30" fill="url(#bg)" />
+  <circle cx="164" cy="250" r="22" fill="url(#glam)" opacity="0.6" />
+
+  <!-- Horizontal lines inside tag (like a listing/label) -->
+  <rect x="210" y="198" width="140" height="18" rx="9" fill="url(#bg)" opacity="0.4" />
+  <rect x="210" y="234" width="108" height="14" rx="7" fill="url(#bg)" opacity="0.3" />
+  <rect x="210" y="264" width="124" height="14" rx="7" fill="url(#bg)" opacity="0.25" />
+  <rect x="210" y="294" width="88" height="14" rx="7" fill="url(#bg)" opacity="0.2" />
+
+  <!-- Small sparkle top-right -->
+  <path d="M416 68 Q422 82 436 88 Q422 94 416 108 Q410 94 396 88 Q410 82 416 68Z" fill="#c4b5fd" />
 </svg>

@@ -4,14 +4,14 @@ import { favoriteService } from '../services/api';
 import { Ad } from '../types';
 import { X, Heart, Trash2, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AdCard from './AdCard';
 import AdDetailModal from './AdDetailModal';
 
 interface FavoritesModalProps {
   onClose: () => void;
+  asPage?: boolean;
 }
 
-const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
+const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false }) => {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +98,59 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose }) => {
       maximumFractionDigits: 0,
     }).format(price);
   };
+
+  if (asPage) {
+    return (
+      <div className="w-full">
+        <div className="p-4 border-b border-slate-200 dark:border-white/5 flex items-center gap-4 mb-6">
+          <div className="w-12 h-12 bg-neon-indigo rounded-[1rem] flex items-center justify-center shadow-gold-heavy">
+            <Heart size={22} className="text-white fill-current" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Favorilerim <span className="text-primary-500">({favorites.length})</span></h1>
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Beğendiğiniz tüm ilanlar</p>
+          </div>
+        </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="w-12 h-12 border-[4px] border-primary-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : favorites.length === 0 ? (
+          <div className="text-center py-24">
+            <Heart size={48} className="text-primary-300 mx-auto mb-4" />
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">Henüz favori ilanınız yok</h3>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {favorites.map((ad) => (
+              <div key={ad.id} className="group glass-premium rounded-[2rem] border border-slate-200 dark:border-white/5 overflow-hidden hover:border-primary-500/30 transition-all duration-500 shadow-sm hover:shadow-xl">
+                <div className="relative h-48 bg-slate-50 dark:bg-black/20 overflow-hidden rounded-t-[2rem]">
+                  {ad.images.length > 0 ? (
+                    <img src={ad.images[0]} alt={ad.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                      <Heart size={32} />
+                    </div>
+                  )}
+                  <button onClick={() => handleRemoveFavorite(ad.id)} className="absolute top-3 right-3 w-9 h-9 bg-white/90 dark:bg-[#12142d]/90 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow border border-red-100 dark:border-transparent active:scale-90" title="Favorilerden Kaldır">
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-extrabold text-slate-900 dark:text-white mb-1 line-clamp-1 text-[15px] tracking-tight group-hover:text-primary-500 transition-colors">{ad.title}</h3>
+                  <div className="text-[20px] font-black text-slate-900 dark:text-white mb-3">{formatPrice(ad.price)}</div>
+                  <button onClick={() => handleAdClick(ad)} className="w-full bg-slate-100 dark:bg-[#12142d] text-slate-700 dark:text-slate-300 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-neon-indigo hover:text-white transition-all flex items-center justify-center gap-2 border border-slate-200 dark:border-white/5 hover:border-transparent">
+                    <Eye size={14} /> İncele
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {selectedAd && <AdDetailModal ad={selectedAd} onClose={() => setSelectedAd(null)} />}
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/60 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">

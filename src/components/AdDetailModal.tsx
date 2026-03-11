@@ -208,9 +208,9 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 </div>
                 <div>
                   <div className="text-[18px] font-black text-slate-900 dark:text-white leading-tight">{seller?.name || 'Değerli Kullanıcımız'}</div>
-                  <div className="text-[11px] font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-1.5 mt-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    AKTİF SATICI
+                  <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-1.5 mt-1">
+                    <span className="material-symbols-outlined text-[14px] text-primary-500">verified_user</span>
+                    {seller?.role === 'admin' ? 'YÖNETİCİ' : 'KAYITLI SATICI'}
                   </div>
                 </div>
               </div>
@@ -240,17 +240,52 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
       <AnimatePresence>
         {isFullscreen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] bg-slate-950 flex items-center justify-center p-8">
-            <button onClick={() => setIsFullscreen(false)} className="absolute top-8 right-8 w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-slate-950 flex items-center justify-center p-4 md:p-12"
+            onClick={() => setIsFullscreen(false)}
+          >
+            {/* Close button — always on top */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
+              className="absolute top-4 right-4 md:top-8 md:right-8 w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 hover:bg-white/20 hover:scale-110 active:scale-95 transition-all shadow-2xl z-10"
+            >
               <span className="material-symbols-outlined text-3xl">close</span>
             </button>
-            <img src={ad.images[currentImageIndex]} className="max-w-full max-h-full object-contain rounded-[3rem]" />
+            {/* Nav arrows */}
+            {ad.images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                  className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 hover:bg-white/20 transition-all z-10"
+                >
+                  <span className="material-symbols-outlined text-2xl">chevron_left</span>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                  className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 hover:bg-white/20 transition-all z-10"
+                >
+                  <span className="material-symbols-outlined text-2xl">chevron_right</span>
+                </button>
+              </>
+            )}
+            <img
+              src={ad.images[currentImageIndex]}
+              className="max-w-full max-h-full object-contain rounded-2xl select-none pointer-events-none"
+              alt={ad.title}
+            />
+            {/* Image counter */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-white text-xs font-black tracking-widest uppercase">
+              {currentImageIndex + 1} / {ad.images.length}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {showMessages && <MessagesModal receiverId={ad.userId} adId={ad.id} onClose={() => setShowMessages(false)} />}
-      {showEditModal && <EditAdModal ad={ad} onClose={() => setShowEditModal(false)} onAdUpdated={() => { setShowEditModal(false); window.location.reload(); }} />}
+      {showEditModal && <EditAdModal ad={ad} onClose={() => setShowEditModal(false)} onAdUpdated={() => { setShowEditModal(false); onDeleted?.(); onClose(); }} />}
     </div>
   );
 };

@@ -35,11 +35,11 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
     };
 
     const navItems = [
-        { icon: Home, label: 'ANA SAYFA', action: () => navigate('/') },
-        { icon: Search, label: 'ARA', action: () => { navigate('/'); setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100); } },
-        { icon: PlusCircle, label: 'İLAN VER', action: () => navigate('/ilan-ver'), isPrimary: true },
-        { icon: Heart, label: 'FAVORİLER', action: () => { if (!user) setShowAuthModal(true); else setShowFavoritesModal(true); } },
-        { icon: User, label: 'PROFİL', action: handleProfileClick }
+        { icon: Home, label: 'ANA SAYFA', path: '/', action: () => navigate('/') },
+        { icon: Search, label: 'ARA', path: '/ilanlar', action: () => navigate('/ilanlar') },
+        { icon: PlusCircle, label: 'İLAN VER', path: '/ilan-ver', action: () => navigate('/ilan-ver'), isPrimary: true },
+        { icon: Heart, label: 'FAVORİLER', path: '/favoriler', action: () => { if (!user) setShowAuthModal(true); else setShowFavoritesModal(true); } },
+        { icon: User, label: 'PROFİL', path: null, action: handleProfileClick }
     ];
 
     return (
@@ -48,7 +48,9 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                 <div className="flex justify-around items-center h-16 px-2">
                     {navItems.map((item, index) => {
                         const Icon = item.icon;
-                        const isActive = (location.pathname === '/' && item.label === 'ANA SAYFA');
+                        const isActive = item.path 
+                            ? (item.path === '/' ? location.pathname === '/' : location.pathname.startsWith(item.path))
+                            : false;
 
                         if (item.isPrimary) {
                             return (

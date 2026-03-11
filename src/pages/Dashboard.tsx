@@ -6,6 +6,7 @@ import { Ad } from '../types';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import ProfileModal from '../components/ProfileModal';
+import EditAdModal from '../components/EditAdModal';
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -20,6 +21,7 @@ const Dashboard = () => {
         messages: 0
     });
     const [showProfileModal, setShowProfileModal] = useState(false);
+    const [editingAd, setEditingAd] = useState<Ad | null>(null);
 
     useEffect(() => {
         if (!user) {
@@ -96,8 +98,27 @@ const Dashboard = () => {
             <aside className="w-72 premium-sidebar-bg flex flex-col justify-between p-8 border-r border-slate-200 dark:border-white/5">
                 <div className="space-y-10">
                     <Link to="/" className="flex items-center gap-4 px-2">
-                        <div className="bg-neon-indigo w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-500/20">
-                            <span className="material-symbols-outlined text-2xl">storefront</span>
+                        <div className="w-12 h-12 flex-shrink-0">
+                            <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                                <defs>
+                                    <linearGradient id="dbg" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stopColor="#6d28d9" />
+                                        <stop offset="100%" stopColor="#4f46e5" />
+                                    </linearGradient>
+                                    <linearGradient id="dglam" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stopColor="#ffffff" />
+                                        <stop offset="100%" stopColor="#ddd6fe" />
+                                    </linearGradient>
+                                </defs>
+                                <rect width="512" height="512" rx="120" fill="url(#dbg)" />
+                                <path d="M108 100 L108 348 Q108 380 140 380 L320 380 Q348 380 364 358 L434 268 Q450 250 434 232 L364 142 Q348 120 320 120 L140 120 Q108 120 108 100 Z" fill="url(#dglam)" opacity="0.95" />
+                                <circle cx="164" cy="250" r="30" fill="url(#dbg)" />
+                                <circle cx="164" cy="250" r="22" fill="url(#dglam)" opacity="0.6" />
+                                <rect x="210" y="198" width="140" height="18" rx="9" fill="url(#dbg)" opacity="0.4" />
+                                <rect x="210" y="234" width="108" height="14" rx="7" fill="url(#dbg)" opacity="0.3" />
+                                <rect x="210" y="264" width="124" height="14" rx="7" fill="url(#dbg)" opacity="0.25" />
+                                <rect x="210" y="294" width="88" height="14" rx="7" fill="url(#dbg)" opacity="0.2" />
+                            </svg>
                         </div>
                         <div>
                             <h1 className="text-xl font-black leading-tight text-slate-900 dark:text-white tracking-tight">ilandan<span className="text-neon-indigo">.online</span></h1>
@@ -135,8 +156,9 @@ const Dashboard = () => {
                             </div>
                             <div className="overflow-hidden">
                                 <p className="text-[15px] font-black truncate text-slate-900 dark:text-white leading-tight">{user.name}</p>
-                                <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Çevrimiçi
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                                    <span className="material-symbols-outlined text-[12px] text-primary-500">verified_user</span>
+                                    {user.role === 'admin' ? 'YÖNETİCİ' : 'ÜYE'}
                                 </p>
                             </div>
                         </div>
@@ -283,6 +305,13 @@ const Dashboard = () => {
                                                     <span className="material-symbols-outlined text-[16px]">visibility</span>
                                                     Görüntüle
                                                 </Link>
+                                                <button
+                                                    onClick={() => setEditingAd(ad)}
+                                                    className="flex items-center gap-2 px-6 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all shadow-sm border border-indigo-200 dark:border-transparent"
+                                                >
+                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                                                    Düzenle
+                                                </button>
                                                 <button 
                                                     onClick={() => handleAction('sold', ad.id)}
                                                     className="flex items-center gap-2 px-6 py-2.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm border border-emerald-200 dark:border-transparent"
@@ -307,6 +336,7 @@ const Dashboard = () => {
                 </div>
             </main>
             {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
+            {editingAd && <EditAdModal ad={editingAd} onClose={() => setEditingAd(null)} onAdUpdated={() => { setEditingAd(null); setAds(prev => prev.map(a => a.id === editingAd.id ? { ...a } : a)); }} />}
         </div>
     );
 };
