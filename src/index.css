@@ -10,8 +10,8 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --text-primary: #1e293b;
-  --text-secondary: rgba(30,41,59,0.7);
-  --border-color: rgba(30,41,59,0.1);
+  --text-secondary: rgba(30, 41, 59, 0.7);
+  --border-color: rgba(30, 41, 59, 0.1);
   --accent-color: #6366f1;
 }
 
@@ -21,20 +21,20 @@
   --bg-primary: #0a0e27;
   --bg-secondary: #1a1e3a;
   --text-primary: #ffffff;
-  --text-secondary: rgba(255,255,255,0.7);
-  --border-color: rgba(255,255,255,0.1);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --border-color: rgba(255, 255, 255, 0.1);
   --accent-color: #6366f1;
 }
 
 /* Base Light Theme Overrides (Applied when not dark) */
-html:not(.dark) .filter-panel, 
+html:not(.dark) .filter-panel,
 html:not(.dark) .premium-sidebar-bg {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
 }
 
-html:not(.dark) .filter-input, 
+html:not(.dark) .filter-input,
 html:not(.dark) .filter-select,
 html:not(.dark) .dark-filter-input,
 html:not(.dark) .dark-filter-select {
@@ -45,7 +45,7 @@ html:not(.dark) .dark-filter-select {
 
 html:not(.dark) .filter-input::placeholder,
 html:not(.dark) .dark-filter-input::placeholder {
-  color: rgba(30,41,59,0.5) !important;
+  color: rgba(30, 41, 59, 0.5) !important;
 }
 
 html:not(.dark) .section-title,
@@ -107,6 +107,18 @@ body {
 
 ::-webkit-scrollbar-thumb {
   @apply bg-primary-300 dark:bg-primary-700 border-4 border-solid border-primary-100 dark:border-primary-900 rounded-full hover:bg-primary-400 dark:hover:bg-primary-600;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-primary-200 dark:bg-primary-800 rounded-full hover:bg-primary-300 dark:hover:bg-primary-700;
 }
 
 /* Line clamp utility */

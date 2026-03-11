@@ -286,6 +286,7 @@ export const adService = {
   },
 
   async updateAd(id: string, updates: {
+    status?: 'pending' | 'active' | 'sold' | 'rejected';
     title?: string;
     description?: string;
     price?: number;
@@ -299,6 +300,7 @@ export const adService = {
         updated_at: new Date().toISOString()
       };
 
+      if (updates.status !== undefined) updateData.status = updates.status;
       if (updates.title !== undefined) updateData.title = updates.title;
       if (updates.description !== undefined) updateData.description = updates.description;
       if (updates.price !== undefined) updateData.price = updates.price;

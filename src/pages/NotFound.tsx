@@ -1,0 +1,23 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Layout from '../components/Layout';
+
+const NotFound = () => {
+  return (
+    <Layout>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+        <h1 className="text-6xl font-black text-accent-premium mb-4">404</h1>
+        <h2 className="text-2xl font-bold text-primary-950 dark:text-white mb-6">Sayfa Bulunamadı</h2>
+        <p className="text-primary-500 mb-8 max-w-md">Aradığınız sayfa kaldırılmış, adı değiştirilmiş veya geçici olarak kullanım dışı olabilir.</p>
+        <Link 
+          to="/" 
+          className="bg-accent-premium text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 transition-all"
+        >
+          Ana Sayfaya Dön
+        </Link>
+      </div>
+    </Layout>
+  );
+};
+
+export default NotFound;

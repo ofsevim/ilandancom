@@ -38,6 +38,7 @@ Markdown
 - Kullanıcının verdiği **spesifik talimatların dışına çıkma.**
 - Kendi başına "iyileştirme", "refactor" veya "ekleme" yapma.
 - İstenen şey A ise, A'yı yap. A yaparken B'yi de "düzelteyim" deme.
+- bana türkçe cevap ver 
 
 ### 1.2 Onay Mekanizması
 ⛔ YASAK → Kodu değiştir, sonra "şunu da yaptım" de.

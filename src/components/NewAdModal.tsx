@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { X, Upload, Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCategories } from '../hooks/useCategories';
 import { adService, storageService } from '../services/api';
@@ -55,40 +54,21 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
   };
 
   const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
+    setFormData(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!user) {
-      toast.error('Giriş yapmanız gerekiyor');
-      return;
-    }
-
-    const hasDistrictList = !!(districts && districts.length);
-
+    if (!user) { toast.error('Giriş yapmanız gerekiyor'); return; }
     if (!formData.title || !formData.description || !formData.price || !formData.categoryId || !formData.city) {
-      toast.error('Lütfen tüm gerekli alanları doldurun');
-      return;
+      toast.error('Lütfen tüm gerekli alanları doldurun'); return;
     }
-
     if (formData.description.trim().length < 60) {
-      toast.error('Açıklama en az 60 karakter olmalıdır');
-      return;
-    }
-
-    if (hasDistrictList && !formData.district) {
-      toast.error('Lütfen ilçe seçin');
-      return;
+      toast.error('Açıklama en az 60 karakter olmalıdır'); return;
     }
 
     try {
       setLoading(true);
-
       const imageUrls: string[] = [];
       for (let i = 0; i < formData.images.length; i++) {
         const file = formData.images[i];
@@ -100,12 +80,8 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
       }
 
       await adService.createAd({
-        title: formData.title,
-        description: formData.description,
+        ...formData,
         price: parseFloat(formData.price),
-        categoryId: formData.categoryId,
-        city: formData.city,
-        district: formData.district,
         images: imageUrls,
         userId: user.id
       });
@@ -114,185 +90,140 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
       onAdCreated();
       onClose();
     } catch (error: any) {
-      toast.error(error.message || 'İlan oluşturulurken hata oluştu');
+      toast.error(error.message || 'Hata oluştu');
     } finally {
       setLoading(false);
     }
   };
 
-  const hasDistrictList = !!(districts && districts.length);
-
-  const modalVariants: any = {
-    hidden: { opacity: 0, scale: 0.95, y: 30 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } },
-    exit: { opacity: 0, scale: 0.95, y: 30 }
-  };
-
   return (
-    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8 overflow-y-auto">
-      <motion.div
-        variants={modalVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        className="bg-white dark:bg-primary-900 rounded-[2.5rem] max-w-4xl w-full max-h-full overflow-hidden flex flex-col shadow-premium border border-primary-100 dark:border-primary-800"
+    <div className="fixed inset-0 bg-slate-900/90 backdrop-blur-xl flex items-center justify-center z-[1000] p-4 lg:p-8">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-white dark:bg-slate-900 rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-100 dark:border-slate-800"
       >
-        <div className="flex items-center justify-between p-8 border-b border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20">
+        <div className="flex items-center justify-between p-8 border-b border-slate-100 dark:border-slate-800">
           <div>
-            <h2 className="text-2xl font-black text-primary-950 dark:text-white tracking-tight">Yeni İlan Oluştur</h2>
-            <p className="text-primary-500 text-sm font-medium mt-1">İlanınızı premium detaylarla yayınlayın</p>
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">Yeni İlan Oluştur</h2>
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Stitch Premium Marketplace</p>
           </div>
-          <button
-            onClick={onClose}
-            className="w-12 h-12 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-primary-600 dark:hover:text-white transition-all border-white/10 shadow-premium"
-          >
-            <X size={20} />
+          <button onClick={onClose} className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-primary transition-all">
+            <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 lg:p-10 space-y-8 overflow-y-auto flex-1 scrollbar-hide">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="p-8 lg:p-10 space-y-10 overflow-y-auto flex-1 scrollbar-hide">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div className="space-y-8">
               <div>
-                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">İlan Başlığı</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">İLAN BAŞLIĞI</label>
                 <input
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
-                  placeholder="Neyi satıyorsunuz?"
-                  maxLength={100}
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold transition-all placeholder:text-slate-400"
+                  placeholder="Kısa ve öz bir başlık yazın..."
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Açıklama</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">AÇIKLAMA</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={6}
-                  className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all resize-none"
-                  placeholder="Ürününüzün detaylarından bahsedin (En az 60 karakter)"
-                  maxLength={1000}
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold transition-all resize-none placeholder:text-slate-400"
+                  placeholder="Detaylı açıklama (en az 60 karakter)..."
                 />
-                <div className="mt-2 text-[10px] font-bold text-primary-400 text-right pr-4">
-                  {formData.description.trim().length} / 1000
+                <div className="mt-2 text-[10px] font-bold text-slate-400 text-right uppercase tracking-widest">
+                  {formData.description.trim().length} / 1000 KARAKTER
                 </div>
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Fiyat (TL)</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">FİYAT (TL)</label>
                   <input
                     type="number"
                     name="price"
                     value={formData.price}
                     onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
+                    className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold transition-all"
                     placeholder="0"
-                    min="0"
                   />
                 </div>
-
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Kategori</label>
-                  <select
-                    name="categoryId"
-                    value={formData.categoryId}
-                    onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="">Kategori Seçin</option>
-                    {categories.map(category => (
-                      <option key={category.id} value={category.id}>{category.name}</option>
-                    ))}
-                  </select>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">KATEGORİ</label>
+                  <div className="relative">
+                    <select
+                      name="categoryId"
+                      value={formData.categoryId}
+                      onChange={handleInputChange}
+                      className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold appearance-none cursor-pointer"
+                    >
+                      <option value="">Seçin</option>
+                      {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Şehir</label>
-                  <select
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="">Şehir Seçin</option>
-                    {cities.map((c: any) => (
-                      <option key={c.id} value={c.name}>{c.name}</option>
-                    ))}
-                  </select>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">ŞEHİR</label>
+                  <div className="relative">
+                    <select
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold appearance-none cursor-pointer"
+                    >
+                      <option value="">Seçin</option>
+                      {cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                    </select>
+                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                  </div>
                 </div>
-
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">İlçe</label>
-                  {hasDistrictList ? (
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">İLÇE</label>
+                  <div className="relative">
                     <select
                       name="district"
                       value={formData.district}
                       onChange={handleInputChange}
-                      className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold appearance-none cursor-pointer"
                       required
                     >
-                      <option value="">İlçe Seçin</option>
-                      {districts.map((d: any) => (
-                        <option key={d.id} value={d.name}>{d.name}</option>
-                      ))}
+                      <option value="">Seçin</option>
+                      {districts.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
                     </select>
-                  ) : (
-                    <input
-                      type="text"
-                      name="district"
-                      value={formData.district}
-                      onChange={handleInputChange}
-                      className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
-                      placeholder="İlçe girin"
-                      required={!!formData.city}
-                    />
-                  )}
+                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <div>
-            <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-4 block pl-4">Görseller (Max 10)</label>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-                id="image-upload"
-              />
-              <label
-                htmlFor="image-upload"
-                className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-primary-200 dark:border-primary-700 rounded-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-800 transition-all group"
-              >
-                <Upload className="h-8 w-8 text-primary-400 group-hover:text-accent-premium transition-colors" />
-                <span className="text-[10px] font-bold text-primary-400 mt-2 uppercase">Ekle</span>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 block">İLAN GÖRSELLERİ (MAX 10)</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" id="image-upload" />
+              <label htmlFor="image-upload" className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-[2rem] cursor-pointer hover:bg-primary/5 hover:border-primary transition-all group">
+                <span className="material-symbols-outlined text-4xl text-slate-300 group-hover:text-primary mb-2">upload</span>
+                <span className="text-[10px] font-black text-slate-400 group-hover:text-primary">GÖRSEL EKLE</span>
               </label>
 
-              {formData.images.map((file, index) => (
-                <div key={index} className="relative aspect-square rounded-3xl overflow-hidden shadow-sm group">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt=""
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all hover:bg-red-600"
-                  >
-                    <Trash2 size={16} />
+              {formData.images.map((file, i) => (
+                <div key={i} className="relative aspect-square rounded-[2rem] overflow-hidden group">
+                  <img src={URL.createObjectURL(file)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <button type="button" onClick={() => removeImage(i)} className="absolute top-2 right-2 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
+                    <span className="material-symbols-outlined">delete</span>
                   </button>
                 </div>
               ))}
@@ -300,31 +231,11 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
           </div>
         </form>
 
-        <div className="p-8 border-t border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20 flex flex-col sm:flex-row justify-end gap-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-8 py-4 bg-white dark:bg-primary-800 text-primary-900 dark:text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-100 dark:hover:bg-primary-700 transition-all border border-primary-100 dark:border-primary-800 shadow-sm"
-          >
-            İptal
-          </button>
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={loading}
-            className="px-10 py-4 gold-gradient text-primary-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:-translate-y-1 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
-          >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-950"></div>
-                <span>Kaydediliyor...</span>
-              </>
-            ) : (
-              <>
-                <Plus size={18} />
-                <span>Yayınla</span>
-              </>
-            )}
+        <div className="p-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex flex-col sm:flex-row justify-end gap-4">
+          <button onClick={onClose} className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">İPTAL</button>
+          <button onClick={handleSubmit} disabled={loading} className="px-10 py-4 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:-translate-y-1 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
+            {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <span className="material-symbols-outlined">add</span>}
+            <span>{loading ? 'YAYINLANIYOR...' : 'İLAN YAYINLA'}</span>
           </button>
         </div>
       </motion.div>

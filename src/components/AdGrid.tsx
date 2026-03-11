@@ -14,24 +14,13 @@ interface AdGridProps {
 const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton, onEditClick }) => {
   if (loading) {
     return (
-      <div
-        className="grid gap-3 sm:gap-4 md:gap-5"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}
-      >
-        {[...Array(6)].map((_, index) => (
-          <div
-            key={index}
-            className="premium-card animate-pulse flex flex-col"
-            style={{ minHeight: '280px' }}
-          >
-            <div className="h-32 sm:h-44 bg-primary-200 dark:bg-primary-800"></div>
-            <div className="p-3 sm:p-4 flex-1 space-y-3 sm:space-y-4">
-              <div className="h-5 bg-primary-200 dark:bg-primary-800 rounded-lg w-3/4"></div>
-              <div className="h-4 bg-primary-200 dark:bg-primary-800 rounded-lg w-1/2"></div>
-              <div className="pt-4 border-t border-primary-100 dark:border-primary-800 flex justify-between">
-                <div className="h-3 bg-primary-100 dark:bg-primary-800 rounded w-1/4"></div>
-                <div className="h-3 bg-primary-100 dark:bg-primary-800 rounded w-1/4"></div>
-              </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="bg-slate-50 dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 h-[420px] animate-pulse">
+            <div className="h-2/3 bg-slate-100 dark:bg-slate-700 rounded-t-[2rem]"></div>
+            <div className="p-6 space-y-4">
+              <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-full w-3/4"></div>
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-full w-1/2"></div>
             </div>
           </div>
         ))}
@@ -41,51 +30,20 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
 
   if (ads.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="col-span-full flex flex-col items-center justify-center py-32"
-      >
-        <div className="bg-primary-100 dark:bg-primary-900 rounded-full w-40 h-40 flex items-center justify-center mb-8 shadow-premium border border-primary-200 dark:border-primary-800">
-          <span className="text-7xl">💎</span>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center py-32 text-center">
+        <div className="w-40 h-40 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-8 shadow-xl shadow-primary/5">
+          <span className="material-symbols-outlined text-6xl text-slate-300">inventory_2</span>
         </div>
-        <h3 className="text-3xl font-bold text-primary-950 dark:text-white mb-4">
-          Aradığınızı Bulamadık
-        </h3>
-        <p className="text-primary-500 dark:text-primary-400 text-center text-lg max-w-md">
-          Henüz bu kriterlere uygun bir ilan yok. Belki de ilk ilanı siz vermek istersiniz?
-        </p>
+        <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter mb-4">Aradığınız İlanı Bulamadık</h3>
+        <p className="text-slate-500 dark:text-slate-400 max-w-sm font-medium">Farklı kriterler deneyebilir veya siz yeni bir ilan verebilirsiniz.</p>
       </motion.div>
     );
   }
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="grid gap-3 sm:gap-4 md:gap-5"
-      style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}
-    >
-      {ads.map((ad, index) => (
-        <AdCard
-          key={ad.id}
-          ad={ad}
-          onAdClick={onAdClick}
-          showEditButton={showEditButton}
-          onEditClick={onEditClick}
-          priority={index < 6}
-        />
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {ads.map((ad, i) => (
+        <AdCard key={ad.id} ad={ad} onAdClick={onAdClick} showEditButton={showEditButton} onEditClick={onEditClick} priority={i < 6} />
       ))}
     </motion.div>
   );

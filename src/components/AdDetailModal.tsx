@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Clock, Eye, Heart, ChevronLeft, ChevronRight, Trash2, Edit } from 'lucide-react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { adService, publicUserService } from '../services/api';
@@ -48,9 +47,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           createdAt: (sellerData as any).created_at || (sellerData as any).createdAt,
           isActive: (sellerData as any).is_active || (sellerData as any).isActive
         });
-      } catch {
-        // fallback to ad.user
-      }
+      } catch { }
     };
     loadSeller();
     return () => { isMounted = false; };
@@ -62,312 +59,193 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
         if (!user || user.id !== ad.userId) {
           await adService.incrementViewCount(ad.id);
         }
-      } catch (error) {
-        console.warn('View count artırılamadı:', error);
-      }
+      } catch (error) { console.warn('View count artırılamadı:', error); }
     };
     incrementView();
   }, [ad.id, ad.userId, user]);
 
   const isFavorite = favorites.includes(ad.id);
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('tr-TR', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price) + ' TL';
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev === ad.images.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? ad.images.length - 1 : prev - 1));
-  };
+  const formatPrice = (price: number) => new Intl.NumberFormat('tr-TR').format(price) + ' TL';
+  const nextImage = () => setCurrentImageIndex((p) => (p === ad.images.length - 1 ? 0 : p + 1));
+  const prevImage = () => setCurrentImageIndex((p) => (p === 0 ? ad.images.length - 1 : p - 1));
 
   const handleFavoriteClick = () => {
-    if (!user) {
-      toast.error('Favorilere eklemek için önce giriş yapmalısınız');
-      return;
-    }
+    if (!user) { toast.error('Lütfen önce giriş yapın'); return; }
     toggleFavorite(ad.id);
   };
 
   const handleDelete = async () => {
     if (!user || user.id !== ad.userId || deleting) return;
-    const confirmDelete = window.confirm('İlanı kaldırmak istediğinize emin misiniz?');
-    if (!confirmDelete) return;
+    if (!window.confirm('Emin misiniz?')) return;
     try {
       setDeleting(true);
       await adService.deleteAd(ad.id);
-      onDeleted && onDeleted();
+      onDeleted?.();
       onClose();
-    } catch (e) {
-      console.error('İlan silinirken hata:', e);
-      toast.error('İlan silinirken bir hata oluştu.');
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  const modalVariants: any = {
-    hidden: { opacity: 0, scale: 0.95, y: 20 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } },
-    exit: { opacity: 0, scale: 0.95, y: 20 }
+    } catch { toast.error('Hata oluştu'); } finally { setDeleting(false); }
   };
 
   return (
-    <div className={asPage ? "w-full mx-auto" : "fixed inset-0 bg-primary-950/80 backdrop-blur-md flex items-start justify-center z-50 p-4 overflow-y-auto"}>
-      <motion.div
-        variants={modalVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        className={`bg-white dark:bg-primary-900 rounded-[2.5rem] w-full relative overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800 ${asPage ? 'scale-90 origin-top' : 'max-w-[95vw] my-4'}`}
+    <div className={asPage ? "w-full max-w-7xl mx-auto py-8 px-6" : "fixed inset-0 bg-slate-900/90 backdrop-blur-xl flex items-center justify-center z-[100] p-4 lg:p-8"}>
+      <motion.div 
+        initial={!asPage ? { opacity: 0, scale: 0.9, y: 30 } : {}}
+        animate={!asPage ? { opacity: 1, scale: 1, y: 0 } : {}}
+        className={`bg-white dark:bg-slate-900 w-full overflow-hidden flex flex-col md:flex-row relative shadow-3xl shadow-black/20
+          ${asPage ? 'rounded-[3rem] border border-slate-100 dark:border-slate-800' : 'max-w-6xl max-h-[90vh] rounded-[3rem]'}`}
       >
         {!asPage && (
-          <button
-            onClick={onClose}
-            className="absolute top-6 right-6 z-50 w-12 h-12 glass rounded-full flex items-center justify-center text-primary-600 dark:text-white hover:scale-110 active:scale-95 transition-all shadow-premium border-white/20"
-          >
-            <X size={20} />
+          <button onClick={onClose} className="absolute top-6 right-6 z-50 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 hover:scale-110 transition-all">
+            <span className="material-symbols-outlined text-2xl">close</span>
           </button>
         )}
 
-        <div className="flex flex-col lg:flex-row min-h-[700px]">
-          {/* Left Side - Photo Gallery */}
-          <div className="lg:w-[50%] relative bg-primary-50 dark:bg-black/20 flex flex-col">
-            <div className="relative flex-1 min-h-[400px] lg:min-h-0 overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={currentImageIndex}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 900, quality: 85 })}
-                  alt={ad.title}
-                  className="w-full h-full object-cover cursor-zoom-in"
-                  onClick={() => setIsFullscreen(true)}
-                />
-              </AnimatePresence>
+        {/* Gallery Section */}
+        <div className="md:w-3/5 relative bg-slate-50 dark:bg-slate-950 flex flex-col min-h-[400px]">
+          <div className="flex-1 relative overflow-hidden flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={currentImageIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 900 })}
+                className="w-full h-full object-cover cursor-zoom-in"
+                onClick={() => setIsFullscreen(true)}
+              />
+            </AnimatePresence>
 
-              {/* Navigation Arrows */}
-              {ad.images.length > 1 && (
-                <>
-                  <button onClick={prevImage} className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-primary-900 dark:text-white hover:scale-110 transition-all shadow-premium border border-primary-200 dark:border-white/20">
-                    <ChevronLeft size={20} className="md:w-6 md:h-6" />
-                  </button>
-                  <button onClick={nextImage} className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-primary-900 dark:text-white hover:scale-110 transition-all shadow-premium border border-primary-200 dark:border-white/20">
-                    <ChevronRight size={20} className="md:w-6 md:h-6" />
-                  </button>
-                </>
-              )}
-
-              {/* Top Badges */}
-              <div className="absolute top-4 left-4 md:top-6 md:left-6 flex flex-col gap-2 md:gap-3">
-                {ad.featured && (
-                  <div className="gold-gradient text-primary-950 px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase shadow-premium">
-                    PREMIUM VİTRİN
-                  </div>
-                )}
-                <div className="bg-primary-900/90 dark:bg-black/50 backdrop-blur-sm px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase text-white shadow-premium border border-white/20">
-                  {ad.category?.name || 'GENEL'}
-                </div>
+            {ad.images.length > 1 && (
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-6 flex justify-between pointer-events-none">
+                <button onClick={prevImage} className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg pointer-events-auto hover:bg-white hover:text-slate-900 transition-all">
+                  <span className="material-symbols-outlined text-2xl">chevron_left</span>
+                </button>
+                <button onClick={nextImage} className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg pointer-events-auto hover:bg-white hover:text-slate-900 transition-all">
+                  <span className="material-symbols-outlined text-2xl">chevron_right</span>
+                </button>
               </div>
+            )}
 
-              {/* Image Counter */}
-              <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 bg-primary-900/90 dark:bg-black/50 backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-[10px] font-black tracking-widest text-white border border-white/20 shadow-premium">
+            <div className="absolute bottom-6 left-6 flex gap-2">
+              <div className="px-4 py-2 rounded-2xl bg-black/40 backdrop-blur-md text-white border border-white/10 text-[10px] font-black tracking-widest uppercase">
                 {currentImageIndex + 1} / {ad.images.length}
               </div>
             </div>
-
-            {/* Thumbnails Sidebar/Bottom */}
-            {ad.images.length > 1 && (
-              <div className="p-6 overflow-x-auto flex gap-4 scrollbar-hide bg-white dark:bg-primary-900/50 backdrop-blur-xl border-t border-primary-100 dark:border-white/5">
-                {ad.images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${idx === currentImageIndex
-                      ? 'border-accent-premium shadow-premium scale-105'
-                      : 'border-transparent opacity-50 hover:opacity-100'
-                      }`}
-                  >
-                    <img src={buildImageUrl(img, { width: 200, height: 200, quality: 60 })} className="w-full h-full object-cover" alt="" />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Right Side - Info Section */}
-          <div className="lg:w-[50%] flex flex-col h-full bg-white dark:bg-primary-900 border-l border-primary-100 dark:border-primary-800">
-            <div className="p-8 lg:p-10 flex-1 overflow-y-auto">
-              {/* Header Info */}
-              <div className="space-y-6 mb-10 pb-8 border-b border-primary-100 dark:border-primary-800">
-                <div className="flex items-center gap-4 text-[10px] font-black tracking-widest uppercase text-accent-premium">
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={12} />
-                    {new Date(ad.createdAt).toLocaleDateString('tr-TR')}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Eye size={12} />
-                    {ad.viewCount} Görüntüleme
-                  </div>
+          <div className="p-6 flex gap-3 overflow-x-auto scrollbar-hide border-t border-slate-100 dark:border-slate-800">
+            {ad.images.map((img, i) => (
+              <button 
+                key={i} 
+                onClick={() => setCurrentImageIndex(i)}
+                className={`w-20 h-16 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all
+                  ${i === currentImageIndex ? 'border-primary shadow-xl scale-105' : 'border-transparent opacity-40 hover:opacity-100'}`}
+              >
+                <img src={buildImageUrl(img, { width: 100, height: 80 })} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="md:w-2/5 flex flex-col bg-white dark:bg-slate-900 overflow-y-auto max-h-[90vh]">
+          <div className="p-10 flex-1">
+            <div className="mb-8 p-4 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest">{ad.category?.name || 'GENEL'}</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">schedule</span>
+                  {new Date(ad.createdAt).toLocaleDateString('tr-TR')}
+                </span>
+              </div>
+              <h1 className="text-3xl font-black text-slate-900 dark:text-white leading-tight tracking-tighter mb-4">{ad.title}</h1>
+              <div className="text-4xl font-black text-primary tracking-tight">{formatPrice(ad.price)}</div>
+            </div>
+
+            <div className="flex gap-3 mb-10">
+              <button 
+                onClick={() => setShowMessages(true)}
+                className="flex-1 h-14 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined">mail</span>
+                MESAJ GÖNDER
+              </button>
+              <button 
+                onClick={handleFavoriteClick}
+                className={`w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all
+                  ${isFavorite ? 'bg-red-500 border-red-500 text-white shadow-xl shadow-red-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}
+              >
+                <span className={`material-symbols-outlined text-2xl ${isFavorite ? 'fill-1' : ''}`}>favorite</span>
+              </button>
+            </div>
+
+            <div className="space-y-8 mb-10">
+              <div>
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">İlan Detayları</h3>
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-loose whitespace-pre-wrap">{ad.description}</div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">GÖRÜNTÜLENME</div>
+                  <div className="text-sm font-black text-slate-900 dark:text-white">{ad.viewCount}</div>
                 </div>
-
-                <h1 className="text-3xl font-black text-primary-950 dark:text-white leading-[1.2] tracking-tight">
-                  {ad.title}
-                </h1>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-4xl font-black text-accent-premium gold-text">
-                    {formatPrice(ad.price)}
-                  </div>
-                  <button
-                    onClick={handleFavoriteClick}
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-premium border-2 active:scale-95 ${isFavorite
-                      ? 'bg-red-500 border-red-500 text-white'
-                      : 'bg-white dark:bg-primary-800 border-primary-100 dark:border-primary-700 text-primary-400 hover:text-red-500 hover:border-red-500'
-                      }`}
-                  >
-                    <Heart size={24} className={isFavorite ? 'fill-current' : ''} />
-                  </button>
+                <div className="p-4 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">KONUM</div>
+                  <div className="text-sm font-black text-slate-900 dark:text-white truncate">{ad.location.city}, {ad.location.district}</div>
                 </div>
+              </div>
+            </div>
 
-                <div className="flex items-center gap-3 p-4 bg-primary-50 dark:bg-primary-800/50 rounded-2xl border border-primary-100 dark:border-primary-800 transition-colors group">
-                  <div className="w-10 h-10 bg-accent-premium rounded-xl flex items-center justify-center text-white shadow-premium transition-transform group-hover:rotate-12">
-                    <MapPin size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest mb-0.5">Konum</div>
-                    <div className="text-sm font-black text-primary-900 dark:text-white uppercase">
-                      {ad.location.district}, {ad.location.city}
-                    </div>
+            <div className="p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Satıcı Bilgileri</h3>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-white text-xl font-black">
+                  {seller?.avatar ? <img src={seller.avatar} className="w-full h-full object-cover rounded-2xl" /> : (seller?.name || 'S')[0].toUpperCase()}
+                </div>
+                <div>
+                  <div className="text-sm font-black text-slate-900 dark:text-white">{seller?.name || 'Değerli Kullanıcımız'}</div>
+                  <div className="text-[10px] font-bold text-green-500 uppercase tracking-widest flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                    ONLINE SATICI
                   </div>
                 </div>
               </div>
-
-              {/* Description */}
-              <div className="mb-10">
-                <h3 className="text-xs font-black text-primary-700 dark:text-primary-400 uppercase tracking-[0.25em] mb-6">İlan Detayları</h3>
-                <div className="text-primary-700 dark:text-primary-300 leading-[1.8] text-sm whitespace-pre-wrap font-medium">
-                  {ad.description}
-                </div>
-              </div>
-
-              {/* Seller Info */}
-              <div className="mb-10">
-                <h3 className="text-xs font-black text-primary-700 dark:text-primary-400 uppercase tracking-[0.25em] mb-6">Yayınlayan</h3>
-                <div className="flex items-center gap-5 p-6 rounded-[2rem] bg-primary-100 dark:bg-gradient-premium border border-primary-200 dark:border-white/5 shadow-premium">
-                  <div className="w-16 h-16 rounded-2xl bg-accent-premium flex items-center justify-center shadow-premium ring-4 ring-primary-200/50 dark:ring-white/10">
-                    <span className="text-2xl font-black text-white">
-                      {(seller?.name || 'S')[0].toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-lg font-black text-primary-900 dark:text-white mb-1">{seller?.name || 'Satıcı'}</div>
-                    <div className="text-xs font-bold text-primary-600 dark:text-white/50 uppercase tracking-widest flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                      Online Satıcı
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Management Buttons (If Owner) */}
-              {user && (user.id === ad.userId || user.role === 'admin') && (
-                <div className="mb-10 grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => setShowEditModal(true)}
-                    className="flex items-center justify-center gap-2 py-4 bg-primary-50 dark:bg-primary-800 text-primary-900 dark:text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white dark:hover:bg-primary-700 transition-all border border-primary-100 dark:border-primary-800 shadow-sm"
-                  >
-                    <Edit size={16} className="text-accent-premium" />
-                    Düzenle
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    className="flex items-center justify-center gap-2 py-4 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all border border-red-100 shadow-sm disabled:opacity-50"
-                  >
-                    <Trash2 size={16} />
-                    {deleting ? 'Siliniyor' : 'İlanı Sil'}
-                  </button>
-                </div>
+              {seller?.phone && (
+                <a href={`tel:${seller.phone}`} className="flex items-center gap-3 text-xs font-black text-slate-900 dark:text-white">
+                  <span className="material-symbols-outlined text-primary">call</span>
+                  {seller.phone}
+                </a>
               )}
             </div>
 
-            {/* Footer Actions */}
-            <div className="p-8 lg:p-10 border-t border-primary-100 dark:border-primary-800 bg-white dark:bg-primary-900/80 backdrop-blur-xl">
-              <div className="flex flex-col gap-3">
-                {seller?.phone && (
-                  <a
-                    href={`tel:${seller.phone}`}
-                    className="w-full flex items-center justify-center gap-3 py-4 bg-white dark:bg-primary-800 text-primary-900 dark:text-white rounded-xl font-bold text-sm border-2 border-primary-200 dark:border-primary-700 shadow-sm transition-all hover:border-primary-300 dark:hover:border-primary-600 active:scale-98"
-                  >
-                    <span className="text-lg">💬</span>
-                    {seller.phone}
-                  </a>
-                )}
-                <button
-                  onClick={() => {
-                    if (!user) {
-                      toast.error('Mesaj göndermek için önce giriş yapmalısınız');
-                      return;
-                    }
-                    setShowMessages(true);
-                  }}
-                  className="w-full flex items-center justify-center gap-3 py-4 bg-accent-premium hover:bg-accent-premium/90 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-98"
-                >
-                  <span className="text-lg">✉️</span>
-                  Mesaj Gönder
+            {user && (user.id === ad.userId || user.role === 'admin') && (
+              <div className="mt-8 flex gap-3">
+                <button onClick={() => setShowEditModal(true)} className="flex-1 py-4 px-6 border-2 border-slate-100 dark:border-slate-700 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-lg">edit</span>
+                  DÜZENLE
+                </button>
+                <button onClick={handleDelete} disabled={deleting} className="flex-1 py-4 px-6 border-2 border-red-50 rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 transition-all flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-lg">delete</span>
+                  {deleting ? 'SİLİNİYOR...' : 'SİL'}
                 </button>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </motion.div>
 
-      {/* Fullscreen Viewer */}
       <AnimatePresence>
         {isFullscreen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 lg:p-12"
-          >
-            <button
-              onClick={() => setIsFullscreen(false)}
-              className="absolute top-4 right-4 md:top-10 md:right-10 w-10 h-10 md:w-14 md:h-14 glass rounded-full flex items-center justify-center text-white active:scale-90 transition-all z-[110]"
-            >
-              <X size={24} className="md:w-7 md:h-7" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] bg-slate-950 flex items-center justify-center p-8">
+            <button onClick={() => setIsFullscreen(false)} className="absolute top-8 right-8 w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20">
+              <span className="material-symbols-outlined text-3xl">close</span>
             </button>
-            <img
-              src={ad.images[currentImageIndex]}
-              alt={ad.title}
-              className="max-w-full max-h-full object-contain rounded-3xl"
-            />
+            <img src={ad.images[currentImageIndex]} className="max-w-full max-h-full object-contain rounded-[3rem]" />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {showMessages && (
-        <MessagesModal receiverId={ad.userId} adId={ad.id} onClose={() => setShowMessages(false)} />
-      )}
-
-      {showEditModal && (
-        <EditAdModal
-          ad={ad}
-          onClose={() => setShowEditModal(false)}
-          onAdUpdated={() => {
-            setShowEditModal(false);
-            window.location.reload();
-          }}
-        />
-      )}
+      {showMessages && <MessagesModal receiverId={ad.userId} adId={ad.id} onClose={() => setShowMessages(false)} />}
+      {showEditModal && <EditAdModal ad={ad} onClose={() => setShowEditModal(false)} onAdUpdated={() => { setShowEditModal(false); window.location.reload(); }} />}
     </div>
   );
 };

@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Instagram, Twitter, Facebook, ArrowUpRight } from 'lucide-react';
 import AboutModal from './AboutModal';
 import ContactModal from './ContactModal';
 import PolicyModal from './PolicyModal';
-import { motion } from 'framer-motion';
 
 const Footer: React.FC = () => {
   const [showAbout, setShowAbout] = useState(false);
@@ -31,141 +29,90 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-24 overflow-hidden">
-      {/* Premium Decorative Gradient */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-accent-premium/30 to-transparent"></div>
-
-      <div className="bg-primary-950 text-white relative">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-            {/* Brand Section */}
+      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2">
-                <div className="w-10 h-10 bg-accent-premium rounded-xl flex items-center justify-center shadow-md">
-                  <span className="text-white font-black text-xl">i</span>
+              <div 
+                className="flex items-center gap-2 cursor-pointer group"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                <div className="bg-primary p-2 rounded-xl text-white group-hover:rotate-12 transition-transform">
+                  <span className="material-symbols-outlined text-2xl">layers</span>
                 </div>
-                <h3 className="text-2xl font-black tracking-tight text-white outfit-font">ilandan<span className="text-accent-premium">.online</span></h3>
+                <h1 className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">
+                  ilandan<span className="text-primary">.online</span>
+                </h1>
               </div>
-              <p className="text-primary-400 text-sm font-medium leading-relaxed max-w-xs">
-                Türkiye'nin en seçkin ilan platformu. Emlak, araç ve değerli eşyalarınız için premium satış deneyimi.
+              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-xs">
+                Türkiye'nin en modern ve kullanıcı dostu ilan platformu. Emlak, vasıta ve tüm alışveriş kategorilerinde güvenle ilanlarınızı yayınlayın.
               </p>
-              <div className="flex items-center gap-4">
-                {[Facebook, Twitter, Instagram].map((Icon, i) => (
-                  <motion.a
+              <div className="flex gap-4">
+                {[
+                  { icon: 'share', label: 'Sosyal Medya' },
+                  { icon: 'language', label: 'Web' },
+                  { icon: 'public', label: 'Global' }
+                ].map((social, i) => (
+                  <a 
                     key={i}
-                    href="#"
-                    whileHover={{ y: -3 }}
-                    className="w-10 h-10 glass rounded-full flex items-center justify-center text-primary-400 hover:text-accent-premium transition-colors"
+                    href="#" 
+                    className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group"
                   >
-                    <Icon size={18} />
-                  </motion.a>
+                    <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">{social.icon}</span>
+                  </a>
                 ))}
               </div>
             </div>
 
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-accent-premium mb-8">Kurumsal</h4>
-              <ul className="space-y-4">
-                {[
-                  { label: 'Hakkımızda', onClick: () => setShowAbout(true) },
-                  { label: 'İletişim', onClick: () => setShowContact(true) },
-                  { label: 'Kariyer', onClick: () => setShowAbout(true) }
-                ].map((link, i) => (
-                  <li key={i}>
-                    <button
-                      onClick={link.onClick}
-                      className="text-primary-400 hover:text-white transition-colors text-sm font-semibold flex items-center group"
-                    >
-                      {link.label}
-                      <ArrowUpRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 -translate-y-1 translate-x-1 transition-all" />
-                    </button>
-                  </li>
-                ))}
+            <div className="lg:ml-auto">
+              <h4 className="font-bold mb-6 mt-2 uppercase text-[10px] tracking-[0.2em] text-slate-400 dark:text-slate-500">Kurumsal</h4>
+              <ul className="space-y-4 text-sm font-semibold">
+                <li><button onClick={() => setShowAbout(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Hakkımızda</button></li>
+                <li><button onClick={() => setShowAbout(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Sürdürülebilirlik</button></li>
+                <li><button onClick={() => setShowAbout(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Kariyer</button></li>
+                <li><button onClick={() => setShowContact(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Bize Ulaşın</button></li>
               </ul>
             </div>
 
-            {/* Legal Links */}
-            <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-accent-premium mb-8">Hukuki</h4>
-              <ul className="space-y-4">
-                {[
-                  { label: 'Gizlilik Politikası', policy: policies.privacy },
-                  { label: 'Kullanım Koşulları', policy: policies.terms },
-                  { label: 'Çerez Politikası', policy: policies.cookies }
-                ].map((link, i) => (
-                  <li key={i}>
-                    <button
-                      onClick={() => setPolicy(link.policy)}
-                      className="text-primary-400 hover:text-white transition-colors text-sm font-semibold flex items-center group"
-                    >
-                      {link.label}
-                    </button>
-                  </li>
-                ))}
+            <div className="lg:ml-auto">
+              <h4 className="font-bold mb-6 mt-2 uppercase text-[10px] tracking-[0.2em] text-slate-400 dark:text-slate-500">Hizmetlerimiz</h4>
+              <ul className="space-y-4 text-sm font-semibold">
+                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">İlan Dopingi</button></li>
+                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Güvenli Ödeme</button></li>
+                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Hizmet İlanları</button></li>
+                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Reklam Ver</button></li>
               </ul>
             </div>
 
-            {/* Contact Section */}
-            <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-accent-premium mb-8">İletişim</h4>
-              <ul className="space-y-6">
-                <li className="flex items-start gap-4 group">
-                  <div className="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center text-accent-light shrink-0 transition-all border border-primary-800">
-                    <Mail size={18} />
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">E-posta</span>
-                    <a href="mailto:omersvm0606@gmail.com" className="text-sm font-bold text-primary-100 hover:text-white transition-colors">omersvm0606@gmail.com</a>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4 group">
-                  <div className="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center text-accent-light shrink-0 transition-all border border-primary-800">
-                    <Phone size={18} />
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Telefon</span>
-                    <a href="tel:+905070000000" className="text-sm font-bold text-primary-100 hover:text-white transition-colors">+90 507 000 00 00</a>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4 group">
-                  <div className="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center text-accent-light shrink-0 transition-all border border-primary-800">
-                    <MapPin size={18} />
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Merkez</span>
-                    <p className="text-sm font-bold text-primary-100">Ankara, Türkiye</p>
-                  </div>
-                </li>
+            <div className="lg:ml-auto">
+              <h4 className="font-bold mb-6 mt-2 uppercase text-[10px] tracking-[0.2em] text-slate-400 dark:text-slate-500">Yardım & Hukuki</h4>
+              <ul className="space-y-4 text-sm font-semibold">
+                <li><button onClick={() => setPolicy(policies.privacy)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Gizlilik Politikası</button></li>
+                <li><button onClick={() => setPolicy(policies.terms)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Kullanım Koşulları</button></li>
+                <li><button onClick={() => setPolicy(policies.cookies)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Çerez Politikası</button></li>
+                <li><button onClick={() => setShowContact(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Yardım Merkezi</button></li>
               </ul>
             </div>
           </div>
-        </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-primary-900 bg-black/50">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
-            <p className="text-primary-500 text-sm font-medium">
-              © {currentYear} <span className="text-primary-300">ilandan.online</span>. Tüm hakları saklıdır.
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">
+              © {currentYear} ilandan.online. Tüm hakları saklıdır.
             </p>
-            <div className="flex items-center gap-8">
-              {[
-                { label: 'Yardım', onClick: () => setShowContact(true) },
-                { label: 'Güvenlik', onClick: () => setPolicy(policies.privacy) },
-                { label: 'SSS', onClick: () => setShowAbout(true) }
-              ].map((item) => (
-                <button
-                  key={item.label}
-                  onClick={item.onClick}
-                  className="text-primary-500 hover:text-accent-premium text-xs font-black uppercase tracking-widest transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
+            <div className="flex items-center gap-6">
+              <img 
+                alt="App Store" 
+                className="h-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqtbpJSIkZmaSvyVBSU96mr3iH_yW-uhdzcn3PubGDsIETCKoHgfc3S_MAAA3jsW_KM3zBZQqb_dnmu-JEXDd_dcsQmNe9o2uniJ8j9C1pwZ9G2fPh4Cy0zDh1OM0RRUi9bb6kBRthsEd-TxLiyD7Hc5xuQD8I8x33VtA2-PpcpIGA5hc1ODGYx9jKFK7yJOQSBEbl8sunmwhi2JXzsJVn5Nx7XkX7RcPcBk-rJH2y3WPYo52A2UT-9UzMQ-yLjNSGp0kIuEKKoR_o"
+              />
+              <img 
+                alt="Google Play" 
+                className="h-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBOzbV0xJVGP7eHTXCzKjiNN8bzuuQN-mUd73TOsokShI7aQHyTPMZpwO0ZnfW1ECr-Y3lO5VWs9wOWB1xhjGO5CNny75ohid0zBKGgsOd4OUPOJrccBGY_YX--c1hLbdvrBOukx8h5-h49X23aanVmEnLitC4QerQfg1vrZgOTI1czofdbh_rchsNkee-w9lczhCcY2-5LwnlLIK_EF85vakGGG-9J55YNqv12AVyl16FyH5A4InnUSssv2BotF5uCDjRrFArTnVS"
+              />
             </div>
           </div>
         </div>
-      </div>
 
       {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
       {showContact && <ContactModal onClose={() => setShowContact(false)} />}
