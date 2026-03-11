@@ -562,6 +562,16 @@ export const messageService = {
 
     const { data, error } = await query;
     if (error) throw error;
+
+    // Filter by local hidden timestamp
+    const hidden = JSON.parse(localStorage.getItem('hidden_conversations') || '{}');
+    const key = `${adId || 'null'}-${otherUserId}`;
+    const hiddenAt = hidden[key];
+
+    if (hiddenAt) {
+      return (data || []).filter((m: any) => new Date(m.created_at) > new Date(hiddenAt));
+    }
+
     return data || [];
   },
 
@@ -577,9 +587,16 @@ export const messageService = {
       .order('created_at', { ascending: false });
     if (error) throw error;
 
+    const hidden = JSON.parse(localStorage.getItem('hidden_conversations') || '{}');
     const map: Record<string, any> = {};
     (data || []).forEach((m: any) => {
       const otherId = m.sender_id === myId ? m.receiver_id : m.sender_id;
+      const key = `${m.ad_id || 'null'}-${otherId}`;
+      const hiddenAt = hidden[key];
+      
+      // If conversation is hidden and message is older/equal to hide time, skip
+      if (hiddenAt && new Date(m.created_at) <= new Date(hiddenAt)) return;
+
       if (!map[otherId]) map[otherId] = { otherUserId: otherId, lastMessage: m, adId: m.ad_id };
     });
     return Object.values(map);
@@ -607,10 +624,50 @@ export const messageService = {
       .update({ read_at: new Date().toISOString() })
       .eq('receiver_id', myId)
       .is('read_at', null);
+
     if (otherUserId) query = query.eq('sender_id', otherUserId);
     if (adId) query = query.eq('ad_id', adId);
+
     const { error } = await query;
     if (error) throw error;
+
+    // Reset hidden status if new messages arrive and we read them
+    // Actually, usually reading means it's visible. But here we just want to be sure.
+  },
+
+  async deleteConversation(otherUserId: string, adId: string | null | undefined) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Oturum açmanız gerekiyor');
+    const myId = user.id;
+
+    // Normalize adId: "" or undefined -> null
+    const targetAdId = adId === "" || !adId ? null : adId;
+
+    // 1. Local Hiding (En güvenli yöntem: RLS engellese bile listeden gider)
+    const hidden = JSON.parse(localStorage.getItem('hidden_conversations') || '{}');
+    const hideKey = `${targetAdId || 'null'}-${otherUserId}`;
+    hidden[hideKey] = new Date().toISOString();
+    localStorage.setItem('hidden_conversations', JSON.stringify(hidden));
+
+    // 2. DB Silme: Benim gönderdiklerim
+    let query1 = supabase.from('messages').delete()
+      .eq('sender_id', myId)
+      .eq('receiver_id', otherUserId);
+    
+    if (targetAdId) query1 = query1.eq('ad_id', targetAdId);
+    else query1 = query1.is('ad_id', null);
+    
+    await query1;
+
+    // 3. DB Silme: Karşıdan bana gelenler (Eğer RLS izin veriyorsa)
+    let query2 = supabase.from('messages').delete()
+      .eq('sender_id', otherUserId)
+      .eq('receiver_id', myId);
+    
+    if (targetAdId) query2 = query2.eq('ad_id', targetAdId);
+    else query2 = query2.is('ad_id', null);
+    
+    await query2;
   },
 
   async markAllRead() {
@@ -630,6 +687,9 @@ export const messageService = {
       .order('created_at', { ascending: false });
 
     if (messagesError) throw messagesError;
+
+    // Hidden listesini al
+    const hidden = JSON.parse(localStorage.getItem('hidden_conversations') || '{}');
 
     // İlan ve kullanıcı bilgilerini ayrı ayrı getir
     const adIds = [...new Set(messages?.map(m => m.ad_id).filter(Boolean) || [])];
@@ -655,7 +715,11 @@ export const messageService = {
     (messages || []).forEach((m: any) => {
       const otherId = m.sender_id === myId ? m.receiver_id : m.sender_id;
       const adId = m.ad_id;
-      const key = `${adId}-${otherId}`;
+      const key = `${adId || 'null'}-${otherId}`;
+      
+      // Hidden kontrolü: Eğer mesaj silinme zamanından önceyse atla
+      const hiddenAt = hidden[key];
+      if (hiddenAt && new Date(m.created_at) <= new Date(hiddenAt)) return;
 
       if (!conversationsMap.has(key)) {
         conversationsMap.set(key, {

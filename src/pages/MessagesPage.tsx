@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { messageService, publicUserService, adService, blockService } from '../services/api';
+import { messageService, publicUserService, adService } from '../services/api';
 import { supabase } from '../lib/supabase';
 import Layout from '../components/Layout';
 import { 
@@ -14,7 +14,8 @@ import {
   ChevronRight,
   CheckCheck,
   User as UserIcon,
-  MessageSquare
+  MessageSquare,
+  Trash2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -39,6 +40,7 @@ const MessagesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [otherUser, setOtherUser] = useState<any>(null);
   const [adDetail, setAdDetail] = useState<any>(null);
+  const [showMenu, setShowMenu] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Load conversations
@@ -62,15 +64,21 @@ const MessagesPage = () => {
       loadConversations();
 
       const channel = supabase
-        .channel('messages-page-realtime')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+        .channel('conversations-realtime')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload: any) => {
           const m = payload.new;
-          if (m.receiver_id === user.id || m.sender_id === user.id) {
-            loadConversations();
-            if (activeConversation && 
-                ((m.sender_id === activeConversation.other_user_id && m.receiver_id === user.id) || 
-                 (m.sender_id === user.id && m.receiver_id === activeConversation.other_user_id)) &&
-                (m.ad_id === activeConversation.ad_id)) {
+          
+          // Refresh list on any change related to messages (ours or not, RLS handles it)
+          loadConversations();
+
+          // Update current chat window if it's an INSERT and related to active conversation
+          if (payload.eventType === 'INSERT' && m && activeConversation) {
+            const isRelated = (
+              ((m.sender_id === activeConversation.other_user_id && m.receiver_id === user.id) || 
+               (m.sender_id === user.id && m.receiver_id === activeConversation.other_user_id)) &&
+              (m.ad_id === activeConversation.ad_id)
+            );
+            if (isRelated) {
               setMessages(prev => [...prev, m]);
             }
           }
@@ -292,7 +300,7 @@ const MessagesPage = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2 sm:gap-3">
+                   <div className="flex items-center gap-2 sm:gap-3 relative">
                     <a 
                       href={otherUser?.phone ? `tel:${otherUser.phone}` : '#'}
                       onClick={(e) => !otherUser?.phone && (e.preventDefault(), toast.error('Telefon numarası bulunamadı'))}
@@ -301,23 +309,53 @@ const MessagesPage = () => {
                     >
                       <Phone size={18} />
                     </a>
-                    <button 
-                      onClick={async () => {
-                        if (!otherUser || !confirm(`${otherUser.name} isimli kullanıcıyı engellemek istediğinize emin misiniz?`)) return;
-                        try {
-                          await blockService.blockUser(otherUser.id);
-                          toast.success('Kullanıcı engellendi');
-                          setActiveConversation(null);
-                          loadConversations();
-                        } catch (e: any) {
-                          toast.error(e.message || 'Engelleme başarısız');
-                        }
-                      }}
-                      className="w-11 h-11 flex items-center justify-center bg-white dark:bg-[#12142d] hover:bg-red-50 dark:hover:bg-red-900/20 border border-slate-200 dark:border-white/5 rounded-[14px] text-slate-600 dark:text-red-400 transition-all shadow-sm"
-                      title="Engelle"
-                    >
-                      <MoreVertical size={18} />
-                    </button>
+                    
+                    <div className="relative">
+                      <button 
+                        onClick={() => setShowMenu(!showMenu)}
+                        className={`w-11 h-11 flex items-center justify-center bg-white dark:bg-[#12142d] border border-slate-200 dark:border-white/5 rounded-[14px] text-slate-600 dark:text-slate-300 transition-all shadow-sm ${showMenu ? 'ring-2 ring-primary-500/50 text-primary-500' : 'hover:text-primary-500'}`}
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+
+                      {showMenu && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+                          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#1a1e3a] rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 p-2 z-50">
+                            <button 
+                              onClick={async () => {
+                                if (!confirm('Bu konuşmayı tamamen silmek istediğinize emin misiniz?')) return;
+                                try {
+                                  // Optimistic update: Listeden manuel çıkar (anında görsel sonuç)
+                                  setConversations(prev => prev.filter(c => 
+                                    !(c.other_user_id === activeConversation.other_user_id && c.ad_id === activeConversation.ad_id)
+                                  ));
+
+                                  await messageService.deleteConversation(activeConversation.other_user_id, activeConversation.ad_id);
+                                  toast.success('Konuşma silindi');
+                                  setActiveConversation(null);
+                                  
+                                  // Küçük bir bekleme: DB'nin temizlenmesi ve Realtime yansıması için
+                                  setTimeout(() => {
+                                    loadConversations();
+                                  }, 800);
+
+                                  setShowMenu(false);
+                                } catch (e: any) {
+                                  toast.error(e.message || 'Silme başarısız');
+                                  loadConversations(); // Hata varsa listeyi geri yükle
+                                }
+                              }}
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-500/10 text-slate-600 dark:text-slate-300 hover:text-red-500 dark:hover:text-red-400 rounded-xl transition-all text-sm font-bold"
+                            >
+                              <Trash2 size={16} />
+                              Konuşmayı Sil
+                            </button>
+                            {/* Diğer seçenekler buraya gelebilir */}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </header>
 

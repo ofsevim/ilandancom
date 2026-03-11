@@ -40,7 +40,7 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
 
     const channel = supabase
       .channel('conversations-realtime')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
         loadConversations();
       })
       .subscribe();
