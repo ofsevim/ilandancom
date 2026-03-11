@@ -39,24 +39,24 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ onCategorySelect, selectedC
 
   return (
     <div className="mt-8">
-      <div className="flex items-center gap-4 overflow-x-auto pb-4 no-scrollbar">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 md:gap-6">
         {categories.map((category) => (
           <motion.div
             key={category.id}
             onClick={() => onCategorySelect(category.id)}
             whileHover={{ y: -4 }}
-            className="flex flex-col items-center gap-2 group cursor-pointer shrink-0"
+            className="flex flex-col items-center group cursor-pointer"
           >
-            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all shadow-sm border
+            <div className={`w-[72px] h-[72px] rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border
               ${selectedCategoryId === category.id 
-                ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
-                : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-300 group-hover:border-primary group-hover:text-primary'}`}>
-              <span className="material-symbols-outlined text-2xl">
+                ? 'bg-neon-indigo text-white border-primary-500 shadow-lg shadow-primary-500/20' 
+                : 'bg-white dark:bg-[#12142d] border-primary-100 dark:border-primary-800/30 text-slate-600 dark:text-slate-300 group-hover:border-primary-400 group-hover:text-primary-500'}`}>
+              <span className="material-symbols-outlined text-[28px]">
                 {getIcon(category.icon)}
               </span>
             </div>
-            <span className={`text-[11px] font-bold uppercase tracking-wider transition-colors
-              ${selectedCategoryId === category.id ? 'text-primary' : 'text-slate-500 dark:text-slate-400 group-hover:text-primary'}`}>
+            <span className={`text-[10px] font-black uppercase tracking-widest transition-colors mt-3 text-center px-1
+              ${selectedCategoryId === category.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-500 dark:text-slate-400 group-hover:text-primary-500'}`}>
               {category.name}
             </span>
           </motion.div>

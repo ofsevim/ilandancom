@@ -11,10 +11,9 @@ import ConversationsModal from './ConversationsModal';
 import MessagesModal from './MessagesModal';
 
 interface MobileBottomNavProps {
-    onShowNewAd: () => void;
 }
 
-const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onShowNewAd }) => {
+const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useAuth();
@@ -38,7 +37,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onShowNewAd }) => {
     const navItems = [
         { icon: Home, label: 'ANA SAYFA', action: () => navigate('/') },
         { icon: Search, label: 'ARA', action: () => { navigate('/'); setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100); } },
-        { icon: PlusCircle, label: 'İLAN VER', action: onShowNewAd, isPrimary: true },
+        { icon: PlusCircle, label: 'İLAN VER', action: () => navigate('/ilan-ver'), isPrimary: true },
         { icon: Heart, label: 'FAVORİLER', action: () => { if (!user) setShowAuthModal(true); else setShowFavoritesModal(true); } },
         { icon: User, label: 'PROFİL', action: handleProfileClick }
     ];
@@ -157,7 +156,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onShowNewAd }) => {
             {/* Modals */}
             {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
             {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
-            {showMyAdsModal && <MyAdsModal onClose={() => setShowMyAdsModal(false)} onShowNewAd={onShowNewAd} />}
+            {showMyAdsModal && <MyAdsModal onClose={() => setShowMyAdsModal(false)} onShowNewAd={() => navigate('/ilan-ver')} />}
             {showFavoritesModal && <FavoritesModal onClose={() => setShowFavoritesModal(false)} />}
             {showConversationsModal && (
                 <ConversationsModal

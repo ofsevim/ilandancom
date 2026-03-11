@@ -86,58 +86,58 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   };
 
   return (
-    <div className={asPage ? "w-full max-w-7xl mx-auto py-8 px-6" : "fixed inset-0 bg-slate-900/90 backdrop-blur-xl flex items-center justify-center z-[100] p-4 lg:p-8"}>
+    <div className={asPage ? "w-full max-w-full mx-auto py-0 px-0" : "fixed inset-0 bg-slate-950/80 backdrop-blur-2xl flex items-center justify-center z-[100] p-2 lg:p-4"}>
       <motion.div 
-        initial={!asPage ? { opacity: 0, scale: 0.9, y: 30 } : {}}
+        initial={!asPage ? { opacity: 0, scale: 0.95, y: 20 } : {}}
         animate={!asPage ? { opacity: 1, scale: 1, y: 0 } : {}}
-        className={`bg-white dark:bg-slate-900 w-full overflow-hidden flex flex-col md:flex-row relative shadow-3xl shadow-black/20
-          ${asPage ? 'rounded-[3rem] border border-slate-100 dark:border-slate-800' : 'max-w-6xl max-h-[90vh] rounded-[3rem]'}`}
+        className={`bg-white dark:bg-[#12142d] w-full overflow-hidden flex flex-col md:flex-row relative
+          ${asPage ? 'rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-premium max-w-[1400px] mx-auto' : 'max-w-[1380px] max-h-[92vh] rounded-[2rem] shadow-premium-hover border border-white/10'}`}
       >
         {!asPage && (
-          <button onClick={onClose} className="absolute top-6 right-6 z-50 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 hover:scale-110 transition-all">
+          <button onClick={onClose} className="absolute top-6 right-6 z-50 w-12 h-12 bg-black/20 backdrop-blur-xl rounded-full flex items-center justify-center text-white border border-white/20 hover:bg-black/40 hover:scale-105 transition-all shadow-lg">
             <span className="material-symbols-outlined text-2xl">close</span>
           </button>
         )}
 
         {/* Gallery Section */}
-        <div className="md:w-3/5 relative bg-slate-50 dark:bg-slate-950 flex flex-col min-h-[400px]">
-          <div className="flex-1 relative overflow-hidden flex items-center justify-center">
+        <div className="md:w-[50%] relative bg-slate-100 dark:bg-[#0a0e27] flex flex-col min-h-[450px]">
+          <div className="flex-1 relative overflow-hidden flex items-center justify-center p-0">
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentImageIndex}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 src={buildImageUrl(ad.images[currentImageIndex], { width: 1200, height: 900 })}
-                className="w-full h-full object-cover cursor-zoom-in"
+                className="w-full h-full object-cover cursor-zoom-in rounded-[1.5rem]"
                 onClick={() => setIsFullscreen(true)}
               />
             </AnimatePresence>
 
             {ad.images.length > 1 && (
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-6 flex justify-between pointer-events-none">
-                <button onClick={prevImage} className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg pointer-events-auto hover:bg-white hover:text-slate-900 transition-all">
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-8 flex justify-between pointer-events-none">
+                <button onClick={prevImage} className="w-12 h-12 rounded-full glass flex items-center justify-center shadow-lg pointer-events-auto hover:scale-105 transition-all text-slate-900 dark:text-white">
                   <span className="material-symbols-outlined text-2xl">chevron_left</span>
                 </button>
-                <button onClick={nextImage} className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg pointer-events-auto hover:bg-white hover:text-slate-900 transition-all">
+                <button onClick={nextImage} className="w-12 h-12 rounded-full glass flex items-center justify-center shadow-lg pointer-events-auto hover:scale-105 transition-all text-slate-900 dark:text-white">
                   <span className="material-symbols-outlined text-2xl">chevron_right</span>
                 </button>
               </div>
             )}
 
-            <div className="absolute bottom-6 left-6 flex gap-2">
-              <div className="px-4 py-2 rounded-2xl bg-black/40 backdrop-blur-md text-white border border-white/10 text-[10px] font-black tracking-widest uppercase">
-                {currentImageIndex + 1} / {ad.images.length}
+            <div className="absolute bottom-4 left-6 flex gap-2">
+              <div className="px-4 py-2 rounded-xl glass-premium text-white text-[11px] font-black tracking-widest uppercase shadow-lg">
+                GÖRSEL {currentImageIndex + 1} / {ad.images.length}
               </div>
             </div>
           </div>
 
-          <div className="p-6 flex gap-3 overflow-x-auto scrollbar-hide border-t border-slate-100 dark:border-slate-800">
+          <div className="p-4 flex gap-3 overflow-x-auto scrollbar-hide">
             {ad.images.map((img, i) => (
               <button 
                 key={i} 
                 onClick={() => setCurrentImageIndex(i)}
-                className={`w-20 h-16 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all
-                  ${i === currentImageIndex ? 'border-primary shadow-xl scale-105' : 'border-transparent opacity-40 hover:opacity-100'}`}
+                className={`w-[88px] h-[66px] rounded-xl overflow-hidden border-[3px] flex-shrink-0 transition-all duration-300
+                  ${i === currentImageIndex ? 'border-primary-500 shadow-glow' : 'border-transparent opacity-50 hover:opacity-100'}`}
               >
                 <img src={buildImageUrl(img, { width: 100, height: 80 })} className="w-full h-full object-cover" />
               </button>
@@ -146,85 +146,90 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
         </div>
 
         {/* Content Section */}
-        <div className="md:w-2/5 flex flex-col bg-white dark:bg-slate-900 overflow-y-auto max-h-[90vh]">
-          <div className="p-10 flex-1">
-            <div className="mb-8 p-4 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest">{ad.category?.name || 'GENEL'}</span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                  <span className="material-symbols-outlined text-xs">schedule</span>
-                  {new Date(ad.createdAt).toLocaleDateString('tr-TR')}
+        <div className="md:w-[50%] flex flex-col bg-white dark:bg-[#12142d] overflow-y-auto max-h-[90vh] custom-scrollbar">
+          <div className="p-5 lg:p-7 flex-1">
+            <div className="mb-4 pb-4 border-b border-slate-100 dark:border-white/5">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="px-4 py-1.5 bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 rounded-lg text-[10px] font-black uppercase tracking-widest">{ad.category?.name || 'GENEL'}</span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[14px]">schedule</span>
+                  {ad.createdAt && !isNaN(new Date(ad.createdAt).getTime()) ? new Date(ad.createdAt).toLocaleDateString('tr-TR') : 'YENİ'}
                 </span>
               </div>
-              <h1 className="text-3xl font-black text-slate-900 dark:text-white leading-tight tracking-tighter mb-4">{ad.title}</h1>
-              <div className="text-4xl font-black text-primary tracking-tight">{formatPrice(ad.price)}</div>
+              <h1 className="text-[28px] lg:text-[34px] font-black text-slate-900 dark:text-white leading-[1.15] tracking-tight mb-4">{ad.title}</h1>
+              <div className="text-[36px] lg:text-[40px] font-black text-primary-500 dark:text-primary-400 tracking-tighter drop-shadow-sm">{formatPrice(ad.price)}</div>
             </div>
 
-            <div className="flex gap-3 mb-10">
+            <div className="flex gap-4 mb-6">
               <button 
                 onClick={() => setShowMessages(true)}
-                className="flex-1 h-14 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                className="flex-1 h-16 bg-neon-indigo text-white rounded-[1.5rem] font-black text-[14px] uppercase tracking-widest shadow-gold-heavy hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
               >
-                <span className="material-symbols-outlined">mail</span>
-                MESAJ GÖNDER
+                <span className="material-symbols-outlined text-[20px]">mail</span>
+                Satıcıyla İletişim
               </button>
               <button 
                 onClick={handleFavoriteClick}
-                className={`w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all
-                  ${isFavorite ? 'bg-red-500 border-red-500 text-white shadow-xl shadow-red-500/20' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400'}`}
+                className={`w-16 h-16 rounded-[1.5rem] border flex items-center justify-center shadow-sm hover:shadow-md transition-all
+                  ${isFavorite ? 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30 text-red-500' : 'bg-white dark:bg-[#1a1e3a] border-slate-200 dark:border-white/10 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}
               >
-                <span className={`material-symbols-outlined text-2xl ${isFavorite ? 'fill-1' : ''}`}>favorite</span>
+                <span className={`material-symbols-outlined text-[28px] ${isFavorite ? 'fill-1' : ''}`}>favorite</span>
               </button>
             </div>
 
-            <div className="space-y-8 mb-10">
+            <div className="space-y-6 mb-8">
               <div>
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">İlan Detayları</h3>
-                <div className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-loose whitespace-pre-wrap">{ad.description}</div>
+                <h3 className="dark-section-title text-slate-900 mb-2 uppercase tracking-widest text-[13px] flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px] text-primary-500">subject</span>İlan Detayları
+                </h3>
+                <div className="text-[15px] font-medium text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{ad.description}</div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">GÖRÜNTÜLENME</div>
-                  <div className="text-sm font-black text-slate-900 dark:text-white">{ad.viewCount}</div>
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-white/5">
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-white/5">
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px]">visibility</span>GÖRÜNTÜLENME</div>
+                  <div className="text-[17px] font-black text-slate-900 dark:text-white">{ad.viewCount}</div>
                 </div>
-                <div className="p-4 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">KONUM</div>
-                  <div className="text-sm font-black text-slate-900 dark:text-white truncate">{ad.location.city}, {ad.location.district}</div>
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-white/5">
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px]">map</span>KONUM</div>
+                  <div className="text-[15px] font-black text-slate-900 dark:text-white truncate">{ad.location?.city || 'Bilinmeyen'}, {ad.location?.district || 'Konum'}</div>
                 </div>
               </div>
             </div>
 
-            <div className="p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Satıcı Bilgileri</h3>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-white text-xl font-black">
-                  {seller?.avatar ? <img src={seller.avatar} className="w-full h-full object-cover rounded-2xl" /> : (seller?.name || 'S')[0].toUpperCase()}
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-white/5 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <span className="material-symbols-outlined text-[120px]">account_circle</span>
+              </div>
+              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-5">Satıcı Profıli</h3>
+              <div className="flex items-center gap-4 mb-4 relative z-10">
+                <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary-600 dark:text-primary-400 text-2xl font-black border-2 border-primary-200 dark:border-primary-800">
+                  {seller?.avatar ? <img src={seller.avatar} className="w-full h-full object-cover rounded-full" /> : (seller?.name || 'S')[0].toUpperCase()}
                 </div>
                 <div>
-                  <div className="text-sm font-black text-slate-900 dark:text-white">{seller?.name || 'Değerli Kullanıcımız'}</div>
-                  <div className="text-[10px] font-bold text-green-500 uppercase tracking-widest flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                    ONLINE SATICI
+                  <div className="text-[18px] font-black text-slate-900 dark:text-white leading-tight">{seller?.name || 'Değerli Kullanıcımız'}</div>
+                  <div className="text-[11px] font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-1.5 mt-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    AKTİF SATICI
                   </div>
                 </div>
               </div>
               {seller?.phone && (
-                <a href={`tel:${seller.phone}`} className="flex items-center gap-3 text-xs font-black text-slate-900 dark:text-white">
-                  <span className="material-symbols-outlined text-primary">call</span>
+                <a href={`tel:${seller.phone}`} className="inline-flex items-center gap-2 text-[14px] font-black text-slate-700 dark:text-slate-300 bg-white dark:bg-[#12142d] py-2 px-4 rounded-xl border border-slate-200 dark:border-white/10 hover:border-primary-500 transition-colors relative z-10 w-fit">
+                  <span className="material-symbols-outlined text-[18px] text-primary-500">call</span>
                   {seller.phone}
                 </a>
               )}
             </div>
 
             {user && (user.id === ad.userId || user.role === 'admin') && (
-              <div className="mt-8 flex gap-3">
-                <button onClick={() => setShowEditModal(true)} className="flex-1 py-4 px-6 border-2 border-slate-100 dark:border-slate-700 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined text-lg">edit</span>
+              <div className="mt-8 flex gap-4 pt-8 border-t border-slate-100 dark:border-white/5">
+                <button onClick={() => setShowEditModal(true)} className="flex-1 py-4 px-6 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">edit</span>
                   DÜZENLE
                 </button>
-                <button onClick={handleDelete} disabled={deleting} className="flex-1 py-4 px-6 border-2 border-red-50 rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 transition-all flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined text-lg">delete</span>
+                <button onClick={handleDelete} disabled={deleting} className="flex-1 py-4 px-6 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-red-100 dark:hover:bg-red-500/20 transition-all flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">delete</span>
                   {deleting ? 'SİLİNİYOR...' : 'SİL'}
                 </button>
               </div>

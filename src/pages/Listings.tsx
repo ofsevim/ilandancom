@@ -55,7 +55,7 @@ const Listings = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-10 py-8 flex flex-col md:flex-row gap-6">
         <aside className="w-full md:w-80 flex-shrink-0">
           <SidebarFilters filters={filters} onFiltersChange={handleFiltersChange} />
         </aside>

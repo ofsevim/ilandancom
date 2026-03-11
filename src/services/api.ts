@@ -108,24 +108,70 @@ export const userService = {
 export const publicUserService = {
   async getPublicUserById(id: string) {
     try {
-      // Basit users tablosu erişimi - telefon numarası dahil
       const { data, error } = await supabase
         .from('users')
-        .select('id, name, avatar, phone, email')
+        .select('id, name, avatar, phone, email, role, created_at, is_active')
         .eq('id', id)
         .single();
 
       if (error) {
         console.warn('User fetch error:', error);
-        return { id, name: 'Bilinmeyen Kullanıcı', avatar: null, phone: null, email: null };
+        return { id, name: 'Bilinmeyen Kullanıcı', avatar: null, phone: null, email: null, role: 'user', created_at: new Date().toISOString(), is_active: true };
       }
 
       return data;
     } catch (error) {
       console.warn('User service error:', error);
-      return { id, name: 'Bilinmeyen Kullanıcı', avatar: null, phone: null, email: null };
+      return { id, name: 'Bilinmeyen Kullanıcı', avatar: null, phone: null, email: null, role: 'user', created_at: new Date().toISOString(), is_active: true };
     }
   }
+};
+
+// Ad Transformer
+const transformAd = (item: any): any => {
+  if (!item) return null;
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    price: item.price,
+    category: item.categories ? {
+      id: item.categories.id,
+      name: item.categories.name,
+      slug: item.categories.slug,
+      icon: item.categories.icon
+    } : {
+      id: item.category_id,
+      name: 'Genel',
+      slug: 'genel',
+      icon: 'tag'
+    },
+    location: {
+      city: item.city || 'Bilinmeyen',
+      district: item.district || 'Konum',
+      coordinates: item.latitude && item.longitude ? {
+        lat: item.latitude,
+        lng: item.longitude
+      } : undefined
+    },
+    images: item.images || [],
+    userId: item.user_id,
+    user: item.users ? {
+      id: item.users.id,
+      email: item.users.email,
+      name: item.users.name,
+      phone: item.users.phone,
+      avatar: item.users.avatar,
+      role: item.users.role,
+      createdAt: item.users.created_at,
+      isActive: item.users.is_active
+    } : undefined,
+    status: item.status,
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
+    viewCount: item.view_count || 0,
+    featured: item.featured || false
+  };
 };
 
 // Category Services
@@ -213,7 +259,7 @@ export const adService = {
     const { data, error } = await query;
 
     if (error) throw error;
-    return data || [];
+    return (data || []).map(transformAd);
   },
 
   async getAdById(id: string) {
@@ -225,25 +271,12 @@ export const adService = {
         users (id, name, email, phone, avatar, role, created_at, is_active)
       `)
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
-
-    // Flatten the response for easier consumption
-    return {
-      ...data,
-      category_id: data.categories?.id || data.category_id,
-      category_name: data.categories?.name,
-      category_slug: data.categories?.slug,
-      category_icon: data.categories?.icon,
-      user_name: data.users?.name,
-      user_email: data.users?.email,
-      user_phone: data.users?.phone,
-      user_avatar: data.users?.avatar,
-      user_role: data.users?.role,
-      user_created_at: data.users?.created_at,
-      user_is_active: data.users?.is_active
-    };
+    if (!data) return null;
+    
+    return transformAd(data);
   },
 
   async createAd(adData: {
@@ -378,7 +411,7 @@ export const adService = {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data || []).map(transformAd);
   }
 };
 
@@ -456,8 +489,7 @@ export const storageService = {
         transform: transform ? {
           width: transform.width,
           height: transform.height,
-          quality: transform.quality,
-          format: 'webp'
+          quality: transform.quality
         } : undefined
       });
 
@@ -514,10 +546,13 @@ export const messageService = {
   },
 
   async getConversation(otherUserId: string, adId?: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
     let query = supabase
       .from('messages')
       .select('*')
-      .or(`sender_id.eq.${(await supabase.auth.getUser()).data.user?.id},receiver_id.eq.${(await supabase.auth.getUser()).data.user?.id}`)
+      .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
       .or(`sender_id.eq.${otherUserId},receiver_id.eq.${otherUserId}`)
       .order('created_at', { ascending: true });
 
@@ -648,4 +683,44 @@ export const messageService = {
       new Date(b.last_message_time).getTime() - new Date(a.last_message_time).getTime()
     );
   },
+};
+
+// Block Services
+export const blockService = {
+  async blockUser(blockedUserId: string) {
+    const { data: me } = await supabase.auth.getUser();
+    const myId = me.user?.id;
+    if (!myId) throw new Error('Oturum açılmadı');
+
+    const { data, error } = await supabase
+      .from('blocked_users')
+      .insert([{
+        blocker_id: myId,
+        blocked_id: blockedUserId,
+        created_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === '23505') throw new Error('Bu kullanıcı zaten engelli');
+      throw error;
+    }
+    return data;
+  },
+
+  async isBlocked(userId: string) {
+    const { data: me } = await supabase.auth.getUser();
+    const myId = me.user?.id;
+    if (!myId) return false;
+
+    const { data, error } = await supabase
+      .from('blocked_users')
+      .select('*')
+      .or(`and(blocker_id.eq.${myId},blocked_id.eq.${userId}),and(blocker_id.eq.${userId},blocked_id.eq.${myId})`)
+      .maybeSingle();
+
+    if (error) return false;
+    return !!data;
+  }
 };

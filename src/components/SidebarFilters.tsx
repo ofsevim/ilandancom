@@ -29,35 +29,35 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
   };
 
   const renderFilters = () => (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* İlan Ara */}
-      <div>
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg text-primary">search</span>
-          İLAN ARA
+      <div className="filter-section pb-4">
+        <label className="dark-section-title mb-4 block flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary-500">search</span>
+          İlan Ara
         </label>
         <div className="relative group">
           <input
             type="text"
-            placeholder="İlan adı, marka veya model..."
+            placeholder="Kelime veya ilan no..."
             value={filters.query || ''}
             onChange={(e) => handleInputChange('query', e.target.value)}
-            className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl text-sm font-semibold transition-all outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
+            className="w-full px-4 py-3.5 dark-filter-input transition-all outline-none"
           />
         </div>
       </div>
 
       {/* Kategori */}
-      <div>
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg text-primary">sell</span>
-          KATEGORİ
+      <div className="filter-section pb-4">
+        <label className="dark-section-title mb-4 block flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary-500">category</span>
+          Kategori
         </label>
         <div className="relative">
           <select
             value={filters.category || ''}
             onChange={(e) => handleInputChange('category', e.target.value || undefined)}
-            className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl text-sm font-semibold transition-all outline-none appearance-none cursor-pointer text-slate-900 dark:text-white"
+            className="w-full px-4 py-3.5 dark-filter-select transition-all outline-none appearance-none cursor-pointer"
           >
             <option value="">Tüm Kategoriler</option>
             {categories.map((c) => (
@@ -69,17 +69,17 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
       </div>
 
       {/* Lokasyon */}
-      <div>
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg text-primary">location_on</span>
-          LOKASYON
+      <div className="filter-section pb-4">
+        <label className="dark-section-title mb-4 block flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary-500">location_on</span>
+          Lokasyon
         </label>
         <div className="space-y-3">
           <div className="relative">
             <select
               value={filters.city || ''}
               onChange={(e) => handleCityChange(e.target.value)}
-              className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl text-sm font-semibold transition-all outline-none appearance-none cursor-pointer text-slate-900 dark:text-white"
+              className="w-full px-4 py-3.5 dark-filter-select transition-all outline-none appearance-none cursor-pointer"
             >
               <option value="">Tüm Şehirler</option>
               {cities.map((c) => (
@@ -91,11 +91,11 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
 
           <AnimatePresence>
             {filters.city && districts && districts.length > 0 && (
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative">
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="relative mt-3">
                 <select
                   value={filters.district || ''}
                   onChange={(e) => handleInputChange('district', e.target.value || undefined)}
-                  className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl text-sm font-semibold transition-all outline-none appearance-none cursor-pointer text-slate-900 dark:text-white"
+                  className="w-full px-4 py-3.5 dark-filter-select transition-all outline-none appearance-none cursor-pointer"
                 >
                   <option value="">İlçe Seçin</option>
                   {districts.map((d) => (
@@ -110,40 +110,40 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
       </div>
 
       {/* Fiyat Aralığı */}
-      <div>
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg text-primary">payments</span>
-          FİYAT ARALIĞI
+      <div className="filter-section pb-4">
+        <label className="dark-section-title mb-4 block flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary-500">payments</span>
+          Fiyat Aralığı
         </label>
         <div className="grid grid-cols-2 gap-3">
           <input
             type="number"
-            placeholder="Min"
+            placeholder="Min ₺"
             value={filters.minPrice || ''}
             onChange={(e) => handleInputChange('minPrice', e.target.value ? parseFloat(e.target.value) : undefined)}
-            className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl text-xs font-bold transition-all outline-none text-slate-900 dark:text-white"
+            className="w-full px-4 py-3.5 dark-filter-input transition-all outline-none"
           />
           <input
             type="number"
-            placeholder="Max"
+            placeholder="Max ₺"
             value={filters.maxPrice || ''}
             onChange={(e) => handleInputChange('maxPrice', e.target.value ? parseFloat(e.target.value) : undefined)}
-            className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl text-xs font-bold transition-all outline-none text-slate-900 dark:text-white"
+            className="w-full px-4 py-3.5 dark-filter-input transition-all outline-none"
           />
         </div>
       </div>
 
       {/* Sıralama */}
-      <div>
-        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block flex items-center gap-2">
-          <span className="material-symbols-outlined text-lg text-primary">sort</span>
-          SIRALAMA
+      <div className="filter-section pb-2">
+        <label className="dark-section-title mb-4 block flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary-500">sort</span>
+          Sıralama
         </label>
         <div className="relative">
           <select
             value={filters.sortBy}
             onChange={(e) => handleInputChange('sortBy', e.target.value as any)}
-            className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl text-sm font-semibold transition-all outline-none appearance-none cursor-pointer text-slate-900 dark:text-white"
+            className="w-full px-4 py-3.5 dark-filter-select transition-all outline-none appearance-none cursor-pointer"
           >
             <option value="newest">En Yeni İlanlar</option>
             <option value="oldest">En Eski İlanlar</option>
@@ -169,17 +169,18 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({ filters, onFiltersChang
         </button>
       </div>
 
-      <div className="hidden lg:block sticky top-24 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 p-8 shadow-xl shadow-primary/5">
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-          <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3 tracking-tighter">
-            <span className="material-symbols-outlined text-primary">filter_alt</span>
-            FİLTRELER
-          </h3>
-          <button onClick={clearFilters} className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">
-            TEMİZLE
-          </button>
+      <div className="hidden lg:block filter-sidebar w-[320px] shrink-0">
+        <div className="premium-sidebar-bg p-8 w-full">
+          <div className="flex items-center justify-between mb-8 pb-6 border-b border-primary-800/20">
+            <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3 tracking-tight">
+              Filtreler
+            </h3>
+            <button onClick={clearFilters} className="clear-btn bg-slate-100 dark:bg-transparent text-slate-600 dark:text-primary-100/50 hover:bg-slate-200 dark:hover:bg-primary-500/10">
+              Temizle
+            </button>
+          </div>
+          {renderFilters()}
         </div>
-        {renderFilters()}
       </div>
 
       <AnimatePresence>

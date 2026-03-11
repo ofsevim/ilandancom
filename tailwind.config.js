@@ -6,36 +6,36 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#1142d4',
-          50: '#f0f3ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#1142d4', // Ana Stitch mavisi
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+          DEFAULT: '#5b13ec',
+          50: '#f3f0ff',
+          100: '#e9e3ff',
+          200: '#d7cdff',
+          300: '#bcabff',
+          400: '#9e7fff',
+          500: '#844cff',
+          600: '#7525ff',
+          700: '#5b13ec', // New Primary Stitch Color
+          800: '#480fbc',
+          900: '#3c0e99',
+          950: '#260868',
         },
         'background-light': '#ffffff',
-        'background-dark': '#101522',
+        'background-dark': '#0f172a',
         accent: {
-          premium: '#1142d4',
-          light: '#818cf8',
-          dark: '#3730a3',
+          premium: '#5b13ec',
+          light: '#9e7fff',
+          dark: '#3c0e99',
         }
       },
       fontFamily: {
-        display: ['Inter', 'sans-serif'],
-        inter: ['Inter', 'sans-serif'],
-        sans: ['Inter', 'sans-serif'],
+        display: ['Manrope', 'sans-serif'],
+        inter: ['Manrope', 'sans-serif'],
+        sans: ['Manrope', 'sans-serif'],
       },
       borderRadius: {
         'none': '0',
         'sm': '0.125rem',
-        'DEFAULT': '1rem',
+        'DEFAULT': '0.75rem', // ROUND_TWELVE
         'md': '0.375rem',
         'lg': '1.5rem',
         'xl': '2rem',
@@ -52,9 +52,9 @@ export default {
         '8xl': '88rem',
       },
       boxShadow: {
-        'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-        'premium-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        'gold-glow': '0 0 25px rgba(17, 66, 212, 0.25)',
+        'premium': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+        'premium-hover': '0 12px 40px 0 rgba(31, 38, 135, 0.12)',
+        'glow': '0 0 25px rgba(91, 19, 236, 0.25)',
       }
     },
   },

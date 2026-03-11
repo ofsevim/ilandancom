@@ -6,6 +6,7 @@ import { X, Edit, Trash2, Eye, Plus, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AdCard from './AdCard';
 import EditAdModal from './EditAdModal';
+import AdDetailModal from './AdDetailModal';
 
 interface MyAdsModalProps {
   onClose: () => void;
@@ -31,44 +32,7 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
     setLoading(true);
     try {
       const data = await adService.getUserAds(user.id);
-      const transformedAds: Ad[] = (data || []).map((item: any) => ({
-        id: item?.id ?? '',
-        title: item.title,
-        description: item.description,
-        price: item.price,
-        category: {
-          id: item?.category_id ?? 'unknown',
-          name: 'Diğer',
-          slug: 'diger',
-          icon: 'tag'
-        },
-        location: {
-          city: item.city ?? '',
-          district: item.district ?? '',
-          coordinates: item.latitude && item.longitude ? {
-            lat: item.latitude,
-            lng: item.longitude
-          } : undefined
-        },
-        images: Array.isArray(item.images) ? item.images : [],
-        userId: item.user_id ?? user.id,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          phone: user.phone,
-          avatar: user.avatar,
-          role: user.role,
-          createdAt: user.createdAt,
-          isActive: user.isActive
-        },
-        status: item.status,
-        createdAt: item.created_at ?? new Date().toISOString(),
-        updatedAt: item.updated_at ?? item.created_at ?? new Date().toISOString(),
-        viewCount: item.view_count ?? 0,
-        featured: item.featured ?? false
-      })).filter((ad: Ad) => ad.id);
-      setAds(transformedAds);
+      setAds(data || []);
     } catch (error: any) {
       toast.error(error.message || 'İlanlar yüklenirken hata oluştu');
     } finally {
@@ -221,7 +185,9 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
                         {ad.viewCount}
                       </span>
                       <span>
-                        {new Date(ad.createdAt).toLocaleDateString('tr-TR')}
+                        {ad.createdAt && !isNaN(new Date(ad.createdAt).getTime()) 
+                          ? new Date(ad.createdAt).toLocaleDateString('tr-TR') 
+                          : 'YENİ'}
                       </span>
                     </div>
 
@@ -259,24 +225,14 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
 
       {/* Ad Detail Modal */}
       {selectedAd && (
-        <div className="fixed inset-0 bg-primary-950/80 backdrop-blur-xl flex items-center justify-center z-[1100] p-4">
-          <div className="bg-white dark:bg-primary-900 rounded-[2.5rem] shadow-premium max-w-4xl w-full max-h-[90vh] overflow-y-auto relative border border-primary-100 dark:border-primary-800">
-            <button
-              onClick={() => setSelectedAd(null)}
-              className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
-            >
-              <X size={20} />
-            </button>
-            <div className="p-10">
-              <AdCard
-                ad={selectedAd}
-                onAdClick={() => { }}
-                showEditButton={true}
-                onEditClick={handleEditAd}
-              />
-            </div>
-          </div>
-        </div>
+        <AdDetailModal
+          ad={selectedAd}
+          onClose={() => setSelectedAd(null)}
+          onDeleted={() => {
+            setSelectedAd(null);
+            fetchMyAds();
+          }}
+        />
       )}
 
       {/* Edit Ad Modal */}

@@ -13,12 +13,11 @@ import ConversationsModal from './ConversationsModal';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface HeaderProps {
-  onShowNewAd?: () => void;
   onShowAdminPanel?: () => void;
 }
 
 
-const Header: React.FC<HeaderProps> = ({ onShowNewAd, onShowAdminPanel }) => {
+const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -67,70 +66,103 @@ const Header: React.FC<HeaderProps> = ({ onShowNewAd, onShowAdminPanel }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between gap-8 mb-4">
+      <header className="sticky top-0 z-50 premium-header">
+        <div className="premium-container py-1.5">
+          <div className="flex items-center justify-between gap-6 md:gap-12">
             {/* Logo */}
             <div 
-              className="flex items-center gap-2 cursor-pointer shrink-0 group"
+              className="flex items-center gap-3 cursor-pointer shrink-0 group"
               onClick={() => navigate('/')}
             >
-              <div className="bg-primary p-2 rounded-xl text-white group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-2xl">layers</span>
+              <div className="w-10 h-10 bg-neon-indigo rounded-[14px] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg shadow-primary-500/20">
+                <span className="material-symbols-outlined text-xl">layers</span>
               </div>
-              <h1 className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">
-                ilandan<span className="text-primary">.online</span>
+              <h1 className="text-lg md:text-xl font-black tracking-tighter text-slate-900 dark:text-white">
+                ilandan<span className="text-neon-indigo">.online</span>
               </h1>
             </div>
 
+            {/* Integrated Search Area (Desktop Only, centered) */}
+            <div className="hidden lg:block flex-1 max-w-2xl mx-auto">
+              <div className="search-bar w-full flex items-center justify-between">
+                <div className="flex-1 flex items-center gap-3 px-2">
+                  <span className="material-symbols-outlined text-primary-400">search</span>
+                  <input 
+                    className="w-full bg-transparent border-none outline-none text-[12px] font-semibold text-primary-950 dark:text-white placeholder:text-primary-400/70" 
+                    placeholder="Ürün veya kategori ara..." 
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </div>
+                <div className="flex items-center gap-2 border-l border-primary-200 dark:border-primary-800/50 pl-4">
+                  <span className="text-xs font-bold text-primary-400 uppercase tracking-widest hidden xl:block mr-2">Hızlı Ara</span>
+                  <button onClick={handleSearch} className="w-8 h-8 bg-primary-100 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 hover:bg-neon-indigo hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                    <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Actions */}
-            <div className="flex items-center gap-6">
-              <div className="hidden lg:flex items-center gap-6">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="hidden md:flex items-center gap-6">
                 {!user ? (
                   <>
-                    <button onClick={() => setShowAuthModal(true)} className="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300">Giriş Yap</button>
-                    <button onClick={() => setShowAuthModal(true)} className="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300">Kayıt Ol</button>
+                    <button onClick={() => setShowAuthModal(true)} className="text-[11px] font-extrabold hover:text-primary-500 transition-colors text-slate-600 dark:text-slate-300">Giriş Yap</button>
+                    <button onClick={() => setShowAuthModal(true)} className="text-[11px] font-extrabold hover:text-primary-500 transition-colors text-slate-600 dark:text-slate-300">Kayıt Ol</button>
                   </>
                 ) : (
-                  <div className="flex items-center gap-4">
-                    <Link to="/mesajlar" className="relative p-2 text-slate-500 hover:text-primary transition-colors">
-                      <span className="material-symbols-outlined text-2xl">mail</span>
-                      {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border border-white dark:border-slate-900"></span>}
+                  <div className="flex items-center gap-6">
+                    <Link to="/mesajlar" className="relative text-slate-400 hover:text-primary-500 transition-colors">
+                      <span className="material-symbols-outlined text-[26px]">mail</span>
+                      {unreadCount > 0 && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white dark:border-primary-950"></span>}
                     </Link>
                     <div className="relative">
-                      <button onClick={() => setShowUserMenu(!showUserMenu)} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+                      <button onClick={() => setShowUserMenu(!showUserMenu)} className="w-[42px] h-[42px] rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border-2 border-transparent hover:border-primary-500 transition-colors">
                         {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <span className="text-sm font-bold">{user.name[0].toUpperCase()}</span>}
                       </button>
                       <AnimatePresence>
                         {showUserMenu && (
-                          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute right-0 mt-3 w-64 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 py-3 z-[60]">
-                            <div className="px-5 py-2 mb-2">
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Hesabım</p>
-                              <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{user.name}</p>
+                          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute right-0 mt-4 w-64 bg-white dark:bg-[#12142d] rounded-3xl shadow-premium border border-primary-100 dark:border-primary-800/50 py-3 z-[60]">
+                            <div className="px-6 py-3 mb-2 border-b border-primary-50 dark:border-primary-800/30">
+                              <p className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-1">Hesabım</p>
+                              <p className="text-sm font-black text-slate-900 dark:text-white truncate">{user.name}</p>
                             </div>
-                            <div className="px-2 space-y-1">
+                            <div className="px-3 space-y-1">
                               {[
-                                { icon: 'analytics', label: 'Panelim', path: '/dashboard' },
-                                { icon: 'inventory_2', label: 'İlanlarım', path: '/dashboard' },
+                                { icon: 'person', label: 'Profil Bilgilerim', action: () => setShowProfileModal(true) },
+                                { icon: 'inventory_2', label: 'İlanlarım Yönet', path: '/dashboard' },
                                 { icon: 'favorite', label: 'Favorilerim', path: '/favoriler' },
                                 { icon: 'chat', label: 'Mesajlarım', path: '/mesajlar' }
                               ].map((item, i) => (
-                                <Link 
-                                  key={i} 
-                                  to={item.path} 
-                                  onClick={() => setShowUserMenu(false)} 
-                                  className="w-full text-left px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl flex items-center gap-3 transition-colors font-medium text-sm"
-                                >
-                                  <span className="material-symbols-outlined text-xl">{item.icon}</span>{item.label}
-                                </Link>
+                                item.path ? (
+                                  <Link 
+                                    key={i} 
+                                    to={item.path} 
+                                    onClick={() => setShowUserMenu(false)} 
+                                    className="w-full text-left px-4 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-primary-800/50 rounded-2xl flex items-center gap-3 transition-colors font-bold text-sm"
+                                  >
+                                    <span className="material-symbols-outlined text-[20px]">{item.icon}</span>{item.label}
+                                  </Link>
+                                ) : (
+                                  <button
+                                    key={i}
+                                    onClick={() => { (item as any).action(); setShowUserMenu(false); }}
+                                    className="w-full text-left px-4 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-primary-800/50 rounded-2xl flex items-center gap-3 transition-colors font-bold text-sm"
+                                  >
+                                    <span className="material-symbols-outlined text-[20px]">{item.icon}</span>{item.label}
+                                  </button>
+                                )
                               ))}
                               {user.role === 'admin' && (
-                                <button onClick={() => { onShowAdminPanel?.(); setShowUserMenu(false); }} className="w-full text-left px-4 py-2 text-primary hover:bg-primary/5 rounded-xl flex items-center gap-3 transition-colors font-bold text-sm">
-                                  <span className="material-symbols-outlined text-xl">admin_panel_settings</span>Admin Paneli
+                                <button onClick={() => { onShowAdminPanel?.(); setShowUserMenu(false); }} className="w-full text-left px-4 py-2.5 mt-2 bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 rounded-2xl flex items-center gap-3 transition-colors font-black text-sm border border-primary-100 dark:border-primary-800/50">
+                                  <span className="material-symbols-outlined text-[20px]">admin_panel_settings</span>Admin Paneli
                                 </button>
                               )}
-                              <button onClick={() => { logout(); setShowUserMenu(false); }} className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/10 rounded-xl flex items-center gap-3 transition-colors font-bold text-sm">
-                                <span className="material-symbols-outlined text-xl">logout</span>Çıkış Yap
+                              <button onClick={() => { logout(); setShowUserMenu(false); }} className="w-full text-left px-4 py-2.5 mt-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl flex items-center gap-3 transition-colors font-bold text-sm">
+                                <span className="material-symbols-outlined text-[20px]">logout</span>Çıkış Yap
                               </button>
                             </div>
                           </motion.div>
@@ -139,50 +171,41 @@ const Header: React.FC<HeaderProps> = ({ onShowNewAd, onShowAdminPanel }) => {
                     </div>
                   </div>
                 )}
-                <button onClick={toggleDarkMode} className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500">
-                  <span className="material-symbols-outlined text-xl">{isDarkMode ? 'light_mode' : 'dark_mode'}</span>
+                <div className="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+                <button onClick={toggleDarkMode} className="w-10 h-10 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                  <span className="material-symbols-outlined text-[22px]">{isDarkMode ? 'light_mode' : 'dark_mode'}</span>
                 </button>
               </div>
 
-              <button 
-                onClick={onShowNewAd}
-                className="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95"
+              <Link 
+                to="/ilan-ver"
+                className="bg-neon-indigo text-white px-4 sm:px-5 py-1.5 rounded-full font-black text-[11px] uppercase tracking-widest flex items-center gap-2 shadow-gold-heavy hover:-translate-y-0.5 active:scale-95 transition-all"
               >
-                <span className="material-symbols-outlined text-lg">add_circle</span>
+                <span className="material-symbols-outlined text-[18px]">add</span>
                 <span className="hidden sm:inline">İlan Ver</span>
-              </button>
-              <button className="md:hidden">
-                <span className="material-symbols-outlined text-3xl">menu</span>
+              </Link>
+              
+              <button 
+                onClick={() => navigate('/ilanlar')}
+                className="md:hidden w-10 h-10 flex items-center justify-center glass-premium rounded-full text-slate-600 dark:text-slate-300"
+              >
+                <span className="material-symbols-outlined">search</span>
               </button>
             </div>
           </div>
 
-          {/* Integrated Search Area */}
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-full flex flex-col md:flex-row items-center gap-1 border border-slate-200 dark:border-slate-700 shadow-sm focus-within:shadow-md focus-within:border-primary/30 transition-all">
-              <div className="flex-1 flex items-center px-6 w-full">
-                <span className="material-symbols-outlined text-slate-400 mr-3">search</span>
-                <input 
-                  className="w-full border-none focus:ring-0 bg-transparent text-sm font-semibold py-2 outline-none text-slate-900 dark:text-white placeholder:text-slate-400" 
-                  placeholder="Kelime, ilan no veya kategori ara..." 
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-              <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 hidden md:block mx-2"></div>
-              <div className="flex items-center gap-2 px-2 py-1 overflow-x-auto no-scrollbar max-w-full hidden md:flex">
-                <button onClick={() => navigate('/ilanlar')} className="px-4 py-1.5 rounded-full hover:bg-white dark:hover:bg-slate-700 text-xs font-bold transition-all whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-primary">Emlak</button>
-                <button onClick={() => navigate('/ilanlar')} className="px-4 py-1.5 rounded-full hover:bg-white dark:hover:bg-slate-700 text-xs font-bold transition-all whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-primary">Vasıta</button>
-                <button onClick={() => navigate('/ilanlar')} className="px-4 py-1.5 rounded-full hover:bg-white dark:hover:bg-slate-700 text-xs font-bold transition-all whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-primary">İkinci El</button>
-              </div>
-              <button 
-                onClick={handleSearch}
-                className="bg-primary text-white px-8 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-colors w-full md:w-auto shadow-lg shadow-primary/20"
-              >
-                Ara
-              </button>
+          {/* Mobile Search Area (Visible only on mobile) */}
+          <div className="lg:hidden mt-4">
+            <div className="search-bar w-full flex items-center">
+              <span className="material-symbols-outlined text-primary-400 mr-2">search</span>
+              <input 
+                className="w-full bg-transparent border-none outline-none text-sm font-semibold text-primary-950 dark:text-white placeholder:text-primary-400/70" 
+                placeholder="Kelime, ilan no veya kategori..." 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
             </div>
           </div>
         </div>
@@ -194,7 +217,7 @@ const Header: React.FC<HeaderProps> = ({ onShowNewAd, onShowAdminPanel }) => {
       {showMyAdsModal && (
         <MyAdsModal
           onClose={() => setShowMyAdsModal(false)}
-          onShowNewAd={onShowNewAd || (() => {})}
+          onShowNewAd={() => { setShowMyAdsModal(false); navigate('/ilan-ver'); }}
         />
       )}
       {showFavoritesModal && <FavoritesModal onClose={() => setShowFavoritesModal(false)} />}

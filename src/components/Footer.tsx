@@ -68,26 +68,14 @@ const Footer: React.FC = () => {
               <h4 className="font-bold mb-6 mt-2 uppercase text-[10px] tracking-[0.2em] text-slate-400 dark:text-slate-500">Kurumsal</h4>
               <ul className="space-y-4 text-sm font-semibold">
                 <li><button onClick={() => setShowAbout(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Hakkımızda</button></li>
-                <li><button onClick={() => setShowAbout(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Sürdürülebilirlik</button></li>
-                <li><button onClick={() => setShowAbout(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Kariyer</button></li>
                 <li><button onClick={() => setShowContact(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Bize Ulaşın</button></li>
-              </ul>
-            </div>
-
-            <div className="lg:ml-auto">
-              <h4 className="font-bold mb-6 mt-2 uppercase text-[10px] tracking-[0.2em] text-slate-400 dark:text-slate-500">Hizmetlerimiz</h4>
-              <ul className="space-y-4 text-sm font-semibold">
-                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">İlan Dopingi</button></li>
-                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Güvenli Ödeme</button></li>
-                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Hizmet İlanları</button></li>
-                <li><button className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Reklam Ver</button></li>
+                <li><button onClick={() => setPolicy(policies.privacy)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Gizlilik Politikası</button></li>
               </ul>
             </div>
 
             <div className="lg:ml-auto">
               <h4 className="font-bold mb-6 mt-2 uppercase text-[10px] tracking-[0.2em] text-slate-400 dark:text-slate-500">Yardım & Hukuki</h4>
               <ul className="space-y-4 text-sm font-semibold">
-                <li><button onClick={() => setPolicy(policies.privacy)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Gizlilik Politikası</button></li>
                 <li><button onClick={() => setPolicy(policies.terms)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Kullanım Koşulları</button></li>
                 <li><button onClick={() => setPolicy(policies.cookies)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Çerez Politikası</button></li>
                 <li><button onClick={() => setShowContact(true)} className="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Yardım Merkezi</button></li>

@@ -8,11 +8,13 @@ function ListingCard({ listing }: { listing: Ad }) {
   const { toast } = useToast();
   const isFav = favorites.includes(listing.id);
 
-  const seller = (listing as any).users || listing.user;
-  const category = (listing as any).categories || listing.category;
+  const seller = listing.user;
+  const category = listing.category;
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return 'YENİ';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'YENİ';
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -86,7 +88,7 @@ function ListingCard({ listing }: { listing: Ad }) {
           </div>
         </div>
 
-        <Link to={`/ilan/ ${listing.id}`}>
+        <Link to={`/ilan/${listing.id}`}>
           <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-1 mb-4 group-hover:text-primary transition-colors">
             {listing.title}
           </h3>
@@ -94,7 +96,7 @@ function ListingCard({ listing }: { listing: Ad }) {
         
         <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 mb-6">
           <span className="material-symbols-outlined text-sm text-primary">location_on</span>
-          {listing.location?.city || (listing as any).city}, {listing.location?.district || (listing as any).district}
+          {listing.location?.city}, {listing.location?.district}
         </div>
 
         <div className="flex items-center justify-between pt-5 border-t border-slate-100 dark:border-slate-700">
@@ -113,7 +115,7 @@ function ListingCard({ listing }: { listing: Ad }) {
           </div>
           
           <Link 
-            to={`/ilan/ ${listing.id}`}
+            to={`/ilan/${listing.id}`}
             className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all duration-300"
           >
             <span className="material-symbols-outlined text-xl">arrow_outward</span>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { X, Users, FileText, TrendingUp, Clock, Check, Ban, Trash2, Eye, Search } from 'lucide-react';
-import { Ad, User } from '../types';
 import { supabase } from '../lib/supabase';
 import { adService } from '../services/api';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -86,7 +86,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   };
 
   const handleViewAd = (id: string) => {
-    window.open(`/ad/${id}`, '_blank');
+    window.open(`/ilan/${id}`, '_blank');
   };
 
   const handleBanUser = async (userId: string) => {
@@ -154,15 +154,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('tr-TR');
+    if (!dateString) return 'Bilinmiyor';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Bilinmiyor';
+    return date.toLocaleDateString('tr-TR');
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-7xl w-full my-8 relative">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-2xl flex items-start justify-center z-[150] p-4 overflow-y-auto">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-white dark:bg-[#12142d] rounded-[2.5rem] max-w-7xl w-full my-8 relative shadow-premium border border-slate-100 dark:border-white/5 overflow-hidden"
+      >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="absolute top-8 right-8 z-10 w-12 h-12 glass-premium rounded-full flex items-center justify-center text-slate-500 hover:text-primary-500 hover:scale-105 transition-all"
         >
           <X size={24} />
         </button>
@@ -513,7 +520,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

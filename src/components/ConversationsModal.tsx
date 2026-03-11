@@ -51,7 +51,9 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
   }, []);
 
   const formatTime = (dateString: string) => {
+    if (!dateString) return 'Bilinmiyor';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Bilinmiyor';
     const now = new Date();
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
@@ -126,9 +128,8 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                        <p className="text-[10px] font-black text-primary-500 uppercase tracking-widest">
+                      <div className="flex items-center gap-2 mb-2 px-2 py-0.5 bg-white/50 dark:bg-black/20 rounded-lg w-fit">
+                        <p className="text-[9px] font-black text-primary-500 uppercase tracking-widest">
                           {conv.other_user_name}
                         </p>
                         {conv.unread_count > 0 && (

@@ -16,11 +16,11 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-slate-50 dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 h-[420px] animate-pulse">
-            <div className="h-2/3 bg-slate-100 dark:bg-slate-700 rounded-t-[2rem]"></div>
-            <div className="p-6 space-y-4">
-              <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-full w-3/4"></div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-full w-1/2"></div>
+          <div key={i} className="bg-slate-50 dark:bg-[#12142d] rounded-2xl border border-slate-100 dark:border-white/5 h-[420px] animate-pulse">
+            <div className="h-2/3 bg-slate-100 dark:bg-slate-800/50 rounded-t-2xl m-2"></div>
+            <div className="px-5 pt-4 pb-3 space-y-4">
+              <div className="h-6 bg-slate-200 dark:bg-slate-700/50 rounded-full w-3/4"></div>
+              <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded-full w-1/2"></div>
             </div>
           </div>
         ))}
@@ -31,10 +31,10 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
   if (ads.length === 0) {
     return (
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center py-32 text-center">
-        <div className="w-40 h-40 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-8 shadow-xl shadow-primary/5">
-          <span className="material-symbols-outlined text-6xl text-slate-300">inventory_2</span>
+        <div className="w-40 h-40 bg-slate-50 dark:bg-[#12142d] rounded-full flex items-center justify-center mb-8 shadow-xl shadow-primary-500/5">
+          <span className="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600">inventory_2</span>
         </div>
-        <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter mb-4">Aradığınız İlanı Bulamadık</h3>
+        <h3 className="text-[28px] font-black text-slate-900 dark:text-white tracking-tighter mb-4">Aradığınız İlanı Bulamadık</h3>
         <p className="text-slate-500 dark:text-slate-400 max-w-sm font-medium">Farklı kriterler deneyebilir veya siz yeni bir ilan verebilirsiniz.</p>
       </motion.div>
     );
