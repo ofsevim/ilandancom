@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useListings } from '@/context/ListingContext';
 import { useToast } from '@/hooks/use-toast';
 import { Ad } from '@/types';
@@ -129,20 +130,20 @@ function ListingCard({ listing }: { listing: Ad }) {
 export default function FeaturedListings() {
   const { listings, loading } = useListings();
 
+  const featured = listings.filter((l: Ad) => (l as any).featured === true).slice(0, 8);
+  const displayListings = featured.length > 0 ? featured : listings.slice(0, 8);
+
   if (loading) {
     return (
       <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          {[...Array(displayListings.length || 4)].map((_, i) => (
             <div key={i} className="aspect-[3/4] bg-slate-100 dark:bg-slate-800 animate-pulse rounded-[2rem]" />
           ))}
         </div>
       </section>
     );
   }
-
-  const featured = listings.filter((l: Ad) => (l as any).featured === true).slice(0, 8);
-  const displayListings = featured.length > 0 ? featured : listings.slice(0, 8);
 
   if (displayListings.length === 0) return null;
 
@@ -166,11 +167,11 @@ export default function FeaturedListings() {
         </Link>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {displayListings.map((l) => (
           <ListingCard key={l.id} listing={l} />
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

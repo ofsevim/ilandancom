@@ -88,16 +88,6 @@ const Footer: React.FC = () => {
               © {currentYear} ilandan.online. Tüm hakları saklıdır.
             </p>
             <div className="flex items-center gap-6">
-              <img 
-                alt="App Store" 
-                className="h-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqtbpJSIkZmaSvyVBSU96mr3iH_yW-uhdzcn3PubGDsIETCKoHgfc3S_MAAA3jsW_KM3zBZQqb_dnmu-JEXDd_dcsQmNe9o2uniJ8j9C1pwZ9G2fPh4Cy0zDh1OM0RRUi9bb6kBRthsEd-TxLiyD7Hc5xuQD8I8x33VtA2-PpcpIGA5hc1ODGYx9jKFK7yJOQSBEbl8sunmwhi2JXzsJVn5Nx7XkX7RcPcBk-rJH2y3WPYo52A2UT-9UzMQ-yLjNSGp0kIuEKKoR_o"
-              />
-              <img 
-                alt="Google Play" 
-                className="h-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBOzbV0xJVGP7eHTXCzKjiNN8bzuuQN-mUd73TOsokShI7aQHyTPMZpwO0ZnfW1ECr-Y3lO5VWs9wOWB1xhjGO5CNny75ohid0zBKGgsOd4OUPOJrccBGY_YX--c1hLbdvrBOukx8h5-h49X23aanVmEnLitC4QerQfg1vrZgOTI1czofdbh_rchsNkee-w9lczhCcY2-5LwnlLIK_EF85vakGGG-9J55YNqv12AVyl16FyH5A4InnUSssv2BotF5uCDjRrFArTnVS"
-              />
             </div>
           </div>
         </div>

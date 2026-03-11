@@ -14,7 +14,7 @@ interface AdGridProps {
 const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton, onEditClick }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {[...Array(6)].map((_, i) => (
           <div key={i} className="bg-slate-50 dark:bg-[#12142d] rounded-2xl border border-slate-100 dark:border-white/5 h-[420px] animate-pulse">
             <div className="h-2/3 bg-slate-100 dark:bg-slate-800/50 rounded-t-2xl m-2"></div>
@@ -41,7 +41,7 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, loading, onAdClick, showEditButton
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
       {ads.map((ad, i) => (
         <AdCard key={ad.id} ad={ad} onAdClick={onAdClick} showEditButton={showEditButton} onEditClick={onEditClick} priority={i < 6} />
       ))}
