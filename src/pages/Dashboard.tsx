@@ -141,10 +141,24 @@ const Dashboard = () => {
                             <span className="material-symbols-outlined">favorite</span>
                             <span className="text-sm">Favoriler</span>
                         </Link>
-                        <Link to="/" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm">
-                            <span className="material-symbols-outlined">home</span>
-                            <span className="text-sm">Ana Sayfa</span>
-                        </Link>
+                    <button
+                        onClick={() => setShowProfileModal(true)}
+                        className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm w-full"
+                    >
+                        <span className="material-symbols-outlined">person</span>
+                        <span className="text-sm">Profil Ayarları</span>
+                    </button>
+                    <button
+                        onClick={() => setShowProfileModal(true)}
+                        className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm w-full"
+                    >
+                        <span className="material-symbols-outlined">person</span>
+                        <span className="text-sm">Profil Ayarları</span>
+                    </button>
+                    <Link to="/" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm">
+                        <span className="material-symbols-outlined">home</span>
+                        <span className="text-sm">Ana Sayfa</span>
+                    </Link>
                     </nav>
                 </div>
 

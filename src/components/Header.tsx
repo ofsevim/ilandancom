@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
   const [showMyAdsModal, setShowMyAdsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showConversationsModal, setShowConversationsModal] = useState(false);
-  const [currentConversation, setCurrentConversation] = useState<{ receiverId: string, adId: string } | null>(null);
+  const [currentConversation, setCurrentConversation] = useState<{ receiverId: string, adId: string | null } | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

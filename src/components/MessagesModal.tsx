@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase';
 
 interface MessagesModalProps {
   receiverId: string;
-  adId?: string;
+  adId?: string | null;
   onClose: () => void;
 }
 
@@ -19,7 +19,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
 
   const load = async () => {
     try {
-      const data = await messageService.getConversation(receiverId, adId);
+      const data = await messageService.getConversation(receiverId, adId ?? undefined);
       setMessages(data);
       setTimeout(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' }), 50);
     } catch (e: any) {
@@ -62,10 +62,10 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
     }
     try {
       setSending(true);
-      await messageService.sendMessage({ receiverId, adId, content: input.trim() });
+      await messageService.sendMessage({ receiverId, adId: adId ?? undefined, content: input.trim() });
       setInput('');
       await load();
-      try { await messageService.markConversationRead(receiverId, adId); } catch { }
+      try { await messageService.markConversationRead(receiverId, adId ?? undefined); } catch { }
     } catch (e: any) {
       toast.error(e.message || 'Mesaj gönderilemedi');
     } finally {

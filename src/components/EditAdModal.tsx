@@ -375,7 +375,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
             İptal
           </button>
           <button
-            type="submit"
+            type="button"
             onClick={handleSubmit}
             disabled={loading}
             className="px-10 py-4 gold-gradient text-primary-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:-translate-y-1 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"

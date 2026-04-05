@@ -147,15 +147,32 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
             <div className="space-y-8">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">FİYAT (TL)</label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold transition-all"
-                    placeholder="0"
-                  />
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">İLÇE</label>
+                  {districts.length > 0 ? (
+                    <div className="relative">
+                      <select
+                        name="district"
+                        value={formData.district}
+                        onChange={handleInputChange}
+                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold appearance-none cursor-pointer"
+                        required
+                      >
+                        <option value="">Seçin</option>
+                        {districts.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                      </select>
+                      <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      name="district"
+                      value={formData.district}
+                      onChange={handleInputChange}
+                      className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold transition-all placeholder:text-slate-400"
+                      placeholder="İlçe girin"
+                      required
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">KATEGORİ</label>
@@ -192,19 +209,31 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
                 </div>
                 <div>
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">İLÇE</label>
-                  <div className="relative">
-                    <select
+                  {districts.length > 0 ? (
+                    <div className="relative">
+                      <select
+                        name="district"
+                        value={formData.district}
+                        onChange={handleInputChange}
+                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold appearance-none cursor-pointer"
+                        required
+                      >
+                        <option value="">Seçin</option>
+                        {districts.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                      </select>
+                      <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
                       name="district"
                       value={formData.district}
                       onChange={handleInputChange}
-                      className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold appearance-none cursor-pointer"
+                      className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none text-slate-900 dark:text-white font-semibold transition-all placeholder:text-slate-400"
+                      placeholder="İlçe girin"
                       required
-                    >
-                      <option value="">Seçin</option>
-                      {districts.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
-                    </select>
-                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-                  </div>
+                    />
+                  )}
                 </div>
               </div>
             </div>

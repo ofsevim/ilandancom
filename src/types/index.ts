@@ -56,6 +56,6 @@ export interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   favorites: string[];
-  toggleFavorite: (adId: string) => void;
+  toggleFavorite: (adId: string) => Promise<void>;
   loading: boolean;
 }

@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 
 interface Conversation {
-  ad_id: string;
+  ad_id: string | null;
   ad_title: string;
   other_user_id: string;
   other_user_name: string;
@@ -16,7 +16,12 @@ interface Conversation {
 
 interface ConversationsModalProps {
   onClose: () => void;
-  onOpenConversation: (receiverId: string, adId: string) => void;
+  onOpenConversation: (receiverId: string, adId: string | null) => void;
+}
+
+interface ConversationsModalProps {
+  onClose: () => void;
+  onOpenConversation: (receiverId: string, adId: string | null) => void;
 }
 
 const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpenConversation }) => {

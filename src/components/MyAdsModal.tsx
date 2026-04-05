@@ -4,7 +4,6 @@ import { adService } from '../services/api';
 import { Ad } from '../types';
 import { X, Edit, Trash2, Eye, Plus, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AdCard from './AdCard';
 import EditAdModal from './EditAdModal';
 import AdDetailModal from './AdDetailModal';
 

@@ -529,7 +529,7 @@ export const locationService = {
 
 // Message Services
 export const messageService = {
-  async sendMessage(params: { receiverId: string; adId?: string; content: string }) {
+  async sendMessage(params: { receiverId: string; adId?: string | null; content: string }) {
     const { data, error } = await supabase
       .from('messages')
       .insert([
@@ -545,7 +545,7 @@ export const messageService = {
     return data;
   },
 
-  async getConversation(otherUserId: string, adId?: string) {
+  async getConversation(otherUserId: string, adId?: string | null) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
 

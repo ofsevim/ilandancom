@@ -24,7 +24,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
     const [showFavoritesModal, setShowFavoritesModal] = useState(false);
     const [showConversationsModal, setShowConversationsModal] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
-    const [currentConversation, setCurrentConversation] = useState<{ receiverId: string, adId: string } | null>(null);
+    const [currentConversation, setCurrentConversation] = useState<{ receiverId: string, adId: string | null } | null>(null);
 
     const handleProfileClick = () => {
         if (!user) {
