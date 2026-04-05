@@ -1,5 +1,4 @@
 import React from 'react';
-import { X, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface PolicyModalProps {
@@ -10,43 +9,43 @@ interface PolicyModalProps {
 
 const PolicyModal: React.FC<PolicyModalProps> = ({ onClose, title, content }) => {
   return (
-    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white dark:bg-primary-900 rounded-[2.5rem] max-w-2xl w-full overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800"
+        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-2xl w-full overflow-hidden"
       >
-        <div className="flex items-center justify-between p-8 border-b border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 gold-gradient rounded-2xl flex items-center justify-center shadow-gold-glow">
-              <ShieldCheck size={24} className="text-primary-950" />
+        <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center">
+              <span className="material-symbols-outlined text-accent">verified</span>
             </div>
             <div>
-              <h2 className="text-2xl font-black text-primary-950 dark:text-white tracking-tight">{title}</h2>
-              <p className="text-primary-400 text-[10px] font-bold uppercase tracking-widest mt-1">Yasal Bilgilendirme</p>
+              <h2 className="text-lg font-bold text-silver-100">{title}</h2>
+              <p className="text-silver-500 text-xs mt-0.5">Yasal Bilgilendirme</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 glass rounded-full flex items-center justify-center text-primary-400 hover:text-primary-600 dark:hover:text-white transition-all"
+            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
           >
-            <X size={20} />
+            <span className="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
 
-        <div className="p-8 lg:p-10">
-          <div className="max-h-[60vh] overflow-y-auto pr-4 scrollbar-hide">
-            <div className="p-6 bg-primary-50 dark:bg-primary-800/30 rounded-3xl border border-primary-100 dark:border-primary-800/50">
-              <p className="text-primary-700 dark:text-primary-300 font-medium leading-[1.8] whitespace-pre-wrap text-sm">
+        <div className="p-6 lg:p-8">
+          <div className="max-h-[60vh] overflow-y-auto pr-2">
+            <div className="p-5 bg-navy-900 border border-silver-700/10 rounded-xl">
+              <p className="text-silver-400 leading-relaxed whitespace-pre-wrap text-sm">
                 {content}
               </p>
             </div>
           </div>
 
-          <div className="pt-8 flex justify-end">
+          <div className="pt-6 flex justify-end">
             <button
               onClick={onClose}
-              className="px-10 py-4 gold-gradient text-primary-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:-translate-y-1 transition-all"
+              className="btn-primary px-8 py-3 text-xs"
             >
               Onayla ve Kapat
             </button>

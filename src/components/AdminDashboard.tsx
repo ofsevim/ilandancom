@@ -124,14 +124,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   };
 
   const getStatusBadge = (status: string) => {
-    const colors = {
-      active: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-      pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-      rejected: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-      sold: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+    const colors: Record<string, string> = {
+      active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
+      pending: 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
+      rejected: 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400',
+      sold: 'bg-slate-100 text-slate-600 dark:bg-slate-500/10 dark:text-slate-400',
     };
     
-    const labels = {
+    const labels: Record<string, string> = {
       active: 'Aktif',
       pending: 'Beklemede',
       rejected: 'Reddedildi',
@@ -139,8 +139,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     };
 
     return (
-      <span className={`px-2 py-1 rounded text-xs font-medium ${colors[status as keyof typeof colors]}`}>
-        {labels[status as keyof typeof labels]}
+      <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${colors[status]}`}>
+        {labels[status]}
       </span>
     );
   };
@@ -161,52 +161,52 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-2xl flex items-start justify-center z-[150] p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-2xl flex items-start justify-center z-[150] p-4 overflow-y-auto">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-white dark:bg-[#12142d] rounded-[2.5rem] max-w-7xl w-full my-8 relative shadow-premium border border-slate-100 dark:border-white/5 overflow-hidden"
+        className="bg-white dark:bg-navy-900 rounded-[2.5rem] max-w-7xl w-full my-8 relative shadow-2xl border border-slate-100 dark:border-silver-700/10 overflow-hidden"
       >
         <button
           onClick={onClose}
-          className="absolute top-8 right-8 z-10 w-12 h-12 glass-premium rounded-full flex items-center justify-center text-slate-500 hover:text-primary-500 hover:scale-105 transition-all"
+          className="absolute top-8 right-8 z-10 w-12 h-12 bg-slate-100 dark:bg-navy-800 rounded-full flex items-center justify-center text-silver-500 dark:text-silver-400 hover:text-accent hover:scale-105 transition-all"
         >
           <X size={24} />
         </button>
 
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Admin Dashboard
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-silver-100">
+              Admin Paneli
             </h1>
             
             <div className="flex space-x-2">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   activeTab === 'overview'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-accent text-white'
+                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-navy-800'
                 }`}
               >
                 Genel Bakış
               </button>
               <button
                 onClick={() => setActiveTab('ads')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   activeTab === 'ads'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-accent text-white'
+                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-navy-800'
                 }`}
               >
                 İlanlar
               </button>
               <button
                 onClick={() => setActiveTab('users')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   activeTab === 'users'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-accent text-white'
+                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-navy-800'
                 }`}
               >
                 Kullanıcılar
@@ -215,77 +215,79 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           </div>
 
           {loading ? (
-            <div className="py-16 text-center text-gray-600 dark:text-gray-300">Yükleniyor...</div>
+            <div className="py-16 text-center text-silver-500 dark:text-silver-400">
+              <div className="animate-spin w-10 h-10 border-4 border-accent border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-sm font-semibold">Yükleniyor...</p>
+            </div>
           ) : error ? (
-            <div className="py-16 text-center text-red-600">{error}</div>
+            <div className="py-16 text-center text-red-500">{error}</div>
           ) : activeTab === 'overview' ? (
             <div className="space-y-6">
-              {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4">
                   <div className="flex items-center">
                     <FileText className="text-blue-600 dark:text-blue-400" size={24} />
                     <div className="ml-3">
                       <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                         {stats.totalAds}
                       </div>
-                      <div className="text-sm text-blue-800 dark:text-blue-300">
+                      <div className="text-sm text-blue-700 dark:text-blue-300">
                         Toplam İlan
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4">
                   <div className="flex items-center">
-                    <Check className="text-green-600 dark:text-green-400" size={24} />
+                    <Check className="text-emerald-600 dark:text-emerald-400" size={24} />
                     <div className="ml-3">
-                      <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                         {stats.activeAds}
                       </div>
-                      <div className="text-sm text-green-800 dark:text-green-300">
+                      <div className="text-sm text-emerald-700 dark:text-emerald-300">
                         Aktif İlan
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl p-4">
                   <div className="flex items-center">
-                    <Clock className="text-yellow-600 dark:text-yellow-400" size={24} />
+                    <Clock className="text-amber-600 dark:text-amber-400" size={24} />
                     <div className="ml-3">
-                      <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                      <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                         {stats.pendingAds}
                       </div>
-                      <div className="text-sm text-yellow-800 dark:text-yellow-300">
+                      <div className="text-sm text-amber-700 dark:text-amber-300">
                         Bekleyen İlan
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                <div className="bg-navy-50 dark:bg-navy-800/50 border border-slate-200 dark:border-silver-700/15 rounded-xl p-4">
                   <div className="flex items-center">
-                    <Users className="text-purple-600 dark:text-purple-400" size={24} />
+                    <Users className="text-slate-600 dark:text-silver-400" size={24} />
                     <div className="ml-3">
-                      <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      <div className="text-2xl font-bold text-slate-600 dark:text-silver-400">
                         {stats.totalUsers}
                       </div>
-                      <div className="text-sm text-purple-800 dark:text-purple-300">
+                      <div className="text-sm text-slate-500 dark:text-silver-500">
                         Toplam Kullanıcı
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4">
+                <div className="bg-accent/10 dark:bg-accent/10 border border-accent/20 dark:border-accent/20 rounded-xl p-4">
                   <div className="flex items-center">
-                    <TrendingUp className="text-indigo-600 dark:text-indigo-400" size={24} />
+                    <TrendingUp className="text-accent" size={24} />
                     <div className="ml-3">
-                      <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      <div className="text-2xl font-bold text-accent">
                         {stats.activeUsers}
                       </div>
-                      <div className="text-sm text-indigo-800 dark:text-indigo-300">
+                      <div className="text-sm text-accent-dark dark:text-accent-light">
                         Aktif Kullanıcı
                       </div>
                     </div>
@@ -293,19 +295,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
               </div>
 
-              {/* Recent Activities */}
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="bg-slate-50 dark:bg-navy-800/50 rounded-xl p-6 border border-slate-100 dark:border-silver-700/10">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-silver-100 mb-4">
                   Son Aktiviteler
                 </h3>
                 <div className="space-y-3">
                   {ads.slice(0, 5).map((ad: any) => (
                     <div key={ad.id} className="flex items-center justify-between py-2">
                       <div>
-                        <div className="font-medium text-gray-900 dark:text-white">
+                        <div className="font-medium text-slate-900 dark:text-silver-100">
                           {ad.title}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                        <div className="text-sm text-silver-500 dark:text-silver-600">
                           {(ad.users?.name || 'Bilinmiyor')} tarafından {formatDate(ad.created_at)}
                         </div>
                       </div>
@@ -319,65 +320,63 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
           {activeTab === 'ads' && !loading && !error && (
             <div className="space-y-6">
-              {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-silver-400" size={20} />
                 <input
                   type="text"
                   placeholder="İlan ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-12 pr-4 py-3 border border-slate-200 dark:border-silver-700/15 rounded-xl focus:ring-2 focus:ring-accent/30 focus:border-accent bg-white dark:bg-navy-800 text-slate-900 dark:text-silver-100 placeholder-silver-400 dark:placeholder-silver-600 outline-none transition-all"
                 />
               </div>
 
-              {/* Ads Table */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-navy-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-silver-700/10">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-700">
+                    <thead className="bg-slate-50 dark:bg-navy-800/80">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           İlan
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           Fiyat
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           Satıcı
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           Durum
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           İşlemler
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="divide-y divide-slate-100 dark:divide-silver-700/10">
                       {filteredAds.map((ad: any) => (
-                        <tr key={ad.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <tr key={ad.id} className="hover:bg-slate-50 dark:hover:bg-navy-800/60 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center">
                               <img
                                 src={ad.images?.[0] || ''}
                                 alt=""
-                                className="w-12 h-12 rounded-lg object-cover mr-3"
+                                className="w-12 h-12 rounded-lg object-cover mr-3 bg-slate-100 dark:bg-navy-800"
                               />
                               <div>
-                                <div className="font-medium text-gray-900 dark:text-white">
+                                <div className="font-medium text-slate-900 dark:text-silver-100">
                                   {ad.title}
                                 </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                <div className="text-sm text-silver-500 dark:text-silver-600">
                                   {ad.categories?.name || ''}
                                 </div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-gray-900 dark:text-white">
+                          <td className="px-6 py-4 text-slate-900 dark:text-silver-100 font-semibold">
                             {formatPrice(ad.price)}
                           </td>
-                          <td className="px-6 py-4 text-gray-900 dark:text-white">
+                          <td className="px-6 py-4 text-slate-700 dark:text-silver-300">
                             {ad.users?.name}
                           </td>
                           <td className="px-6 py-4">
@@ -387,7 +386,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                             <div className="flex space-x-2">
                               <button 
                                 onClick={() => handleViewAd(ad.id)}
-                                className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1 rounded"
+                                className="text-accent hover:bg-accent/10 p-1.5 rounded-lg transition-colors"
                                 title="İlanı Görüntüle"
                               >
                                 <Eye size={16} />
@@ -395,7 +394,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                               {ad.status !== 'active' && (
                                 <button 
                                   onClick={() => handleApproveAd(ad.id)}
-                                  className="text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded"
+                                  className="text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 p-1.5 rounded-lg transition-colors"
                                   title="İlanı Onayla"
                                 >
                                   <Check size={16} />
@@ -403,7 +402,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                               )}
                               <button 
                                 onClick={() => handleDeleteAd(ad.id)} 
-                                className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded"
+                                className="text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 p-1.5 rounded-lg transition-colors"
                                 title="İlanı Sil"
                               >
                                 <Trash2 size={16} />
@@ -421,74 +420,72 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
           {activeTab === 'users' && !loading && !error && (
             <div className="space-y-6">
-              {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-silver-400" size={20} />
                 <input
                   type="text"
                   placeholder="Kullanıcı ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-12 pr-4 py-3 border border-slate-200 dark:border-silver-700/15 rounded-xl focus:ring-2 focus:ring-accent/30 focus:border-accent bg-white dark:bg-navy-800 text-slate-900 dark:text-silver-100 placeholder-silver-400 dark:placeholder-silver-600 outline-none transition-all"
                 />
               </div>
 
-              {/* Users Table */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-navy-800 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-silver-700/10">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-700">
+                    <thead className="bg-slate-50 dark:bg-navy-800/80">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           Kullanıcı
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           Email
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           Rol
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           Üyelik Tarihi
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-silver-500 dark:text-silver-600 uppercase tracking-wider">
                           İşlemler
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="divide-y divide-slate-100 dark:divide-silver-700/10">
                       {filteredUsers.map((user: any) => (
-                        <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-navy-800/60 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center">
-                              <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3">
-                                <span className="text-gray-600 dark:text-gray-400 font-medium">
+                              <div className="w-10 h-10 bg-slate-200 dark:bg-navy-700 rounded-full flex items-center justify-center mr-3">
+                                <span className="text-slate-500 dark:text-silver-400 font-semibold text-sm">
                                   {(user.name || '').charAt(0).toUpperCase()}
                                 </span>
                               </div>
                               <div>
-                                <div className="font-medium text-gray-900 dark:text-white">
+                                <div className="font-medium text-slate-900 dark:text-silver-100">
                                   {user.name}
                                 </div>
-                                <div className={`text-sm ${user.is_active ? 'text-green-600' : 'text-red-600'}`}>
+                                <div className={`text-sm font-semibold ${user.is_active ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
                                   {user.is_active ? 'Aktif' : 'Pasif'}
                                 </div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-gray-900 dark:text-white">
+                          <td className="px-6 py-4 text-slate-700 dark:text-silver-300">
                             {user.email}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${
                               user.role === 'admin'
-                                ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                ? 'bg-accent/10 text-accent dark:bg-accent/10 dark:text-accent-light'
+                                : 'bg-slate-100 text-slate-600 dark:bg-navy-700 dark:text-silver-400'
                             }`}>
                               {user.role === 'admin' ? 'Yönetici' : 'Kullanıcı'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-gray-900 dark:text-white">
+                          <td className="px-6 py-4 text-slate-700 dark:text-silver-300">
                             {formatDate(user.created_at)}
                           </td>
                           <td className="px-6 py-4">
@@ -496,7 +493,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                               {user.is_active && (
                                 <button 
                                   onClick={() => handleBanUser(user.id)}
-                                  className="text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 p-1 rounded"
+                                  className="text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 p-1.5 rounded-lg transition-colors"
                                   title="Kullanıcıyı Engelle"
                                 >
                                   <Ban size={16} />
@@ -504,7 +501,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                               )}
                               <button 
                                 onClick={() => handleDeleteUser(user.id)}
-                                className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded"
+                                className="text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 p-1.5 rounded-lg transition-colors"
                                 title="Kullanıcıyı Sil"
                               >
                                 <Trash2 size={16} />

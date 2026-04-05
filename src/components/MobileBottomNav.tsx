@@ -44,7 +44,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
 
     return (
         <>
-            <div className="fixed bottom-0 left-0 right-0 md:hidden z-50 bg-white/80 dark:bg-primary-900/80 backdrop-blur-xl border-t border-primary-200 dark:border-primary-800 pb-safe">
+            <div className="fixed bottom-0 left-0 right-0 md:hidden z-50 bg-white/80 dark:bg-navy-900/90 backdrop-blur-xl border-t border-slate-200 dark:border-silver-700/10 pb-safe">
                 <div className="flex justify-around items-center h-16 px-2">
                     {navItems.map((item, index) => {
                         const Icon = item.icon;
@@ -57,7 +57,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                                 <button
                                     key={index}
                                     onClick={item.action}
-                                    className="relative -top-5 w-14 h-14 bg-accent-premium rounded-full flex flex-col items-center justify-center text-white shadow-lg border-4 border-white dark:border-primary-950 transform active:scale-95 transition-all"
+                                    className="relative -top-5 w-14 h-14 bg-accent rounded-full flex flex-col items-center justify-center text-white shadow-glow border-4 border-white dark:border-navy-950 transform active:scale-95 transition-all"
                                 >
                                     <Icon size={24} />
                                 </button>
@@ -68,7 +68,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                             <button
                                 key={index}
                                 onClick={item.action}
-                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${isActive ? 'text-accent-premium font-bold' : 'text-primary-500 dark:text-primary-400'
+                                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${isActive ? 'text-accent font-bold' : 'text-silver-500 dark:text-silver-400'
                                     }`}
                             >
                                 <Icon size={20} className={isActive ? 'transform scale-110' : ''} />
@@ -79,7 +79,6 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                 </div>
             </div>
 
-            {/* Mobile User Menu Sheet */}
             <AnimatePresence>
                 {showUserMenu && user && (
                     <div className="fixed inset-0 z-[60] md:hidden">
@@ -88,27 +87,27 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowUserMenu(false)}
-                            className="absolute inset-0 bg-primary-950/60 backdrop-blur-sm"
+                            className="absolute inset-0 bg-navy-950/70 backdrop-blur-sm"
                         />
                         <motion.div
                             initial={{ y: '100%' }}
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', damping: 30, stiffness: 500, mass: 0.8 }}
-                            className="absolute bottom-0 left-0 right-0 bg-white dark:bg-primary-900 rounded-t-[2rem] shadow-2xl border-t border-primary-100 dark:border-primary-800 p-5 pb-10 max-h-[85vh] overflow-y-auto"
+                            className="absolute bottom-0 left-0 right-0 bg-white dark:bg-navy-900 rounded-t-[2rem] shadow-2xl border-t border-slate-200 dark:border-silver-700/10 p-5 pb-10 max-h-[85vh] overflow-y-auto"
                         >
                             <div className="flex justify-between items-center mb-6">
-                                <div className="w-12 h-1.5 bg-primary-200 dark:bg-primary-700 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-3" />
+                                <div className="w-12 h-1.5 bg-slate-200 dark:bg-silver-700 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-3" />
                                 <button 
                                     onClick={() => setShowUserMenu(false)}
-                                    className="ml-auto p-2 bg-primary-100 dark:bg-primary-800 rounded-full text-primary-600 dark:text-primary-400 active:scale-90 transition-all hover:bg-primary-200 dark:hover:bg-primary-700"
+                                    className="ml-auto p-2 bg-slate-100 dark:bg-navy-800 rounded-full text-slate-600 dark:text-silver-400 active:scale-90 transition-all hover:bg-slate-200 dark:hover:bg-navy-700"
                                 >
                                     <X size={20} />
                                 </button>
                             </div>
                             
-                            <div className="flex items-center gap-4 mb-5 p-4 bg-primary-50 dark:bg-primary-800/50 rounded-2xl border border-primary-100 dark:border-primary-800">
-                                <div className="w-12 h-12 bg-accent-premium rounded-xl flex items-center justify-center text-white shadow-premium flex-shrink-0">
+                            <div className="flex items-center gap-4 mb-5 p-4 bg-accent/5 dark:bg-accent/5 rounded-2xl border border-accent/10 dark:border-accent/10">
+                                <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center text-white shadow-glow flex-shrink-0">
                                     {user.avatar ? (
                                         <img src={user.avatar} alt={user.name} className="w-full h-full object-cover rounded-xl" />
                                     ) : (
@@ -116,27 +115,27 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                                     )}
                                 </div>
                                 <div className="min-w-0">
-                                    <p className="text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-0.5">HESABIM</p>
-                                    <h4 className="text-base font-black text-primary-950 dark:text-white truncate">{user.name}</h4>
+                                    <p className="text-[10px] font-bold text-silver-500 dark:text-silver-600 uppercase tracking-widest mb-0.5">HESABIM</p>
+                                    <h4 className="text-base font-black text-slate-900 dark:text-silver-100 truncate">{user.name}</h4>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 gap-2.5">
                                 {[
-                                    { icon: User, label: 'Profilimi Düzenle', color: 'text-indigo-500', bg: 'bg-indigo-50', onClick: () => setShowProfileModal(true) },
-                                    { icon: Package, label: 'İlanlarımı Yönet', color: 'text-primary-600', bg: 'bg-primary-50', onClick: () => setShowMyAdsModal(true) },
-                                    { icon: Heart, label: 'Favorilerim', color: 'text-red-500', bg: 'bg-red-50', onClick: () => setShowFavoritesModal(true) },
-                                    { icon: MessageSquare, label: 'Mesajlarım', color: 'text-emerald-500', bg: 'bg-emerald-50', onClick: () => setShowConversationsModal(true) },
+                                    { icon: User, label: 'Profilimi Düzenle', color: 'text-accent', bg: 'bg-accent/10', onClick: () => setShowProfileModal(true) },
+                                    { icon: Package, label: 'İlanlarımı Yönet', color: 'text-accent', bg: 'bg-accent/10', onClick: () => setShowMyAdsModal(true) },
+                                    { icon: Heart, label: 'Favorilerim', color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-500/10', onClick: () => setShowFavoritesModal(true) },
+                                    { icon: MessageSquare, label: 'Mesajlarım', color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', onClick: () => setShowConversationsModal(true) },
                                 ].map((item, i) => (
                                     <button
                                         key={i}
                                         onClick={() => { item.onClick(); setShowUserMenu(false); }}
-                                        className="flex items-center gap-3.5 p-3.5 rounded-xl border border-primary-100 dark:border-primary-800 hover:bg-primary-50 dark:hover:bg-primary-800 transition-all active:scale-[0.98]"
+                                        className="flex items-center gap-3.5 p-3.5 rounded-xl border border-slate-200 dark:border-silver-700/10 hover:bg-slate-50 dark:hover:bg-navy-800 transition-all active:scale-[0.98]"
                                     >
-                                        <div className={`p-2 rounded-lg ${item.bg} dark:bg-primary-800`}>
+                                        <div className={`p-2 rounded-lg ${item.bg} dark:bg-navy-800`}>
                                             <item.icon size={18} className={item.color} />
                                         </div>
-                                        <span className="font-bold text-sm text-primary-900 dark:text-primary-100">{item.label}</span>
+                                        <span className="font-bold text-sm text-slate-900 dark:text-silver-100">{item.label}</span>
                                     </button>
                                 ))}
 
@@ -155,7 +154,6 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                 )}
             </AnimatePresence>
 
-            {/* Modals */}
             {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
             {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
             {showMyAdsModal && <MyAdsModal onClose={() => setShowMyAdsModal(false)} onShowNewAd={() => navigate('/ilan-ver')} />}

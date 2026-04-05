@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Send } from 'lucide-react';
 import { messageService } from '../services/api';
 import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
@@ -74,40 +73,38 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
   };
 
   return (
-    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[1100] p-4">
-      <div className="bg-white dark:bg-primary-900 rounded-[2.5rem] w-full max-w-lg shadow-premium border border-primary-100 dark:border-primary-800 relative overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1100] p-4">
+      <div className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl w-full max-w-lg relative overflow-hidden flex flex-col max-h-[80vh]">
 
-        {/* Close Button - Premium */}
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
-        >
-          <X size={20} />
-        </button>
-
-        {/* Header */}
-        <div className="p-8 border-b border-primary-100 dark:border-primary-800">
-          <h3 className="text-xl font-black text-primary-950 dark:text-white tracking-tight">Mesajlaşma</h3>
-          <p className="text-primary-500 text-[10px] font-bold uppercase tracking-widest mt-1">Güvenli Sohbet</p>
+        <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
+          <div>
+            <h3 className="text-lg font-bold text-silver-100">Mesajlaşma</h3>
+            <p className="text-silver-500 text-xs mt-0.5">Güvenli Sohbet</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
+          >
+            <span className="material-symbols-outlined text-xl">close</span>
+          </button>
         </div>
 
-        {/* Message List */}
-        <div ref={listRef} className="p-8 max-h-[50vh] overflow-y-auto space-y-4 scrollbar-hide bg-primary-50/30 dark:bg-black/10">
+        <div ref={listRef} className="p-6 flex-1 overflow-y-auto space-y-3 bg-navy-900/50">
           {messages.length === 0 ? (
             <div className="text-center py-10 flex flex-col items-center gap-3">
-              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-800 rounded-full flex items-center justify-center">
-                <Send size={24} className="text-primary-300" />
+              <div className="w-14 h-14 bg-navy-800 border border-silver-700/10 rounded-full flex items-center justify-center">
+                <span className="material-symbols-outlined text-silver-500">chat_bubble_outline</span>
               </div>
-              <p className="text-primary-400 text-xs font-bold uppercase tracking-widest">Henüz mesaj yok</p>
+              <p className="text-silver-500 text-xs">Henüz mesaj yok</p>
             </div>
           ) : (
             messages.map((m) => {
               const isMine = myId && m.sender_id === myId;
               return (
                 <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl text-sm font-medium shadow-sm ${isMine
-                      ? 'bg-neon-indigo text-white rounded-br-none'
-                      : 'bg-white dark:bg-primary-800 text-primary-950 dark:text-white rounded-bl-none border border-primary-100 dark:border-primary-700'
+                  <div className={`max-w-[85%] px-4 py-2.5 rounded-xl text-sm ${isMine
+                      ? 'bg-accent text-white rounded-br-sm'
+                      : 'bg-navy-800 text-silver-100 rounded-bl-sm border border-silver-700/10'
                     }`}>
                     {m.content}
                   </div>
@@ -117,22 +114,21 @@ const MessagesModal: React.FC<MessagesModalProps> = ({ receiverId, adId, onClose
           )}
         </div>
 
-        {/* Input Area */}
-        <div className="p-6 border-t border-primary-100 dark:border-primary-800 bg-white dark:bg-primary-900 flex items-center gap-3">
+        <div className="p-4 border-t border-silver-700/10 flex items-center gap-3 bg-navy-800">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
-            className="flex-1 px-6 py-4 rounded-2xl bg-primary-50 dark:bg-primary-800 border border-transparent focus:border-indigo-500/50 outline-none text-primary-950 dark:text-white font-bold transition-all placeholder:text-primary-400"
+            className="input-base flex-1 px-4 py-3"
             placeholder="Mesajınızı yazın..."
           />
           <button
             onClick={send}
             disabled={sending || !input.trim()}
-            className="w-14 h-14 bg-neon-indigo text-white rounded-2xl shadow-lg shadow-indigo-600/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-40"
+            className="w-11 h-11 bg-accent text-white rounded-xl flex items-center justify-center hover:bg-accent-dark transition-all disabled:opacity-40 active:scale-95"
           >
-            <Send size={20} />
+            <span className="material-symbols-outlined text-xl">send</span>
           </button>
         </div>
       </div>

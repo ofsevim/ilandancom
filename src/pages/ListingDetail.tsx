@@ -33,7 +33,7 @@ const ListingDetail = () => {
       <Layout>
         <SEO title="İlan Detayı" />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin w-10 h-10 border-4 border-accent-premium border-t-transparent rounded-full"></div>
+          <div className="animate-spin w-10 h-10 border-4 border-accent border-t-transparent rounded-full"></div>
         </div>
       </Layout>
     );
@@ -44,8 +44,8 @@ const ListingDetail = () => {
       <Layout>
         <SEO title="İlan Bulunamadı" />
         <div className="text-center py-20">
-          <h2 className="text-2xl font-bold">İlan bulunamadı</h2>
-          <button onClick={() => navigate('/')} className="mt-4 text-accent-premium">Ana Sayfaya Dön</button>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-silver-100">İlan bulunamadı</h2>
+          <button onClick={() => navigate('/')} className="mt-4 text-accent font-semibold hover:underline">Ana Sayfaya Dön</button>
         </div>
       </Layout>
     );

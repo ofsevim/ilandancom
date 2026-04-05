@@ -1,5 +1,4 @@
 import React from 'react';
-import { X, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface AboutModalProps {
@@ -8,49 +7,49 @@ interface AboutModalProps {
 
 const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
   return (
-    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="bg-white dark:bg-primary-900 rounded-[2.5rem] max-w-xl w-full overflow-hidden shadow-premium border border-primary-100 dark:border-primary-800"
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-xl w-full overflow-hidden"
       >
-        <div className="flex items-center justify-between p-8 border-b border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 gold-gradient rounded-2xl flex items-center justify-center shadow-gold-glow">
-              <Info size={24} className="text-primary-950" />
+        <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center">
+              <span className="material-symbols-outlined text-accent">info</span>
             </div>
             <div>
-              <h2 className="text-2xl font-black text-primary-950 dark:text-white tracking-tight">Hakkımızda</h2>
-              <p className="text-primary-400 text-xs font-bold uppercase tracking-widest mt-1">Vizyonumuz & Değerlerimiz</p>
+              <h2 className="text-lg font-bold text-silver-100">Hakkımızda</h2>
+              <p className="text-silver-500 text-xs mt-0.5">Vizyonumuz & Değerlerimiz</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 glass rounded-full flex items-center justify-center text-primary-400 hover:text-primary-600 dark:hover:text-white transition-all"
+            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
           >
-            <X size={20} />
+            <span className="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
 
-        <div className="p-10 space-y-6">
-          <div className="space-y-4">
-            <p className="text-primary-600 dark:text-primary-200 text-lg font-medium leading-relaxed italic">
+        <div className="p-8 space-y-5">
+          <div className="space-y-3">
+            <p className="text-silver-300 text-base leading-relaxed italic">
               "Türkiye'nin en seçkin ilan deneyimini inşa ediyoruz."
             </p>
-            <div className="h-px w-12 gold-gradient"></div>
+            <div className="h-px w-10 bg-accent/30"></div>
           </div>
 
-          <div className="space-y-5 text-primary-600 dark:text-primary-300 font-medium leading-relaxed">
+          <div className="space-y-4 text-silver-400 leading-relaxed">
             <p>ilandan.online; kullanıcıların emlak, vasıta, elektronik ve değerli eşyalar için premium kalitede ilan yayınlayabildiği modern bir platformdur.</p>
             <p>Amacımız; sadece bir satış sitesi olmak değil, kullanıcılarımıza güvenli, hızlı ve görsel açıdan kusursuz bir ticaret deneyimi sunmaktır.</p>
             <p>Her detay üzerinde titizlikle çalışıyor, teknoloji ve tasarımı en yüksek standartlarda buluşturuyoruz.</p>
           </div>
 
-          <div className="pt-6">
+          <div className="pt-4">
             <button
               onClick={onClose}
-              className="w-full py-4 gold-gradient text-primary-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:-translate-y-1 transition-all"
+              className="btn-primary w-full py-3 text-xs"
             >
               Anladım
             </button>

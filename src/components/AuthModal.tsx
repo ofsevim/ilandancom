@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, Mail, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
@@ -54,70 +53,60 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
     });
   };
 
-  const modalVariants: any = {
-    hidden: { opacity: 0, scale: 0.9, y: 20 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 30, stiffness: 500, mass: 0.8 } },
-    exit: { opacity: 0, scale: 0.9, y: 20 }
-  };
-
   return (
-    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
+    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
       <motion.div
-        variants={modalVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        className="bg-white dark:bg-primary-900 rounded-[2.5rem] max-w-md w-full p-8 lg:p-10 relative shadow-premium border border-primary-100 dark:border-primary-800"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: 'spring', damping: 30, stiffness: 500, mass: 0.8 }}
+        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-md w-full p-8 lg:p-10 relative"
       >
-        {/* Close Button - Premium */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
+          className="absolute top-5 right-5 w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all z-50"
         >
-          <X size={20} />
+          <span className="material-symbols-outlined text-xl">close</span>
         </button>
 
-        <div className="text-center mb-10">
-          <div className="w-20 h-20 gold-gradient rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-premium rotate-3">
-            <Lock size={32} className="text-primary-950" />
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-2xl mx-auto mb-5 flex items-center justify-center">
+            <span className="material-symbols-outlined text-3xl text-accent">lock</span>
           </div>
-          <h2 className="text-3xl font-black text-primary-950 dark:text-white tracking-tight">
+          <h2 className="text-2xl font-bold text-silver-100 tracking-tight">
             {isForgot ? 'Şifreni Sıfırla' : isLogin ? 'Tekrar Hoşgeldiniz' : 'Yeni Hesap Oluştur'}
           </h2>
-          <p className="text-primary-500 dark:text-primary-400 mt-3 font-medium text-sm">
-            {isForgot ? 'E-posta adresinize sıfırlama bağlantısı göndereceğiz' : isLogin ? 'Premium ilan dünyasına giriş yapın' : 'Avantajlı satış ve alışverişe başlayın'}
+          <p className="text-silver-500 mt-2 text-sm">
+            {isForgot ? 'E-posta adresinize sıfırlama bağlantısı göndereceğiz' : isLogin ? 'İlan dünyasına giriş yapın' : 'Satış ve alışverişe başlayın'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <AnimatePresence mode="popLayout">
             {!isLogin && !isForgot && (
               <motion.div
                 initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                animate={{ opacity: 1, height: 'auto', marginBottom: 20 }}
+                animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                className="relative"
               >
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-400">
-                  <User size={20} />
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-silver-500 text-xl">person</span>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Ad Soyad"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required={!isLogin}
+                    className="input-base w-full pl-12 pr-4 py-3.5"
+                  />
                 </div>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Ad Soyad"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required={!isLogin}
-                  className="w-full pl-12 pr-6 py-4 bg-primary-50 dark:bg-primary-800/50 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium focus:border-transparent outline-none text-primary-950 dark:text-white font-semibold transition-all placeholder:text-primary-300"
-                />
               </motion.div>
             )}
           </AnimatePresence>
 
           <div className="relative">
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-400">
-              <Mail size={20} />
-            </div>
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-silver-500 text-xl">mail</span>
             <input
               type="email"
               name="email"
@@ -125,15 +114,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full pl-12 pr-6 py-4 bg-primary-50 dark:bg-primary-800/50 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium focus:border-transparent outline-none text-primary-950 dark:text-white font-semibold transition-all placeholder:text-primary-300"
+              className="input-base w-full pl-12 pr-4 py-3.5"
             />
           </div>
 
           {!isForgot && (
             <div className="relative">
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-400">
-                <Lock size={20} />
-              </div>
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-silver-500 text-xl">lock</span>
               <input
                 type="password"
                 name="password"
@@ -141,28 +128,28 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full pl-12 pr-6 py-4 bg-primary-50 dark:bg-primary-800/50 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium focus:border-transparent outline-none text-primary-950 dark:text-white font-semibold transition-all placeholder:text-primary-300"
+                className="input-base w-full pl-12 pr-4 py-3.5"
               />
             </div>
           )}
 
           {isLogin && !isForgot && (
-            <div className="text-right -mt-2">
+            <div className="text-right -mt-1">
               <button
                 type="button"
                 onClick={() => setIsForgot(true)}
-                className="text-xs font-bold text-primary-400 hover:text-accent-premium transition-colors"
+                className="text-xs font-medium text-silver-500 hover:text-accent transition-colors"
               >
                 Şifremi Unuttum
               </button>
             </div>
           )}
 
-          <div className="pt-4">
+          <div className="pt-3">
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full gold-gradient text-primary-950 py-5 rounded-[1.25rem] font-black text-sm uppercase tracking-widest shadow-premium hover:-translate-y-1 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-3.5 text-sm"
             >
               {isLoading
                 ? 'İşlem yapılıyor...'
@@ -172,29 +159,27 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           </div>
         </form>
 
-        <div className="mt-10 text-center space-y-3">
+        <div className="mt-8 text-center space-y-2">
           {isForgot ? (
             <button
               onClick={() => setIsForgot(false)}
-              className="text-primary-500 dark:text-primary-400 font-bold hover:text-accent-premium transition-colors text-sm"
+              className="text-silver-500 font-medium hover:text-accent transition-colors text-sm"
             >
               ← Giriş ekranına dön
             </button>
           ) : (
-            <>
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-primary-500 dark:text-primary-400 font-bold hover:text-accent-premium transition-colors text-sm"
-              >
-                {isLogin
-                  ? 'Henüz hesabınız yok mu? '
-                  : 'Zaten üyeliğiniz var mı? '
-                }
-                <span className="text-accent-premium border-b-2 border-accent-premium/30 pb-0.5 ml-1">
-                  {isLogin ? 'Kayıt Ol' : 'Giriş Yap'}
-                </span>
-              </button>
-            </>
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-silver-500 font-medium hover:text-accent transition-colors text-sm"
+            >
+              {isLogin
+                ? 'Henüz hesabınız yok mu? '
+                : 'Zaten üyeliğiniz var mı? '
+              }
+              <span className="text-accent ml-1">
+                {isLogin ? 'Kayıt Ol' : 'Giriş Yap'}
+              </span>
+            </button>
           )}
         </div>
       </motion.div>

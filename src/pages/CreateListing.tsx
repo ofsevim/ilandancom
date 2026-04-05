@@ -10,7 +10,7 @@ const CreateListing = () => {
     <Layout>
       <SEO title="İlan Ver" description="ilandan.online'da ücretsiz ilan verin. Binlerce alıcıya ulaşın." />
       <div className="max-w-5xl mx-auto px-6 py-20">
-        <div className="bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden">
+        <div className="bg-white dark:bg-navy-900 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-silver-700/10 overflow-hidden">
           <NewAdModal onClose={() => navigate('/')} onAdCreated={() => navigate('/ilanlar')} />
         </div>
       </div>

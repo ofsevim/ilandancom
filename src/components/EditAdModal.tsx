@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { X, Upload, Trash2, Edit } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCategories } from '../hooks/useCategories';
 import { adService, storageService } from '../services/api';
@@ -160,145 +159,146 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
     }
   };
 
-  const modalVariants: any = {
-    hidden: { opacity: 0, scale: 0.95, y: 30 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } },
-    exit: { opacity: 0, scale: 0.95, y: 30 }
-  };
-
   const hasDistrictList = !!(districts && districts.length);
 
   return (
-    <div className="fixed inset-0 bg-primary-950/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-8 overflow-y-auto">
+    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-8">
       <motion.div
-        variants={modalVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        className="bg-white dark:bg-primary-900 rounded-[2.5rem] max-w-4xl w-full max-h-full overflow-hidden flex flex-col shadow-premium border border-primary-100 dark:border-primary-800"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
       >
-        {/* Close Button - Premium */}
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 w-10 h-10 glass-premium rounded-full flex items-center justify-center text-primary-400 hover:text-white transition-all z-50 hover:scale-110 active:scale-90"
-        >
-          <X size={20} />
-        </button>
-
-        <div className="flex items-center justify-between p-8 border-b border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-neon-indigo rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
-              <Edit size={24} className="text-white" />
+        <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center">
+              <span className="material-symbols-outlined text-accent">edit</span>
             </div>
             <div>
-              <h2 className="text-2xl font-black text-primary-950 dark:text-white tracking-tight">İlanı Düzenle</h2>
-              <p className="text-primary-500 text-[10px] font-bold uppercase tracking-widest mt-1">İlan bilgilerinizi güncelleyin</p>
+              <h2 className="text-lg font-bold text-silver-100">İlanı Düzenle</h2>
+              <p className="text-silver-500 text-xs mt-0.5">İlan bilgilerinizi güncelleyin</p>
             </div>
           </div>
+          <button
+            onClick={onClose}
+            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
+          >
+            <span className="material-symbols-outlined text-xl">close</span>
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 lg:p-10 space-y-8 overflow-y-auto flex-1 scrollbar-hide">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 lg:p-8 space-y-6 overflow-y-auto flex-1">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-5">
               <div>
-                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">İlan Başlığı</label>
+                <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-2 block">İlan Başlığı</label>
                 <input
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
+                  className="input-base w-full px-4 py-3.5"
                   placeholder="İlan başlığı"
                   maxLength={100}
                 />
               </div>
 
               <div>
-                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Açıklama</label>
+                <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-2 block">Açıklama</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={6}
-                  className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all resize-none"
+                  className="input-base w-full px-4 py-3.5 resize-none"
                   placeholder="İlan açıklaması (En az 60 karakter)"
                   maxLength={1000}
                 />
-                <div className="mt-2 text-[10px] font-bold text-primary-400 text-right pr-4">
+                <div className="mt-1.5 text-[10px] text-silver-500 text-right">
                   {formData.description.length} / 1000
                 </div>
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Fiyat (TL)</label>
+                  <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-2 block">Fiyat (TL)</label>
                   <input
                     type="number"
                     name="price"
                     value={formData.price}
                     onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
+                    className="input-base w-full px-4 py-3.5"
                     placeholder="0"
                     min="0"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Kategori</label>
-                  <select
-                    name="categoryId"
-                    value={formData.categoryId}
-                    onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="">Kategori Seçin</option>
-                    {categories.map(category => (
-                      <option key={category.id} value={category.id}>{category.name}</option>
-                    ))}
-                  </select>
+                  <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-2 block">Kategori</label>
+                  <div className="relative">
+                    <select
+                      name="categoryId"
+                      value={formData.categoryId}
+                      onChange={handleInputChange}
+                      className="input-base w-full px-4 py-3.5 appearance-none cursor-pointer pr-10"
+                    >
+                      <option value="">Kategori Seçin</option>
+                      {categories.map(category => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </select>
+                    <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-silver-500 text-xl">expand_more</span>
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">Şehir</label>
-                  <select
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="">Şehir Seçin</option>
-                    {cities.map((c: any) => (
-                      <option key={c.id} value={c.name}>{c.name}</option>
-                    ))}
-                  </select>
+                  <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-2 block">Şehir</label>
+                  <div className="relative">
+                    <select
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className="input-base w-full px-4 py-3.5 appearance-none cursor-pointer pr-10"
+                    >
+                      <option value="">Şehir Seçin</option>
+                      {cities.map((c: any) => (
+                        <option key={c.id} value={c.name}>{c.name}</option>
+                      ))}
+                    </select>
+                    <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-silver-500 text-xl">expand_more</span>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-3 block pl-4">İlçe</label>
+                  <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-2 block">İlçe</label>
                   {hasDistrictList ? (
-                    <select
-                      name="district"
-                      value={formData.district}
-                      onChange={handleInputChange}
-                      className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all appearance-none cursor-pointer"
-                      required
-                    >
-                      <option value="">İlçe Seçin</option>
-                      {districts.map((d: any) => (
-                        <option key={d.id} value={d.name}>{d.name}</option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <select
+                        name="district"
+                        value={formData.district}
+                        onChange={handleInputChange}
+                        className="input-base w-full px-4 py-3.5 appearance-none cursor-pointer pr-10"
+                        required
+                      >
+                        <option value="">İlçe Seçin</option>
+                        {districts.map((d: any) => (
+                          <option key={d.id} value={d.name}>{d.name}</option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-silver-500 text-xl">expand_more</span>
+                    </div>
                   ) : (
                     <input
                       type="text"
                       name="district"
                       value={formData.district}
                       onChange={handleInputChange}
-                      className="w-full px-6 py-4 bg-primary-50 dark:bg-primary-800 border border-primary-100 dark:border-primary-800 rounded-2xl focus:ring-2 focus:ring-accent-premium outline-none text-primary-950 dark:text-white font-semibold transition-all"
+                      className="input-base w-full px-4 py-3.5"
                       placeholder="İlçe girin"
                       required={!!formData.city}
                     />
@@ -309,7 +309,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
           </div>
 
           <div>
-            <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest mb-4 block pl-4">Görseller (Mevcut & Yeni)</label>
+            <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-3 block">Görseller (Mevcut & Yeni)</label>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               <input
                 type="file"
@@ -321,44 +321,44 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
               />
               <label
                 htmlFor="image-upload-edit"
-                className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-primary-200 dark:border-primary-700 rounded-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-800 transition-all group"
+                className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-silver-700/20 rounded-xl cursor-pointer hover:border-accent/30 hover:bg-accent/5 transition-all group"
               >
-                <Upload className="h-8 w-8 text-primary-400 group-hover:text-accent-premium transition-colors" />
-                <span className="text-[10px] font-bold text-primary-400 mt-2 uppercase">Ekle</span>
+                <span className="material-symbols-outlined text-2xl text-silver-600 group-hover:text-accent">add_photo_alternate</span>
+                <span className="text-[10px] font-medium text-silver-500 mt-1">Ekle</span>
               </label>
 
               {formData.existingImages.map((image, index) => (
-                <div key={`existing-${index}`} className="relative aspect-square rounded-3xl overflow-hidden shadow-sm group">
+                <div key={`existing-${index}`} className="relative aspect-square rounded-xl overflow-hidden group">
                   <img
                     src={image}
                     alt=""
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   />
-                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-primary-950/50 text-white text-[8px] font-bold rounded-full backdrop-blur-sm">MEVCUT</div>
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-navy-950/80 text-silver-300 text-[8px] font-medium rounded-md backdrop-blur-sm">Mevcut</div>
                   <button
                     type="button"
                     onClick={() => removeImage(index, 'existing')}
-                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all hover:bg-red-600"
+                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600"
                   >
-                    <Trash2 size={16} />
+                    <span className="material-symbols-outlined text-sm">delete</span>
                   </button>
                 </div>
               ))}
 
               {formData.images.map((file, index) => (
-                <div key={`new-${index}`} className="relative aspect-square rounded-3xl overflow-hidden shadow-sm group">
+                <div key={`new-${index}`} className="relative aspect-square rounded-xl overflow-hidden group ring-2 ring-accent/30">
                   <img
                     src={URL.createObjectURL(file)}
                     alt=""
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110 border-2 border-accent-premium/30"
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   />
-                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-accent-premium/80 text-primary-950 text-[8px] font-bold rounded-full backdrop-blur-sm">YENİ</div>
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-accent/80 text-white text-[8px] font-medium rounded-md backdrop-blur-sm">Yeni</div>
                   <button
                     type="button"
                     onClick={() => removeImage(index, 'new')}
-                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all hover:bg-red-600"
+                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600"
                   >
-                    <Trash2 size={16} />
+                    <span className="material-symbols-outlined text-sm">delete</span>
                   </button>
                 </div>
               ))}
@@ -366,11 +366,11 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
           </div>
         </form>
 
-        <div className="p-8 border-t border-primary-100 dark:border-primary-800 bg-primary-50/50 dark:bg-black/20 flex flex-col sm:flex-row justify-end gap-4">
+        <div className="p-6 border-t border-silver-700/10 bg-navy-900/50 flex flex-col sm:flex-row justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-8 py-4 bg-white dark:bg-primary-800 text-primary-900 dark:text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-100 dark:hover:bg-primary-700 transition-all border border-primary-100 dark:border-primary-800 shadow-sm"
+            className="btn-secondary px-6 py-3 text-xs"
           >
             İptal
           </button>
@@ -378,16 +378,16 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className="px-10 py-4 gold-gradient text-primary-950 rounded-2xl font-black text-xs uppercase tracking-widest shadow-premium hover:-translate-y-1 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+            className="btn-primary px-8 py-3 text-xs disabled:opacity-50"
           >
             {loading ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-950"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white"></div>
                 <span>Güncelleniyor...</span>
               </>
             ) : (
               <>
-                <Edit size={18} />
+                <span className="material-symbols-outlined text-sm">check</span>
                 <span>Güncelle</span>
               </>
             )}

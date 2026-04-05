@@ -37,11 +37,9 @@ const Dashboard = () => {
                     messageService.getUnreadCount()
                 ]);
 
-                // Ensure data is array
                 const adsData = userAds || [];
                 setAds(adsData);
 
-                // Calculate stats
                 const activeCount = adsData.filter((a: any) => a.status === 'active').length;
                 const totalViews = adsData.reduce((acc: number, curr: Ad) => acc + (curr.viewCount || 0), 0);
                 
@@ -93,21 +91,20 @@ const Dashboard = () => {
     if (!user) return null;
 
     return (
-        <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950/50">
-            {/* Sidebar */}
-            <aside className="w-72 premium-sidebar-bg flex flex-col justify-between p-8 border-r border-slate-200 dark:border-white/5">
+        <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-navy-950">
+            <aside className="w-72 bg-white dark:bg-navy-900 flex flex-col justify-between p-8 border-r border-slate-200 dark:border-silver-700/10">
                 <div className="space-y-10">
                     <Link to="/" className="flex items-center gap-4 px-2">
                         <div className="w-12 h-12 flex-shrink-0">
                             <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                                 <defs>
                                     <linearGradient id="dbg" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stopColor="#6d28d9" />
-                                        <stop offset="100%" stopColor="#4f46e5" />
+                                        <stop offset="0%" stopColor="#3b82f6" />
+                                        <stop offset="100%" stopColor="#2563eb" />
                                     </linearGradient>
                                     <linearGradient id="dglam" x1="0" y1="0" x2="1" y2="1">
                                         <stop offset="0%" stopColor="#ffffff" />
-                                        <stop offset="100%" stopColor="#ddd6fe" />
+                                        <stop offset="100%" stopColor="#e9ecef" />
                                     </linearGradient>
                                 </defs>
                                 <rect width="512" height="512" rx="120" fill="url(#dbg)" />
@@ -121,41 +118,34 @@ const Dashboard = () => {
                             </svg>
                         </div>
                         <div>
-                            <h1 className="text-xl font-black leading-tight text-slate-900 dark:text-white tracking-tight">ilandan<span className="text-neon-indigo">.online</span></h1>
-                            <p className="text-[10px] text-primary-500 font-black uppercase tracking-widest">{user.role === 'admin' ? 'YÖNETİCİ' : 'PREMİUM ÜYE'}</p>
+                            <h1 className="text-xl font-black leading-tight text-slate-900 dark:text-silver-100 tracking-tight">ilandan<span className="text-accent">.online</span></h1>
+                            <p className="text-[10px] text-accent font-bold uppercase tracking-widest">{user.role === 'admin' ? 'YÖNETİCİ' : 'ÜYE'}</p>
                         </div>
                     </Link>
                     <nav className="space-y-2">
-                        <Link to="/dashboard" className="flex items-center gap-4 px-5 py-4 rounded-2xl bg-primary-500/10 text-primary-600 dark:text-primary-400 font-bold transition-all border border-primary-500/20 shadow-sm">
+                        <Link to="/dashboard" className="flex items-center gap-4 px-5 py-4 rounded-2xl bg-accent/10 text-accent dark:text-accent-light font-bold transition-all border border-accent/20 shadow-sm">
                             <span className="material-symbols-outlined">analytics</span>
                             <span className="text-sm">Panel</span>
                         </Link>
-                        <Link to="/mesajlar" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm">
+                        <Link to="/mesajlar" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-silver-400 hover:bg-white dark:hover:bg-navy-800/60 transition-all font-semibold hover:shadow-sm">
                             <span className="material-symbols-outlined">chat_bubble</span>
                             <span className="text-sm">Mesajlar</span>
                             {stats.messages > 0 && (
-                                <span className="ml-auto bg-neon-indigo text-white text-[10px] px-2 py-0.5 rounded-full font-black shadow-lg shadow-primary-500/20">{stats.messages}</span>
+                                <span className="ml-auto bg-accent text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-glow">{stats.messages}</span>
                             )}
                         </Link>
-                        <Link to="/favoriler" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm">
+                        <Link to="/favoriler" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-silver-400 hover:bg-white dark:hover:bg-navy-800/60 transition-all font-semibold hover:shadow-sm">
                             <span className="material-symbols-outlined">favorite</span>
                             <span className="text-sm">Favoriler</span>
                         </Link>
                     <button
                         onClick={() => setShowProfileModal(true)}
-                        className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm w-full"
+                        className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-silver-400 hover:bg-white dark:hover:bg-navy-800/60 transition-all font-semibold hover:shadow-sm w-full"
                     >
                         <span className="material-symbols-outlined">person</span>
                         <span className="text-sm">Profil Ayarları</span>
                     </button>
-                    <button
-                        onClick={() => setShowProfileModal(true)}
-                        className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm w-full"
-                    >
-                        <span className="material-symbols-outlined">person</span>
-                        <span className="text-sm">Profil Ayarları</span>
-                    </button>
-                    <Link to="/" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/50 transition-all font-semibold hover:shadow-sm">
+                    <Link to="/" className="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-600 dark:text-silver-400 hover:bg-white dark:hover:bg-navy-800/60 transition-all font-semibold hover:shadow-sm">
                         <span className="material-symbols-outlined">home</span>
                         <span className="text-sm">Ana Sayfa</span>
                     </Link>
@@ -163,22 +153,22 @@ const Dashboard = () => {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="bg-white dark:bg-slate-900/50 p-5 rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-sm">
+                    <div className="bg-white dark:bg-navy-800/50 p-5 rounded-[2rem] border border-slate-100 dark:border-silver-700/10 shadow-sm">
                         <div className="flex items-center gap-4 mb-5">
-                            <div className="h-12 w-12 rounded-full glass-premium flex items-center justify-center text-primary-500 font-black text-xl overflow-hidden border border-white/20">
+                            <div className="h-12 w-12 rounded-full bg-accent/10 dark:bg-accent/10 flex items-center justify-center text-accent font-bold text-xl overflow-hidden border border-accent/20">
                                 {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : user.name.charAt(0)}
                             </div>
                             <div className="overflow-hidden">
-                                <p className="text-[15px] font-black truncate text-slate-900 dark:text-white leading-tight">{user.name}</p>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
-                                    <span className="material-symbols-outlined text-[12px] text-primary-500">verified_user</span>
+                                <p className="text-[15px] font-black truncate text-slate-900 dark:text-silver-100 leading-tight">{user.name}</p>
+                                <p className="text-[10px] text-silver-500 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                                    <span className="material-symbols-outlined text-[12px] text-accent">verified_user</span>
                                     {user.role === 'admin' ? 'YÖNETİCİ' : 'ÜYE'}
                                 </p>
                             </div>
                         </div>
                         <button 
                             onClick={logout}
-                            className="w-full bg-slate-50 dark:bg-[#12142d] text-red-500 text-[11px] font-black uppercase tracking-widest py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 transition-all flex items-center justify-center gap-2 border border-transparent hover:border-red-100 dark:hover:border-red-500/30"
+                            className="w-full bg-slate-50 dark:bg-navy-800 text-red-500 text-[11px] font-bold uppercase tracking-widest py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 transition-all flex items-center justify-center gap-2 border border-transparent hover:border-red-200 dark:hover:border-red-500/30"
                         >
                             <span className="material-symbols-outlined text-[18px]">logout</span>
                             Çıkış Yap
@@ -187,21 +177,20 @@ const Dashboard = () => {
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <main className="flex-1 overflow-y-auto custom-scrollbar">
-                <header className="sticky top-0 z-10 bg-white/80 dark:bg-[#0a0e27]/80 backdrop-blur-2xl border-b border-slate-200 dark:border-white/5 px-10 py-6 flex items-center justify-between shadow-sm shadow-primary-500/5">
+            <main className="flex-1 overflow-y-auto">
+                <header className="sticky top-0 z-10 bg-white/80 dark:bg-navy-950/80 backdrop-blur-2xl border-b border-slate-200 dark:border-silver-700/10 px-10 py-6 flex items-center justify-between shadow-sm">
                     <div className="relative w-[400px]">
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary-500">search</span>
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-accent">search</span>
                         <input 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3.5 dark-filter-input transition-all outline-none rounded-2xl" 
+                            className="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/15 rounded-2xl text-slate-900 dark:text-silver-100 placeholder-silver-500 dark:placeholder-silver-600 focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all outline-none" 
                             placeholder="İlanlarımda ara..." 
                             type="text"
                         />
                     </div>
                     <div className="flex items-center gap-4">
-                        <Link to="/ilan-ver" className="bg-neon-indigo text-white px-8 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-gold-heavy hover:-translate-y-0.5 flex items-center gap-2">
+                        <Link to="/ilan-ver" className="bg-accent text-white px-8 py-3.5 rounded-2xl font-bold text-[11px] uppercase tracking-widest transition-all shadow-glow hover:-translate-y-0.5 flex items-center gap-2 hover:shadow-glow-lg">
                              <span className="material-symbols-outlined text-[18px]">add</span>
                              Yeni İlan Ver
                         </Link>
@@ -210,14 +199,14 @@ const Dashboard = () => {
 
                 <div className="p-10 max-w-[1200px] mx-auto space-y-12">
                     <section>
-                        <div className="mb-8 pl-2 border-l-[3px] border-primary-500">
-                            <h2 className="text-[32px] font-black tracking-tighter text-slate-900 dark:text-white uppercase leading-none mb-2">Hoş geldin, {user.name.split(' ')[0]} 👋</h2>
-                            <p className="text-slate-500 dark:text-slate-400 font-medium uppercase tracking-widest text-[11px]">Pazar özetin ve istatistiklerin.</p>
+                        <div className="mb-8 pl-2 border-l-[3px] border-accent">
+                            <h2 className="text-[32px] font-black tracking-tighter text-slate-900 dark:text-silver-100 uppercase leading-none mb-2">Hoş geldin, {user.name.split(' ')[0]}</h2>
+                            <p className="text-silver-500 dark:text-silver-600 font-medium uppercase tracking-widest text-[11px]">Pazar özetin ve istatistiklerin.</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {[
-                                { label: 'Aktif İlanlar', value: stats.active, icon: 'campaign', color: 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 border-primary-200 dark:border-primary-500/20', trend: '+2 Yeni', trendColor: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10' },
+                                { label: 'Aktif İlanlar', value: stats.active, icon: 'campaign', color: 'bg-accent/10 dark:bg-accent/10 text-accent dark:text-accent-light border-accent/20 dark:border-accent/20', trend: '+2 Yeni', trendColor: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10' },
                                 { label: 'Görüntülenme', value: stats.views.toLocaleString(), icon: 'visibility', color: 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-500/20', trend: '%5 Düşüş', trendColor: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10' },
                                 { label: 'Mesajlar', value: stats.messages, icon: 'forum', color: 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-500/20', trend: '+%12', trendColor: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10' }
                             ].map((item, idx) => (
@@ -226,33 +215,33 @@ const Dashboard = () => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="premium-card p-8 group border border-slate-100 dark:border-white/5"
+                                    className="bg-white dark:bg-navy-800/50 p-8 group border border-slate-100 dark:border-silver-700/10 rounded-2xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all"
                                 >
                                     <div className="flex items-center justify-between mb-6">
                                         <div className={`p-3 rounded-2xl border ${item.color} group-hover:scale-110 transition-transform`}>
                                             <span className="material-symbols-outlined text-[24px] block">{item.icon}</span>
                                         </div>
-                                        <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl ${item.trendColor}`}>{item.trend}</span>
+                                        <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-xl ${item.trendColor}`}>{item.trend}</span>
                                     </div>
-                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
-                                    <p className="text-[40px] font-black mt-2 text-slate-900 dark:text-white tracking-tighter leading-none drop-shadow-sm">{item.value}</p>
+                                    <p className="text-[11px] font-bold text-silver-500 dark:text-silver-600 uppercase tracking-widest">{item.label}</p>
+                                    <p className="text-[40px] font-black mt-2 text-slate-900 dark:text-silver-100 tracking-tighter leading-none">{item.value}</p>
                                 </motion.div>
                             ))}
                         </div>
                     </section>
 
                     <section>
-                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200 dark:border-white/5">
-                            <h3 className="dark-section-title text-[20px] mb-0 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-primary-500">list_alt</span>
+                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200 dark:border-silver-700/10">
+                            <h3 className="text-[20px] font-bold text-slate-900 dark:text-silver-100 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-accent">list_alt</span>
                                 İlanlarım
                             </h3>
-                            <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-[#12142d] rounded-2xl border border-slate-200 dark:border-white/5">
+                            <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-navy-800 rounded-2xl border border-slate-200 dark:border-silver-700/10">
                                 {['Tümü', 'Aktif', 'Pasif'].map((filter) => (
                                     <button 
                                         key={filter}
                                         onClick={() => setActiveFilter(filter)}
-                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === activeFilter ? 'bg-white dark:bg-primary-500 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-transparent' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${filter === activeFilter ? 'bg-white dark:bg-accent text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-transparent' : 'text-silver-500 hover:text-slate-700 dark:hover:text-silver-300'}`}
                                     >
                                         {filter}
                                     </button>
@@ -262,16 +251,16 @@ const Dashboard = () => {
 
                         <div className="space-y-4">
                             {loading ? (
-                                <div className="text-center py-20 bg-white dark:bg-[#12142d] rounded-[2rem] border border-slate-200 dark:border-white/5">
-                                    <div className="animate-spin w-12 h-12 border-[5px] border-primary-500 border-t-transparent rounded-full mx-auto"></div>
-                                    <p className="text-[#5b13ec] text-[11px] font-black uppercase tracking-widest mt-6">İlanlar yükleniyor...</p>
+                                <div className="text-center py-20 bg-white dark:bg-navy-800 rounded-[2rem] border border-slate-200 dark:border-silver-700/10">
+                                    <div className="animate-spin w-12 h-12 border-[5px] border-accent border-t-transparent rounded-full mx-auto"></div>
+                                    <p className="text-accent text-[11px] font-bold uppercase tracking-widest mt-6">İlanlar yükleniyor...</p>
                                 </div>
                             ) : filteredAds.length === 0 ? (
-                                <div className="text-center py-24 premium-card border-dashed">
-                                    <span className="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-6 drop-shadow-sm">folder_open</span>
-                                    <p className="text-slate-700 dark:text-white text-[18px] font-black tracking-tight mb-2">Henüz ilanınız bulunmuyor</p>
-                                    <p className="text-slate-400 text-[12px] font-medium mb-6">Satışa başlamak için hemen yeni bir ilan oluşturun.</p>
-                                    <Link to="/ilan-ver" className="bg-neon-indigo text-white px-8 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-gold-heavy hover:-translate-y-0.5 transition-all inline-block">Yeni İlan Oluştur</Link>
+                                <div className="text-center py-24 bg-white dark:bg-navy-800/50 border-2 border-dashed border-silver-300 dark:border-silver-700/20 rounded-2xl">
+                                    <span className="material-symbols-outlined text-6xl text-silver-300 dark:text-silver-700 mb-6">folder_open</span>
+                                    <p className="text-slate-700 dark:text-silver-100 text-[18px] font-bold tracking-tight mb-2">Henüz ilanınız bulunmuyor</p>
+                                    <p className="text-silver-500 dark:text-silver-600 text-[12px] font-medium mb-6">Satışa başlamak için hemen yeni bir ilan oluşturun.</p>
+                                    <Link to="/ilan-ver" className="bg-accent text-white px-8 py-3.5 rounded-2xl text-[11px] font-bold uppercase tracking-widest shadow-glow hover:-translate-y-0.5 transition-all inline-block">Yeni İlan Oluştur</Link>
                                 </div>
                             ) : (
                                 filteredAds.map((ad, idx) => (
@@ -280,17 +269,17 @@ const Dashboard = () => {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.05 }}
-                                        className={`group premium-card p-4 flex flex-col md:flex-row gap-6 ${ad.status !== 'active' ? 'opacity-70 grayscale-[0.3]' : ''}`}
+                                        className={`group bg-white dark:bg-navy-800/50 p-4 flex flex-col md:flex-row gap-6 border border-slate-100 dark:border-silver-700/10 rounded-2xl shadow-card hover:shadow-card-hover transition-all ${ad.status !== 'active' ? 'opacity-70 grayscale-[0.3]' : ''}`}
                                     >
-                                        <div className="relative w-full md:w-64 h-40 shrink-0 rounded-[1.5rem] overflow-hidden shadow-sm border border-slate-200 dark:border-white/10 m-2">
+                                        <div className="relative w-full md:w-64 h-40 shrink-0 rounded-[1.5rem] overflow-hidden shadow-sm border border-slate-200 dark:border-silver-700/15 m-2">
                                             {ad.images && ad.images.length > 0 ? (
                                                 <img src={ad.images[0]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" alt={ad.title} />
                                             ) : (
-                                                <div className="w-full h-full bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300 dark:text-slate-600">
+                                                <div className="w-full h-full bg-slate-50 dark:bg-navy-800 flex items-center justify-center text-silver-400 dark:text-silver-600">
                                                     <span className="material-symbols-outlined text-4xl opacity-50">image_not_supported</span>
                                                 </div>
                                             )}
-                                            <div className={`absolute top-3 left-3 px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md ${ad.status === 'active' ? 'bg-emerald-500/90 text-white' : 'bg-slate-800/90 text-white'}`}>
+                                            <div className={`absolute top-3 left-3 px-3.5 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg backdrop-blur-md ${ad.status === 'active' ? 'bg-emerald-500/90 text-white' : 'bg-slate-800/90 text-white'}`}>
                                                 {ad.status === 'active' ? 'AKTİF' : ad.status.toUpperCase()}
                                             </div>
                                         </div>
@@ -299,43 +288,43 @@ const Dashboard = () => {
                                             <div>
                                                 <div className="flex items-start justify-between">
                                                     <div className="space-y-2">
-                                                        <p className="text-[10px] text-primary-500 font-black uppercase tracking-widest">{ad.category?.name || 'Genel'}</p>
-                                                        <h4 className="text-[20px] font-extrabold text-slate-900 dark:text-white group-hover:text-primary-500 transition-colors leading-[1.2] tracking-tight">{ad.title}</h4>
-                                                        <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest pt-1">
+                                                        <p className="text-[10px] text-accent font-bold uppercase tracking-widest">{ad.category?.name || 'Genel'}</p>
+                                                        <h4 className="text-[20px] font-extrabold text-slate-900 dark:text-silver-100 group-hover:text-accent transition-colors leading-[1.2] tracking-tight">{ad.title}</h4>
+                                                        <div className="flex items-center gap-3 text-silver-500 dark:text-silver-600 text-[11px] font-bold uppercase tracking-widest pt-1">
                                                             <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px]">visibility</span>{ad.viewCount || 0} Görüntülenme</span>
-                                                            <span className="h-1 w-1 bg-slate-200 dark:bg-slate-700 rounded-full"></span>
+                                                            <span className="h-1 w-1 bg-slate-200 dark:bg-silver-700 rounded-full"></span>
                                                             <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[14px]">event</span>{ad.createdAt && !isNaN(new Date(ad.createdAt).getTime()) ? new Date(ad.createdAt).toLocaleDateString('tr-TR') : 'YENİ'}</span>
                                                         </div>
                                                     </div>
-                                                    <p className="text-[24px] font-black text-slate-900 dark:text-white tracking-tighter drop-shadow-sm">{ad.price.toLocaleString('tr-TR')} ₺</p>
+                                                    <p className="text-[24px] font-black text-slate-900 dark:text-silver-100 tracking-tighter">{ad.price.toLocaleString('tr-TR')} ₺</p>
                                                 </div>
                                             </div>
 
                                             <div className="flex flex-wrap gap-3 mt-8">
                                                 <Link 
                                                     to={`/ilan/${ad.id}`}
-                                                    className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-[#12142d] rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300 hover:bg-neon-indigo hover:text-white transition-all shadow-sm border border-slate-200 dark:border-white/5 hover:border-transparent"
+                                                    className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-navy-800 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-700 dark:text-silver-300 hover:bg-accent hover:text-white transition-all shadow-sm border border-slate-200 dark:border-silver-700/10 hover:border-transparent"
                                                 >
                                                     <span className="material-symbols-outlined text-[16px]">visibility</span>
                                                     Görüntüle
                                                 </Link>
                                                 <button
                                                     onClick={() => setEditingAd(ad)}
-                                                    className="flex items-center gap-2 px-6 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all shadow-sm border border-indigo-200 dark:border-transparent"
+                                                    className="flex items-center gap-2 px-6 py-2.5 bg-accent/10 dark:bg-accent/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-accent dark:text-accent-light hover:bg-accent hover:text-white transition-all shadow-sm border border-accent/20 dark:border-transparent"
                                                 >
                                                     <span className="material-symbols-outlined text-[16px]">edit</span>
                                                     Düzenle
                                                 </button>
                                                 <button 
                                                     onClick={() => handleAction('sold', ad.id)}
-                                                    className="flex items-center gap-2 px-6 py-2.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm border border-emerald-200 dark:border-transparent"
+                                                    className="flex items-center gap-2 px-6 py-2.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm border border-emerald-200 dark:border-transparent"
                                                 >
                                                     <span className="material-symbols-outlined text-[16px]">check_circle</span>
                                                     Satıldı
                                                 </button>
                                                 <button 
                                                     onClick={() => handleAction('delete', ad.id)}
-                                                    className="flex items-center gap-2 px-6 py-2.5 bg-red-50 dark:bg-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white transition-all shadow-sm border border-red-200 dark:border-transparent"
+                                                    className="flex items-center gap-2 px-6 py-2.5 bg-red-50 dark:bg-red-500/10 rounded-xl text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white transition-all shadow-sm border border-red-200 dark:border-transparent"
                                                 >
                                                     <span className="material-symbols-outlined text-[16px]">delete</span>
                                                     Sil

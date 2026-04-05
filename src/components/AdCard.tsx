@@ -46,67 +46,77 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onAdClick, showEditButton, onEditCl
 
   return (
     <motion.div
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       onClick={() => onAdClick(ad)}
-      className="premium-card cursor-pointer flex flex-col h-full group pb-2"
+      className="group cursor-pointer flex flex-col h-full rounded-xl bg-navy-900 border border-silver-600/8 overflow-hidden hover:border-accent/30 hover:shadow-card-hover"
     >
-      <div className="relative aspect-[4/3] overflow-hidden m-2 rounded-xl">
+      {/* Image */}
+      <div className="relative aspect-[4/3] overflow-hidden">
         {ad.images && ad.images.length > 0 ? (
           <img
             src={buildImageUrl(ad.images[0], { width: 600, height: 450 })}
             alt={ad.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
             loading={priority ? "eager" : "lazy"}
           />
         ) : (
-          <div className="w-full h-full bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-300 dark:text-slate-600">
-            <span className="material-symbols-outlined text-[48px] opacity-50">image_not_supported</span>
+          <div className="w-full h-full bg-navy-950 flex items-center justify-center">
+            <span className="material-symbols-outlined text-5xl text-silver-700/40">image_not_supported</span>
           </div>
         )}
 
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
         {/* Favorite Button */}
-        <div 
+        <button
           onClick={handleFavoriteClick}
-          className="absolute top-3 right-3 bg-white/90 dark:bg-[#12142d]/90 backdrop-blur-md p-2 rounded-full shadow-lg cursor-pointer hover:text-red-500 transition-colors z-10 border border-white/20 dark:border-white/5"
+          className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full bg-navy-950/70 backdrop-blur-sm border border-silver-600/12 hover:bg-navy-950/90 transition-colors z-10"
         >
-          <span className={`material-symbols-outlined text-[20px] leading-none ${isFavorite ? 'text-red-500 fill-1' : 'text-slate-600 dark:text-slate-300'}`}>favorite</span>
-        </div>
+          <span className={`material-symbols-outlined text-lg transition-colors ${isFavorite ? 'text-red-500 [font-variation-settings:"FILL"_1]' : 'text-silver-400 hover:text-silver-100'}`}>favorite</span>
+        </button>
 
         {/* Badges */}
         <div className="absolute bottom-3 left-3 flex gap-2">
           {ad.featured && (
-            <span className="bg-neon-indigo text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg uppercase tracking-widest shadow-lg shadow-primary-500/20">VİTRİN</span>
+            <span className="bg-gradient-to-r from-accent to-accent-dark text-silver-100 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-lg shadow-accent/20">Vitrin</span>
           )}
           {ad.price < 50000 && (
-            <span className="bg-red-500 text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg uppercase tracking-widest shadow-lg shadow-red-500/20">ACİL</span>
+            <span className="bg-red-600/90 backdrop-blur-sm text-silver-100 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-lg shadow-red-500/20">Acil</span>
           )}
         </div>
       </div>
 
-      <div className="px-5 pt-4 pb-3 flex flex-col flex-1">
-        <div className="flex items-center gap-1.5 text-primary-500 dark:text-primary-400 text-[11px] font-black uppercase tracking-widest mb-3">
+      {/* Content */}
+      <div className="px-4 pt-3.5 pb-3 flex flex-col flex-1">
+        {/* Location */}
+        <div className="flex items-center gap-1 text-silver-700 text-[11px] font-medium mb-2">
           <span className="material-symbols-outlined text-[14px]">location_on</span>
           <span>{ad.location?.city || 'Bilinmeyen'}, {ad.location?.district || 'Konum'}</span>
         </div>
-        
-        <h4 className="font-extrabold text-[17px] leading-snug mb-2 line-clamp-2 text-slate-900 dark:text-white group-hover:text-primary-500 transition-colors">
+
+        {/* Title */}
+        <h4 className="font-semibold text-[15px] leading-snug mb-2 line-clamp-2 text-silver-100 group-hover:text-accent-light transition-colors">
           {ad.title}
         </h4>
-        
-        <p className="text-slate-500 dark:text-slate-400 text-[13px] font-medium mb-5 truncate">
-          {ad.category?.name || 'Genel'} • {formatDate(ad.createdAt)}
+
+        {/* Category + Date */}
+        <p className="text-silver-700 text-[12px] mb-4 truncate">
+          {ad.category?.name || 'Genel'} &middot; {formatDate(ad.createdAt)}
         </p>
 
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 dark:border-primary-800/30">
-          <div className="text-[20px] font-black text-slate-900 dark:text-white tracking-tight">
+        {/* Price + Edit */}
+        <div className="mt-auto flex items-center justify-between pt-3 border-t border-silver-600/6">
+          <div className="text-lg font-bold text-silver-100 tracking-tight">
             {formatPrice(ad.price)}
           </div>
           {showEditButton && onEditClick && user && (user.id === ad.userId || user.role === 'admin') && (
-            <button 
+            <button
               onClick={(e) => { e.stopPropagation(); onEditClick(ad); }}
-              className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-primary-900/40 border border-slate-200 dark:border-primary-800/50 flex items-center justify-center text-slate-600 dark:text-primary-300 hover:bg-neon-indigo hover:text-white hover:border-transparent transition-all shadow-sm"
+              className="w-8 h-8 rounded-lg bg-navy-800 border border-silver-600/8 flex items-center justify-center text-silver-500 hover:text-silver-100 hover:border-accent/30 hover:bg-accent/10 transition-all"
             >
-              <span className="material-symbols-outlined text-[18px]">edit</span>
+              <span className="material-symbols-outlined text-base">edit</span>
             </button>
           )}
         </div>
