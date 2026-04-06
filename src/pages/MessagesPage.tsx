@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+﻿import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { messageService, publicUserService, adService } from '../services/api';
 import { supabase } from '../lib/supabase';
@@ -266,7 +266,7 @@ const MessagesPage = () => {
                         {adDetail.images && adDetail.images[0] ? (
                           <img src={adDetail.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center"><MessageSquare size={16} className="text-silver-400" /></div>
+                          <div className="w-full h-full flex items-center justify-center"><MessageSquare size={16} className="text-slate-400 dark:text-silver-400" /></div>
                         )}
                       </div>
                       <div className="min-w-0 pr-2">

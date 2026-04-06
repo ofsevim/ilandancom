@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import AdDetailModal from '../components/AdDetailModal';
@@ -44,7 +44,7 @@ const ListingDetail = () => {
       <Layout>
         <SEO title="İlan Bulunamadı" />
         <div className="text-center py-20">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-silver-100">İlan bulunamadı</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-900 dark:text-silver-100">İlan bulunamadı</h2>
           <button onClick={() => navigate('/')} className="mt-4 text-accent font-semibold hover:underline">Ana Sayfaya Dön</button>
         </div>
       </Layout>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+﻿import React, { useMemo, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCategories } from '../hooks/useCategories';
 import { adService, storageService } from '../services/api';
@@ -128,18 +128,18 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
           <div>
-            <h2 className="text-lg font-bold text-silver-100">Yeni İlan Oluştur</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-silver-100">Yeni İlan Oluştur</h2>
             <p className="text-silver-500 text-xs mt-0.5">İlan bilgilerini doldurun</p>
           </div>
-          <button onClick={onClose} className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all">
+          <button onClick={onClose} className="w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all">
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
@@ -234,7 +234,7 @@ const NewAdModal: React.FC<NewAdModalProps> = ({ onClose, onAdCreated }) => {
             <label className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-4 block">Görseller (Max 10)</label>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" id="image-upload" />
-              <label htmlFor="image-upload" className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-silver-700/20 rounded-xl cursor-pointer hover:border-accent/30 hover:bg-accent/5 transition-all group">
+              <label htmlFor="image-upload" className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-silver-700/20 rounded-xl cursor-pointer hover:border-accent/30 hover:bg-accent/5 transition-all group">
                 <span className="material-symbols-outlined text-3xl text-silver-600 group-hover:text-accent mb-1">add_photo_alternate</span>
                 <span className="text-[10px] font-medium text-silver-500 group-hover:text-accent">Ekle</span>
               </label>

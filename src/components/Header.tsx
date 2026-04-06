@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useDarkMode } from '../hooks/useDarkMode';
@@ -59,9 +59,9 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
         if (m.receiver_id === user.id) {
           setUnreadCount((c) => c + 1);
           toast.custom((t) => (
-            <div className={`pointer-events-auto flex items-center gap-3 rounded-xl bg-navy-800 shadow-xl px-4 py-3 border border-silver-700/20 ${t.visible ? 'animate-fade-in' : ''}`}>
+            <div className={`pointer-events-auto flex items-center gap-3 rounded-xl bg-white dark:bg-navy-800 shadow-xl px-4 py-3 border border-slate-200 dark:border-silver-700/20 ${t.visible ? 'animate-fade-in' : ''}`}>
               <span className="material-symbols-outlined text-accent text-lg">mail</span>
-              <div className="text-sm font-medium text-silver-100">Yeni bir mesajınız var</div>
+              <div className="text-sm font-medium text-slate-900 dark:text-silver-100">Yeni bir mesajınız var</div>
             </div>
           ), { duration: 3000 });
         }
@@ -83,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center shadow-glow">
                 <span className="material-symbols-outlined text-white text-xl">storefront</span>
               </div>
-              <h1 className="text-lg font-bold tracking-tight text-navy-950 dark:text-silver-50">
+              <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-silver-50">
                 ilandan<span className="text-accent">.online</span>
               </h1>
             </div>
@@ -91,9 +91,9 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
             {/* Desktop Search */}
             <div className="hidden lg:flex flex-1 max-w-xl mx-8">
               <div className="relative w-full group">
-                <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-silver-500 text-lg group-focus-within:text-accent transition-colors">search</span>
+                <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-silver-500 text-lg group-focus-within:text-accent transition-colors">search</span>
                 <input
-                  className="w-full pl-10 pr-4 py-2.5 bg-navy-800/50 dark:bg-navy-900/50 border border-silver-700/20 rounded-xl text-sm text-navy-950 dark:text-silver-100 placeholder:text-silver-500 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-navy-900/50 border border-slate-200 dark:border-silver-700/20 rounded-xl text-sm text-slate-900 dark:text-silver-100 placeholder:text-slate-400 dark:placeholder:text-silver-500 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all"
                   placeholder="İlan, ürün veya kategori ara..."
                   type="text"
                   value={searchQuery}
@@ -108,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
               {/* Dark mode toggle */}
               <button
                 onClick={toggleDarkMode}
-                className="w-9 h-9 rounded-lg flex items-center justify-center text-silver-500 hover:text-navy-950 dark:hover:text-silver-100 hover:bg-navy-100 dark:hover:bg-navy-800 transition-colors"
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 dark:text-silver-500 hover:text-slate-900 dark:hover:text-silver-100 hover:bg-slate-100 dark:hover:bg-navy-800 transition-colors"
               >
                 <span className="material-symbols-outlined text-lg">{isDarkMode ? 'light_mode' : 'dark_mode'}</span>
               </button>
@@ -116,7 +116,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
               {!user ? (
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="hidden sm:inline-flex text-sm font-semibold text-silver-600 dark:text-silver-400 hover:text-accent transition-colors"
+                  className="hidden sm:inline-flex text-sm font-semibold text-slate-600 dark:text-silver-400 hover:text-accent transition-colors"
                 >
                   Giriş Yap
                 </button>
@@ -125,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                   {/* Messages */}
                   <button
                     onClick={() => navigate('/mesajlar')}
-                    className="relative w-9 h-9 rounded-lg flex items-center justify-center text-silver-500 hover:text-navy-950 dark:hover:text-silver-100 hover:bg-navy-100 dark:hover:bg-navy-800 transition-colors"
+                    className="relative w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 dark:text-silver-500 hover:text-slate-900 dark:hover:text-silver-100 hover:bg-slate-100 dark:hover:bg-navy-800 transition-colors"
                   >
                     <span className="material-symbols-outlined text-lg">chat_bubble</span>
                     {unreadCount > 0 && (
@@ -138,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                   {/* Favorites */}
                   <button
                     onClick={() => navigate('/favoriler')}
-                    className="hidden sm:flex w-9 h-9 rounded-lg items-center justify-center text-silver-500 hover:text-navy-950 dark:hover:text-silver-100 hover:bg-navy-100 dark:hover:bg-navy-800 transition-colors"
+                    className="hidden sm:flex w-9 h-9 rounded-lg items-center justify-center text-slate-500 dark:text-silver-500 hover:text-slate-900 dark:hover:text-silver-100 hover:bg-slate-100 dark:hover:bg-navy-800 transition-colors"
                   >
                     <span className="material-symbols-outlined text-lg">favorite</span>
                   </button>
@@ -147,12 +147,12 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                   <div className="relative">
                     <button
                       onClick={() => setShowUserMenu(!showUserMenu)}
-                      className="w-9 h-9 rounded-lg bg-navy-100 dark:bg-navy-800 flex items-center justify-center overflow-hidden border border-silver-700/20 hover:border-accent/40 transition-colors"
+                      className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-navy-800 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-silver-700/20 hover:border-accent/40 transition-colors"
                     >
                       {user.avatar ? (
                         <img src={user.avatar} className="w-full h-full object-cover" alt="" />
                       ) : (
-                        <span className="text-xs font-bold text-silver-600 dark:text-silver-300">{user.name[0].toUpperCase()}</span>
+                        <span className="text-xs font-bold text-slate-600 dark:text-silver-300">{user.name[0].toUpperCase()}</span>
                       )}
                     </button>
                     <AnimatePresence>
@@ -162,11 +162,11 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.96 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute right-0 mt-2 w-64 bg-white dark:bg-navy-800 rounded-xl shadow-xl border border-silver-200 dark:border-silver-700/20 py-2 z-[60]"
+                          className="absolute right-0 mt-2 w-64 bg-white dark:bg-navy-800 rounded-xl shadow-xl border border-slate-200 dark:border-silver-700/20 py-2 z-[60]"
                         >
-                          <div className="px-4 py-3 mb-1 border-b border-silver-200 dark:border-silver-700/20">
-                            <p className="text-sm font-bold text-navy-950 dark:text-silver-50 truncate">{user.name}</p>
-                            <p className="text-xs text-silver-500 mt-0.5">{user.email}</p>
+                          <div className="px-4 py-3 mb-1 border-b border-slate-100 dark:border-silver-700/20">
+                            <p className="text-sm font-bold text-slate-900 dark:text-silver-50 truncate">{user.name}</p>
+                            <p className="text-xs text-slate-500 dark:text-silver-500 mt-0.5">{user.email}</p>
                           </div>
                           <div className="px-2 space-y-0.5">
                             {[
@@ -180,7 +180,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                                   key={i}
                                   to={item.path}
                                   onClick={() => setShowUserMenu(false)}
-                                  className="w-full text-left px-3 py-2.5 text-sm text-silver-600 dark:text-silver-300 hover:bg-navy-50 dark:hover:bg-navy-700/50 rounded-lg flex items-center gap-3 transition-colors"
+                                  className="w-full text-left px-3 py-2.5 text-sm text-slate-600 dark:text-silver-300 hover:bg-slate-50 dark:hover:bg-navy-700/50 rounded-lg flex items-center gap-3 transition-colors"
                                 >
                                   <span className="material-symbols-outlined text-lg">{item.icon}</span>
                                   {item.label}
@@ -189,7 +189,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                                 <button
                                   key={i}
                                   onClick={() => { (item as any).action(); setShowUserMenu(false); }}
-                                  className="w-full text-left px-3 py-2.5 text-sm text-silver-600 dark:text-silver-300 hover:bg-navy-50 dark:hover:bg-navy-700/50 rounded-lg flex items-center gap-3 transition-colors"
+                                  className="w-full text-left px-3 py-2.5 text-sm text-slate-600 dark:text-silver-300 hover:bg-slate-50 dark:hover:bg-navy-700/50 rounded-lg flex items-center gap-3 transition-colors"
                                 >
                                   <span className="material-symbols-outlined text-lg">{item.icon}</span>
                                   {item.label}
@@ -205,7 +205,7 @@ const Header: React.FC<HeaderProps> = ({ onShowAdminPanel }) => {
                                 Admin Paneli
                               </button>
                             )}
-                            <div className="border-t border-silver-200 dark:border-silver-700/20 my-1" />
+                            <div className="border-t border-slate-100 dark:border-silver-700/20 my-1" />
                             <button
                               onClick={() => { logout(); setShowUserMenu(false); }}
                               className="w-full text-left px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg flex items-center gap-3 transition-colors"

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 
 interface AboutModalProps {
@@ -7,12 +7,12 @@ interface AboutModalProps {
 
 const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-xl w-full overflow-hidden"
+        className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-xl w-full overflow-hidden"
       >
         <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
           <div className="flex items-center gap-3">
@@ -20,13 +20,13 @@ const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
               <span className="material-symbols-outlined text-accent">info</span>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-silver-100">Hakkımızda</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-silver-100">Hakkımızda</h2>
               <p className="text-silver-500 text-xs mt-0.5">Vizyonumuz & Değerlerimiz</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
+            className="w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all"
           >
             <span className="material-symbols-outlined text-xl">close</span>
           </button>

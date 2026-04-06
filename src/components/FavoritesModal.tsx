@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { favoriteService } from '../services/api';
 import { Ad } from '../types';
@@ -106,7 +106,7 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
             <span className="material-symbols-outlined text-accent">favorite</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-silver-100 tracking-tight">Favorilerim <span className="text-silver-500">({favorites.length})</span></h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-silver-100 tracking-tight">Favorilerim <span className="text-slate-500 dark:text-slate-500 dark:text-silver-500">({favorites.length})</span></h1>
             <p className="text-silver-500 text-xs">Beğendiğiniz tüm ilanlar</p>
           </div>
         </div>
@@ -117,27 +117,27 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
         ) : favorites.length === 0 ? (
           <div className="text-center py-24">
             <span className="material-symbols-outlined text-5xl text-silver-700 mx-auto mb-4">favorite_border</span>
-            <h3 className="text-lg font-bold text-silver-100 mb-2">Henüz favori ilanınız yok</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-silver-100 mb-2">Henüz favori ilanınız yok</h3>
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {favorites.map((ad) => (
               <div key={ad.id} className="group card-base overflow-hidden">
-                <div className="relative h-48 bg-navy-900 overflow-hidden">
+                <div className="relative h-48 bg-white dark:bg-navy-900 overflow-hidden">
                   {ad.images.length > 0 ? (
                     <img src={ad.images[0]} alt={ad.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-silver-700">
+                    <div className="w-full h-full flex items-center justify-center text-slate-700 dark:text-silver-700">
                       <span className="material-symbols-outlined text-3xl">image</span>
                     </div>
                   )}
-                  <button onClick={() => handleRemoveFavorite(ad.id)} className="absolute top-3 right-3 w-9 h-9 bg-navy-950/90 rounded-xl flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-all active:scale-90" title="Favorilerden Kaldır">
+                  <button onClick={() => handleRemoveFavorite(ad.id)} className="absolute top-3 right-3 w-9 h-9 bg-slate-50 dark:bg-navy-950/90 rounded-xl flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-all active:scale-90" title="Favorilerden Kaldır">
                     <span className="material-symbols-outlined text-sm">delete</span>
                   </button>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-silver-100 mb-1 line-clamp-1 text-sm group-hover:text-accent transition-colors">{ad.title}</h3>
-                  <div className="text-lg font-bold text-silver-100 mb-3">{formatPrice(ad.price)}</div>
+                  <h3 className="font-semibold text-slate-900 dark:text-silver-100 mb-1 line-clamp-1 text-sm group-hover:text-accent transition-colors">{ad.title}</h3>
+                  <div className="text-lg font-bold text-slate-900 dark:text-silver-100 mb-3">{formatPrice(ad.price)}</div>
                   <button onClick={() => handleAdClick(ad)} className="btn-secondary w-full py-2.5 text-[10px]">
                     İncele
                   </button>
@@ -152,12 +152,12 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
   }
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">
-      <div className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto relative">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">
+      <div className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto relative">
 
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all z-50"
+          className="absolute top-5 right-5 w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all z-50"
         >
           <span className="material-symbols-outlined text-xl">close</span>
         </button>
@@ -168,8 +168,8 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
               <span className="material-symbols-outlined text-accent text-2xl">favorite</span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-silver-100 tracking-tight">
-                Favorilerim <span className="text-silver-500">({favorites.length})</span>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-silver-100 tracking-tight">
+                Favorilerim <span className="text-slate-500 dark:text-slate-500 dark:text-silver-500">({favorites.length})</span>
               </h2>
               <p className="text-silver-500 text-xs mt-0.5">Beğendiğiniz tüm ilanlar burada</p>
             </div>
@@ -183,11 +183,11 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
               <span className="text-silver-500 text-xs">Favoriler yükleniyor...</span>
             </div>
           ) : favorites.length === 0 ? (
-            <div className="text-center py-24 bg-navy-900 border border-silver-700/10 rounded-xl border-dashed">
+            <div className="text-center py-24 bg-white dark:bg-navy-900 border border-silver-700/10 rounded-xl border-dashed">
               <div className="w-20 h-20 bg-navy-950 border border-silver-700/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <span className="material-symbols-outlined text-3xl text-silver-700">favorite_border</span>
+                <span className="material-symbols-outlined text-3xl text-slate-700 dark:text-silver-700">favorite_border</span>
               </div>
-              <h3 className="text-lg font-bold text-silver-100 mb-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-silver-100 mb-2">
                 Henüz favori ilanınız yok
               </h3>
               <p className="text-silver-500 text-sm max-w-sm mx-auto">
@@ -198,7 +198,7 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {favorites.map((ad) => (
                 <div key={ad.id} className="group card-base overflow-hidden">
-                  <div className="relative h-56 bg-navy-900 overflow-hidden">
+                  <div className="relative h-56 bg-white dark:bg-navy-900 overflow-hidden">
                     {ad.images.length > 0 ? (
                       <img
                         src={ad.images[0]}
@@ -214,7 +214,7 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
 
                     <button
                       onClick={() => handleRemoveFavorite(ad.id)}
-                      className="absolute top-4 right-4 w-10 h-10 bg-navy-950/95 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-silver-700/10"
+                      className="absolute top-4 right-4 w-10 h-10 bg-slate-50 dark:bg-navy-950/95 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all active:scale-90 border border-silver-700/10"
                       title="Favorilerden Kaldır"
                     >
                       <span className="material-symbols-outlined text-sm text-red-400 hover:text-white">favorite</span>
@@ -228,10 +228,10 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ onClose, asPage = false
                   </div>
 
                   <div className="p-5">
-                    <h3 className="font-semibold text-silver-100 mb-1.5 line-clamp-1 group-hover:text-accent transition-colors">
+                    <h3 className="font-semibold text-slate-900 dark:text-silver-100 mb-1.5 line-clamp-1 group-hover:text-accent transition-colors">
                       {ad.title}
                     </h3>
-                    <div className="text-xl font-bold text-silver-100 mb-4">
+                    <div className="text-xl font-bold text-slate-900 dark:text-silver-100 mb-4">
                       {formatPrice(ad.price)}
                     </div>
 

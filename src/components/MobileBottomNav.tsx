@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Home, Search, PlusCircle, Heart, User, Package, LogOut, MessageSquare, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -87,7 +87,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowUserMenu(false)}
-                            className="absolute inset-0 bg-navy-950/70 backdrop-blur-sm"
+                            className="absolute inset-0 bg-slate-50 dark:bg-navy-950/70 backdrop-blur-sm"
                         />
                         <motion.div
                             initial={{ y: '100%' }}
@@ -130,7 +130,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
                                     <button
                                         key={i}
                                         onClick={() => { item.onClick(); setShowUserMenu(false); }}
-                                        className="flex items-center gap-3.5 p-3.5 rounded-xl border border-slate-200 dark:border-silver-700/10 hover:bg-slate-50 dark:hover:bg-navy-800 transition-all active:scale-[0.98]"
+                                        className="flex items-center gap-3.5 p-3.5 rounded-xl border border-slate-200 dark:border-silver-700/10 hover:bg-slate-50 dark:hover:bg-slate-50 dark:bg-navy-800 transition-all active:scale-[0.98]"
                                     >
                                         <div className={`p-2 rounded-lg ${item.bg} dark:bg-navy-800`}>
                                             <item.icon size={18} className={item.color} />

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useListings } from '../context/ListingContext';
 import { useToast } from '../hooks/use-toast';
@@ -27,7 +27,7 @@ function ListingCard({ listing }: { listing: Ad }) {
   };
 
   return (
-    <div className="group bg-navy-900 rounded-2xl overflow-hidden border border-silver-700/10 hover:border-accent/30 transition-all duration-500 hover:shadow-card-hover">
+    <div className="group bg-white dark:bg-navy-900 rounded-2xl overflow-hidden border border-silver-700/10 hover:border-accent/30 transition-all duration-500 hover:shadow-card-hover">
       <Link to={`/ilan/${listing.id}`} className="block relative aspect-[4/3] overflow-hidden">
         {listing.images && listing.images.length > 0 ? (
           <img
@@ -37,7 +37,7 @@ function ListingCard({ listing }: { listing: Ad }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-navy-800 flex items-center justify-center text-silver-600 uppercase text-[10px] font-black">
+          <div className="w-full h-full bg-slate-50 dark:bg-navy-800 flex items-center justify-center text-silver-600 uppercase text-[10px] font-black">
             Görsel Yok
           </div>
         )}
@@ -47,7 +47,7 @@ function ListingCard({ listing }: { listing: Ad }) {
             <span className="bg-accent text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-accent/20">VİTRİN</span>
           )}
           {category && (
-            <span className="bg-navy-950/80 backdrop-blur-md text-silver-100 text-[10px] font-black px-3 py-1 rounded-full shadow-sm">
+            <span className="bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md text-slate-900 dark:text-silver-100 text-[10px] font-black px-3 py-1 rounded-full shadow-sm">
               {category.name.toUpperCase()}
             </span>
           )}
@@ -61,14 +61,14 @@ function ListingCard({ listing }: { listing: Ad }) {
             toast({ title: isFav ? 'Favorilerden çıkarıldı' : 'Favorilere eklendi' });
           }}
           className={`absolute top-4 right-4 h-10 w-10 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-300 z-10
-            ${isFav ? 'bg-accent text-white scale-110 shadow-lg shadow-accent/20' : 'bg-navy-950/50 text-silver-100 hover:bg-navy-800 hover:scale-110'}`}
+            ${isFav ? 'bg-accent text-white scale-110 shadow-lg shadow-accent/20' : 'bg-slate-50 dark:bg-navy-950/50 text-slate-900 dark:text-silver-100 hover:bg-slate-50 dark:bg-navy-800 hover:scale-110'}`}
         >
           <span className={`material-symbols-outlined text-2xl ${isFav ? 'fill-1' : ''}`}>
             favorite
           </span>
         </button>
 
-        <div className="absolute bottom-4 right-4 bg-navy-950/60 backdrop-blur-sm text-silver-100 text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+        <div className="absolute bottom-4 right-4 bg-slate-50 dark:bg-navy-950/60 backdrop-blur-sm text-slate-900 dark:text-silver-100 text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
           <span className="material-symbols-outlined text-xs">photo_camera</span>
           {listing.images?.length || 0}
         </div>
@@ -86,7 +86,7 @@ function ListingCard({ listing }: { listing: Ad }) {
         </div>
 
         <Link to={`/ilan/${listing.id}`}>
-          <h3 className="font-bold text-sm text-silver-100 line-clamp-1 mb-4 group-hover:text-accent transition-colors">
+          <h3 className="font-bold text-sm text-slate-900 dark:text-silver-100 line-clamp-1 mb-4 group-hover:text-accent transition-colors">
             {listing.title}
           </h3>
         </Link>
@@ -98,7 +98,7 @@ function ListingCard({ listing }: { listing: Ad }) {
 
         <div className="flex items-center justify-between pt-4 border-t border-silver-700/10">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-full bg-navy-800 flex items-center justify-center text-silver-400 text-[10px] font-black uppercase overflow-hidden border border-silver-700/10">
+            <div className="h-8 w-8 rounded-full bg-slate-50 dark:bg-navy-800 flex items-center justify-center text-silver-400 text-[10px] font-black uppercase overflow-hidden border border-silver-700/10">
               {seller?.avatar ? (
                 <img src={seller.avatar} alt={seller.name} className="w-full h-full object-cover" />
               ) : (
@@ -106,14 +106,14 @@ function ListingCard({ listing }: { listing: Ad }) {
               )}
             </div>
             <div className="flex flex-col">
-              <span className="text-[11px] font-black text-silver-100 truncate max-w-[90px] leading-tight">{seller?.name || 'Kullanıcı'}</span>
+              <span className="text-[11px] font-black text-slate-900 dark:text-silver-100 truncate max-w-[90px] leading-tight">{seller?.name || 'Kullanıcı'}</span>
               <span className="text-[10px] font-bold text-silver-600 uppercase tracking-widest leading-tight">{formatDate(listing.createdAt)}</span>
             </div>
           </div>
 
           <Link
             to={`/ilan/${listing.id}`}
-            className="w-8 h-8 rounded-full bg-navy-800 flex items-center justify-center text-silver-500 group-hover:bg-accent group-hover:text-white transition-all duration-300"
+            className="w-8 h-8 rounded-full bg-slate-50 dark:bg-navy-800 flex items-center justify-center text-silver-500 group-hover:bg-accent group-hover:text-white transition-all duration-300"
           >
             <span className="material-symbols-outlined text-xl">arrow_outward</span>
           </Link>
@@ -134,7 +134,7 @@ export default function FeaturedListings() {
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="aspect-[3/4] bg-navy-900 animate-pulse rounded-2xl" />
+            <div key={i} className="aspect-[3/4] bg-white dark:bg-navy-900 animate-pulse rounded-2xl" />
           ))}
         </div>
       </section>
@@ -144,10 +144,10 @@ export default function FeaturedListings() {
   if (displayListings.length === 0) return null;
 
   return (
-    <section className="mt-12">
+    <section className="mt-12 bg-white dark:bg-navy-950 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-2xl font-bold tracking-tight text-silver-100">
+          <h3 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-silver-100">
             {featured.length > 0 ? 'Vitrindeki İlanlar' : 'En Yeni İlanlar'}
           </h3>
           <p className="text-silver-400 text-sm">

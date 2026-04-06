@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 
 interface PolicyModalProps {
@@ -9,11 +9,11 @@ interface PolicyModalProps {
 
 const PolicyModal: React.FC<PolicyModalProps> = ({ onClose, title, content }) => {
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-2xl w-full overflow-hidden"
+        className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-2xl w-full overflow-hidden"
       >
         <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
           <div className="flex items-center gap-3">
@@ -21,13 +21,13 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ onClose, title, content }) =>
               <span className="material-symbols-outlined text-accent">verified</span>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-silver-100">{title}</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-silver-100">{title}</h2>
               <p className="text-silver-500 text-xs mt-0.5">Yasal Bilgilendirme</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
+            className="w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all"
           >
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
@@ -35,7 +35,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ onClose, title, content }) =>
 
         <div className="p-6 lg:p-8">
           <div className="max-h-[60vh] overflow-y-auto pr-2">
-            <div className="p-5 bg-navy-900 border border-silver-700/10 rounded-xl">
+            <div className="p-5 bg-white dark:bg-navy-900 border border-silver-700/10 rounded-xl">
               <p className="text-silver-400 leading-relaxed whitespace-pre-wrap text-sm">
                 {content}
               </p>

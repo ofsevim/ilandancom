@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Ad } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { adService, publicUserService } from '../services/api';
@@ -86,20 +86,20 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
   };
 
   return (
-    <div className={asPage ? "w-full max-w-full mx-auto py-0 px-0" : "fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-2 lg:p-4"}>
+    <div className={asPage ? "w-full max-w-full mx-auto py-0 px-0" : "fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-2 lg:p-4"}>
       <motion.div
         initial={!asPage ? { opacity: 0, scale: 0.95, y: 20 } : {}}
         animate={!asPage ? { opacity: 1, scale: 1, y: 0 } : {}}
-        className={`bg-navy-800 w-full overflow-hidden flex flex-col md:flex-row relative
-          ${asPage ? 'rounded-2xl border border-silver-700/20 shadow-xl max-w-[1400px] mx-auto' : 'max-w-[1380px] max-h-[92vh] rounded-2xl shadow-xl border border-silver-700/20'}`}
+        className={`bg-slate-50 dark:bg-navy-800 w-full overflow-hidden flex flex-col md:flex-row relative
+          ${asPage ? 'rounded-2xl border border-slate-200 dark:border-silver-700/20 shadow-xl max-w-[1400px] mx-auto' : 'max-w-[1380px] max-h-[92vh] rounded-2xl shadow-xl border border-slate-200 dark:border-silver-700/20'}`}
       >
         {!asPage && (
-          <button onClick={onClose} className="absolute top-4 right-4 z-50 w-10 h-10 bg-navy-950/80 backdrop-blur-md rounded-full flex items-center justify-center text-silver-100 border border-silver-700/20 hover:bg-navy-950 transition-all shadow-lg">
+          <button onClick={onClose} className="absolute top-4 right-4 z-50 w-10 h-10 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-900 dark:text-silver-100 border border-slate-200 dark:border-silver-700/20 hover:bg-navy-950 transition-all shadow-lg">
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
         )}
 
-        <div className="md:w-[50%] relative bg-navy-900 flex flex-col min-h-[400px]">
+        <div className="md:w-[50%] relative bg-white dark:bg-navy-900 flex flex-col min-h-[400px]">
           <div className="flex-1 relative overflow-hidden flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.img
@@ -114,17 +114,17 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
 
             {ad.images.length > 1 && (
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-4 flex justify-between pointer-events-none">
-                <button onClick={prevImage} className="w-10 h-10 rounded-full bg-navy-950/80 backdrop-blur-md flex items-center justify-center shadow-lg pointer-events-auto hover:bg-navy-950 transition-all text-silver-100 border border-silver-700/20">
+                <button onClick={prevImage} className="w-10 h-10 rounded-full bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center shadow-lg pointer-events-auto hover:bg-navy-950 transition-all text-slate-900 dark:text-silver-100 border border-slate-200 dark:border-silver-700/20">
                   <span className="material-symbols-outlined text-xl">chevron_left</span>
                 </button>
-                <button onClick={nextImage} className="w-10 h-10 rounded-full bg-navy-950/80 backdrop-blur-md flex items-center justify-center shadow-lg pointer-events-auto hover:bg-navy-950 transition-all text-silver-100 border border-silver-700/20">
+                <button onClick={nextImage} className="w-10 h-10 rounded-full bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center shadow-lg pointer-events-auto hover:bg-navy-950 transition-all text-slate-900 dark:text-silver-100 border border-slate-200 dark:border-silver-700/20">
                   <span className="material-symbols-outlined text-xl">chevron_right</span>
                 </button>
               </div>
             )}
 
             <div className="absolute bottom-3 left-4">
-              <span className="px-3 py-1.5 rounded-lg bg-navy-950/80 backdrop-blur-md text-silver-100 text-[10px] font-medium border border-silver-700/20">
+              <span className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md text-slate-900 dark:text-silver-100 text-[10px] font-medium border border-slate-200 dark:border-silver-700/20">
                 {currentImageIndex + 1} / {ad.images.length}
               </span>
             </div>
@@ -144,7 +144,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           </div>
         </div>
 
-        <div className="md:w-[50%] flex flex-col bg-navy-800 overflow-y-auto max-h-[90vh]">
+        <div className="md:w-[50%] flex flex-col bg-slate-50 dark:bg-navy-800 overflow-y-auto max-h-[90vh]">
           <div className="p-5 lg:p-6 flex-1">
             <div className="mb-4 pb-4 border-b border-silver-700/10">
               <div className="flex items-center gap-2 mb-2">
@@ -154,7 +154,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                   {ad.createdAt && !isNaN(new Date(ad.createdAt).getTime()) ? new Date(ad.createdAt).toLocaleDateString('tr-TR') : 'YENİ'}
                 </span>
               </div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-silver-100 leading-tight tracking-tight mb-3">{ad.title}</h1>
+              <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-silver-100 leading-tight tracking-tight mb-3">{ad.title}</h1>
               <div className="text-2xl lg:text-3xl font-bold text-accent">{formatPrice(ad.price)}</div>
             </div>
 
@@ -169,7 +169,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               <button
                 onClick={handleFavoriteClick}
                 className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-all
-                  ${isFavorite ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-navy-900 border-silver-700/10 text-silver-500 hover:text-silver-100'}`}
+                  ${isFavorite ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-white dark:bg-navy-900 border-silver-700/10 text-silver-500 hover:text-slate-900 dark:text-slate-900 dark:text-silver-100'}`}
               >
                 <span className={`material-symbols-outlined text-xl ${isFavorite ? 'fill-1' : ''}`}>favorite</span>
               </button>
@@ -184,25 +184,25 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-4 border-t border-silver-700/10">
-                <div className="p-3 rounded-xl bg-navy-900 border border-silver-700/10">
+                <div className="p-3 rounded-xl bg-white dark:bg-navy-900 border border-silver-700/10">
                   <div className="text-[10px] font-semibold text-silver-500 mb-1 flex items-center gap-1"><span className="material-symbols-outlined text-sm">visibility</span>Görüntülenme</div>
-                  <div className="text-base font-bold text-silver-100">{ad.viewCount}</div>
+                  <div className="text-base font-bold text-slate-900 dark:text-slate-900 dark:text-silver-100">{ad.viewCount}</div>
                 </div>
-                <div className="p-3 rounded-xl bg-navy-900 border border-silver-700/10">
+                <div className="p-3 rounded-xl bg-white dark:bg-navy-900 border border-silver-700/10">
                   <div className="text-[10px] font-semibold text-silver-500 mb-1 flex items-center gap-1"><span className="material-symbols-outlined text-sm">location_on</span>Konum</div>
-                  <div className="text-sm font-semibold text-silver-100 truncate">{ad.location?.city || 'Bilinmeyen'}, {ad.location?.district || 'Konum'}</div>
+                  <div className="text-sm font-semibold text-slate-900 dark:text-silver-100 truncate">{ad.location?.city || 'Bilinmeyen'}, {ad.location?.district || 'Konum'}</div>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-navy-900 border border-silver-700/10">
+            <div className="p-4 rounded-xl bg-white dark:bg-navy-900 border border-silver-700/10">
               <h3 className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-4">Satıcı Profili</h3>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent font-bold">
                   {seller?.avatar ? <img src={seller.avatar} className="w-full h-full object-cover rounded-full" /> : (seller?.name || 'S')[0].toUpperCase()}
                 </div>
                 <div>
-                  <div className="text-base font-bold text-silver-100">{seller?.name || 'Değerli Kullanıcımız'}</div>
+                  <div className="text-base font-bold text-slate-900 dark:text-slate-900 dark:text-silver-100">{seller?.name || 'Değerli Kullanıcımız'}</div>
                   <div className="text-[10px] text-silver-500 flex items-center gap-1 mt-0.5">
                     <span className="material-symbols-outlined text-sm text-accent">verified</span>
                     {seller?.role === 'admin' ? 'Yönetici' : 'Kayıtlı Satıcı'}
@@ -210,7 +210,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
                 </div>
               </div>
               {seller?.phone && (
-                <a href={`tel:${seller.phone}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-silver-100 bg-navy-800 py-2 px-3 rounded-lg border border-silver-700/10 hover:border-accent/30 transition-colors w-fit">
+                <a href={`tel:${seller.phone}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-900 dark:text-silver-100 bg-slate-50 dark:bg-navy-800 py-2 px-3 rounded-lg border border-silver-700/10 hover:border-accent/30 transition-colors w-fit">
                   <span className="material-symbols-outlined text-base text-accent">call</span>
                   {seller.phone}
                 </a>
@@ -244,7 +244,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
           >
             <button
               onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
-              className="absolute top-4 right-4 md:top-8 md:right-8 w-12 h-12 bg-navy-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-silver-100 border border-silver-700/20 hover:bg-navy-800 transition-all shadow-lg z-10"
+              className="absolute top-4 right-4 md:top-8 md:right-8 w-12 h-12 bg-navy-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-900 dark:text-silver-100 border border-slate-200 dark:border-silver-700/20 hover:bg-slate-50 dark:bg-navy-800 transition-all shadow-lg z-10"
             >
               <span className="material-symbols-outlined text-2xl">close</span>
             </button>
@@ -252,13 +252,13 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               <>
                 <button
                   onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                  className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-navy-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-silver-100 border border-silver-700/20 hover:bg-navy-800 transition-all z-10"
+                  className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-navy-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-900 dark:text-silver-100 border border-slate-200 dark:border-silver-700/20 hover:bg-slate-50 dark:bg-navy-800 transition-all z-10"
                 >
                   <span className="material-symbols-outlined text-xl">chevron_left</span>
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                  className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-navy-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-silver-100 border border-silver-700/20 hover:bg-navy-800 transition-all z-10"
+                  className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-navy-800/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-900 dark:text-silver-100 border border-slate-200 dark:border-silver-700/20 hover:bg-slate-50 dark:bg-navy-800 transition-all z-10"
                 >
                   <span className="material-symbols-outlined text-xl">chevron_right</span>
                 </button>
@@ -269,7 +269,7 @@ const AdDetailModal: React.FC<AdDetailModalProps> = ({ ad, onClose, onDeleted, a
               className="max-w-full max-h-full object-contain rounded-xl select-none pointer-events-none"
               alt={ad.title}
             />
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-navy-800/80 backdrop-blur-md rounded-lg text-silver-100 text-xs font-medium border border-silver-700/20">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-navy-800/80 backdrop-blur-md rounded-lg text-slate-900 dark:text-silver-100 text-xs font-medium border border-slate-200 dark:border-silver-700/20">
               {currentImageIndex + 1} / {ad.images.length}
             </div>
           </motion.div>

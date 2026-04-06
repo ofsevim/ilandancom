@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { userService, adService, storageService } from '../services/api';
 import { toast } from 'react-hot-toast';
@@ -94,12 +94,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
-      <div className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
+      <div className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
 
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all z-50"
+          className="absolute top-5 right-5 w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all z-50"
         >
           <span className="material-symbols-outlined text-xl">close</span>
         </button>
@@ -107,7 +107,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
         <div className="p-8 md:p-10">
           <div className="flex flex-col items-center mb-8">
             <div className="relative group">
-              <div className="w-24 h-24 bg-navy-900 border border-silver-700/20 rounded-2xl flex items-center justify-center mb-4">
+              <div className="w-24 h-24 bg-white dark:bg-navy-900 border border-slate-200 dark:border-silver-700/20 rounded-2xl flex items-center justify-center mb-4">
                 {formData.avatar ? (
                   <img
                     src={formData.avatar}
@@ -115,11 +115,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
                     className="w-full h-full rounded-2xl object-cover"
                   />
                 ) : (
-                  <span className="material-symbols-outlined text-4xl text-silver-500">person</span>
+                  <span className="material-symbols-outlined text-4xl text-slate-500 dark:text-slate-500 dark:text-silver-500">person</span>
                 )}
               </div>
               {isEditing && (
-                <label className="absolute -bottom-1 -right-1 bg-navy-800 border border-silver-700/20 text-accent p-2 rounded-xl hover:scale-105 transition-all cursor-pointer shadow-lg">
+                <label className="absolute -bottom-1 -right-1 bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 text-accent p-2 rounded-xl hover:scale-105 transition-all cursor-pointer shadow-lg">
                   {uploadingAvatar ? (
                     <div className="w-4 h-4 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
                   ) : (
@@ -129,7 +129,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
                 </label>
               )}
             </div>
-            <h3 className="text-xl font-bold text-silver-100 mb-1">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-silver-100 mb-1">
               {user?.name}
             </h3>
             <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
                 }`}>
                 {user?.role === 'admin' ? 'Admin' : 'Kullanıcı'}
               </span>
-              <span className="text-xs text-silver-500">
+              <span className="text-xs text-slate-500 dark:text-slate-500 dark:text-silver-500">
                 Üye: {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('tr-TR') : '2024'}
               </span>
             </div>
@@ -195,31 +195,31 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
               <label className="flex items-center gap-1.5 text-[10px] font-semibold text-silver-500 uppercase tracking-wider">
                 <span className="material-symbols-outlined text-sm">key</span> Kullanıcı ID
               </label>
-              <div className="px-4 py-3 bg-navy-900 border border-silver-700/10 rounded-xl text-[11px] text-silver-500 font-mono break-all">
+              <div className="px-4 py-3 bg-white dark:bg-navy-900 border border-silver-700/10 rounded-xl text-[11px] text-silver-500 font-mono break-all">
                 {user?.id || '---'}
               </div>
             </div>
           </div>
 
-          <div className="mt-8 p-6 bg-navy-900 border border-silver-700/10 rounded-xl">
+          <div className="mt-8 p-6 bg-white dark:bg-navy-900 border border-silver-700/10 rounded-xl">
             <h4 className="text-[10px] font-semibold text-silver-500 uppercase tracking-wider mb-5 flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">bar_chart</span> Hesap İstatistikleri
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="space-y-1">
-                <div className="text-xl font-bold text-silver-100">{stats.activeAds}</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-silver-100">{stats.activeAds}</div>
                 <div className="text-[10px] font-medium text-silver-500 uppercase tracking-wider">Aktif İlan</div>
               </div>
               <div className="space-y-1">
-                <div className="text-xl font-bold text-silver-100">{stats.soldAds}</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-silver-100">{stats.soldAds}</div>
                 <div className="text-[10px] font-medium text-silver-500 uppercase tracking-wider">Satılan</div>
               </div>
               <div className="space-y-1">
-                <div className="text-xl font-bold text-silver-100">{stats.totalViews}</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-silver-100">{stats.totalViews}</div>
                 <div className="text-[10px] font-medium text-silver-500 uppercase tracking-wider">İzlenme</div>
               </div>
               <div className="space-y-1">
-                <div className="text-xl font-bold text-silver-100">{favorites.length}</div>
+                <div className="text-xl font-bold text-slate-900 dark:text-silver-100">{favorites.length}</div>
                 <div className="text-[10px] font-medium text-silver-500 uppercase tracking-wider">Favori</div>
               </div>
             </div>

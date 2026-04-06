@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+﻿import React, { useMemo, useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCategories } from '../hooks/useCategories';
 import { adService, storageService } from '../services/api';
@@ -162,13 +162,13 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
   const hasDistrictList = !!(districts && districts.length);
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-8">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-8">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
           <div className="flex items-center gap-3">
@@ -176,13 +176,13 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
               <span className="material-symbols-outlined text-accent">edit</span>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-silver-100">İlanı Düzenle</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-silver-100">İlanı Düzenle</h2>
               <p className="text-silver-500 text-xs mt-0.5">İlan bilgilerinizi güncelleyin</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
+            className="w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all"
           >
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
@@ -321,7 +321,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
               />
               <label
                 htmlFor="image-upload-edit"
-                className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-silver-700/20 rounded-xl cursor-pointer hover:border-accent/30 hover:bg-accent/5 transition-all group"
+                className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-silver-700/20 rounded-xl cursor-pointer hover:border-accent/30 hover:bg-accent/5 transition-all group"
               >
                 <span className="material-symbols-outlined text-2xl text-silver-600 group-hover:text-accent">add_photo_alternate</span>
                 <span className="text-[10px] font-medium text-silver-500 mt-1">Ekle</span>
@@ -334,7 +334,7 @@ const EditAdModal: React.FC<EditAdModalProps> = ({ ad, onClose, onAdUpdated }) =
                     alt=""
                     className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   />
-                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-navy-950/80 text-silver-300 text-[8px] font-medium rounded-md backdrop-blur-sm">Mevcut</div>
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-slate-50 dark:bg-navy-950/80 text-silver-300 text-[8px] font-medium rounded-md backdrop-blur-sm">Mevcut</div>
                   <button
                     type="button"
                     onClick={() => removeImage(index, 'existing')}

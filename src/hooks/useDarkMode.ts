@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 export const useDarkMode = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : true;
   });
 
   useEffect(() => {
@@ -11,10 +11,8 @@ export const useDarkMode = () => {
     
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      document.documentElement.setAttribute('data-theme', 'light');
     }
   }, [isDarkMode]);
 

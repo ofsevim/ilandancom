@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import MobileBottomNav from './MobileBottomNav';
@@ -11,12 +11,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
-
   return (
-    <div className="min-h-screen bg-navy-950 text-silver-100 flex flex-col">
+    <div className="min-h-screen flex flex-col transition-colors duration-300 bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-silver-100">
       <Header onShowAdminPanel={() => setShowAdminDashboard(true)} />
       <main className="flex-1">
         {children}

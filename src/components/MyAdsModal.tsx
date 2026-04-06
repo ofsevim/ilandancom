@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { adService } from '../services/api';
 import { Ad } from '../types';
@@ -68,12 +68,12 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">
-      <div className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto relative">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4 lg:p-8">
+      <div className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto relative">
 
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all z-50"
+          className="absolute top-5 right-5 w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all z-50"
         >
           <span className="material-symbols-outlined text-xl">close</span>
         </button>
@@ -84,8 +84,8 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
               <span className="material-symbols-outlined text-accent">inventory_2</span>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-silver-100 tracking-tight">
-                İlanlarım <span className="text-silver-500">({ads.length})</span>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-silver-100 tracking-tight">
+                İlanlarım <span className="text-slate-500 dark:text-slate-500 dark:text-silver-500">({ads.length})</span>
               </h2>
               <p className="text-silver-500 text-xs mt-0.5">İlanlarınızı buradan yönetebilirsiniz</p>
             </div>
@@ -108,10 +108,10 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
             </div>
           ) : ads.length === 0 ? (
             <div className="text-center py-24">
-              <div className="w-16 h-16 bg-navy-900 border border-silver-700/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <span className="material-symbols-outlined text-2xl text-silver-600">inventory_2</span>
+              <div className="w-16 h-16 bg-white dark:bg-navy-900 border border-silver-700/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-2xl text-slate-600 dark:text-silver-600">inventory_2</span>
               </div>
-              <h3 className="text-base font-bold text-silver-100 mb-2">
+              <h3 className="text-base font-bold text-slate-900 dark:text-silver-100 mb-2">
                 Henüz ilanınız yok
               </h3>
               <p className="text-silver-500 text-sm mb-8 max-w-xs mx-auto">
@@ -129,7 +129,7 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {ads.map((ad) => (
                 <div key={ad.id} className="group card-base overflow-hidden">
-                  <div className="relative h-56 bg-navy-900 overflow-hidden">
+                  <div className="relative h-56 bg-white dark:bg-navy-900 overflow-hidden">
                     {ad.images.length > 0 ? (
                       <img
                         src={ad.images[0]}
@@ -160,7 +160,7 @@ const MyAdsModal: React.FC<MyAdsModalProps> = ({ onClose, onShowNewAd }) => {
                   </div>
 
                   <div className="p-5">
-                    <h3 className="font-semibold text-silver-100 mb-2 line-clamp-1">
+                    <h3 className="font-semibold text-slate-900 dark:text-silver-100 mb-2 line-clamp-1">
                       {ad.title}
                     </h3>
                     <div className="text-lg font-bold text-accent mb-3">

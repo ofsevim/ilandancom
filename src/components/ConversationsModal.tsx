@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { messageService } from '../services/api';
 import toast from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
@@ -63,8 +63,8 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
   };
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
-      <div className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl w-full max-w-2xl relative overflow-hidden flex flex-col max-h-[80vh]">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
+      <div className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl w-full max-w-2xl relative overflow-hidden flex flex-col max-h-[80vh]">
 
         <div className="flex items-center justify-between p-6 border-b border-silver-700/10">
           <div className="flex items-center gap-3">
@@ -72,13 +72,13 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
               <span className="material-symbols-outlined text-accent">chat</span>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-silver-100">Mesajlarım</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-silver-100">Mesajlarım</h3>
               <p className="text-silver-500 text-xs">{conversations.length} Konuşma</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all"
+            className="w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all"
           >
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
@@ -92,10 +92,10 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
             </div>
           ) : conversations.length === 0 ? (
             <div className="py-20 text-center">
-              <div className="w-16 h-16 bg-navy-900 border border-silver-700/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <span className="material-symbols-outlined text-2xl text-silver-600">chat_bubble_outline</span>
+              <div className="w-16 h-16 bg-white dark:bg-navy-900 border border-silver-700/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-2xl text-slate-600 dark:text-silver-600">chat_bubble_outline</span>
               </div>
-              <h4 className="text-base font-bold text-silver-100 mb-1">Henüz mesajınız yok</h4>
+              <h4 className="text-base font-bold text-slate-900 dark:text-silver-100 mb-1">Henüz mesajınız yok</h4>
               <p className="text-silver-500 text-sm">İlanlara mesaj gönderdiğinizde burada görünecek</p>
             </div>
           ) : (
@@ -104,7 +104,7 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
                 <button
                   key={`${conv.ad_id}-${conv.other_user_id}`}
                   onClick={() => onOpenConversation(conv.other_user_id, conv.ad_id)}
-                  className="w-full p-4 text-left bg-navy-900 hover:bg-navy-950 rounded-xl border border-transparent hover:border-accent/20 transition-all group"
+                  className="w-full p-4 text-left bg-white dark:bg-navy-900 hover:bg-navy-950 rounded-xl border border-transparent hover:border-accent/20 transition-all group"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-11 h-11 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -113,7 +113,7 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-semibold text-silver-100 truncate group-hover:text-accent transition-colors text-sm">
+                        <h4 className="font-semibold text-slate-900 dark:text-silver-100 truncate group-hover:text-accent transition-colors text-sm">
                           {conv.ad_title}
                         </h4>
                         <span className="text-[10px] text-silver-500 ml-2 flex-shrink-0">
@@ -122,7 +122,7 @@ const ConversationsModal: React.FC<ConversationsModalProps> = ({ onClose, onOpen
                       </div>
 
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="text-[10px] font-medium text-silver-500">
+                        <p className="text-[10px] font-medium text-slate-500 dark:text-slate-500 dark:text-silver-500">
                           {conv.other_user_name}
                         </p>
                         {conv.unread_count > 0 && (

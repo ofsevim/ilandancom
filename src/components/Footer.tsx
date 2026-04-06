@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import AboutModal from './AboutModal';
 import ContactModal from './ContactModal';
 import PolicyModal from './PolicyModal';
@@ -29,7 +29,7 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-navy-950 border-t border-[rgba(192,192,192,0.08)] pt-16 pb-8">
+    <footer className="bg-white dark:bg-navy-950 border-t border-slate-200 dark:border-silver-700/10 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
@@ -40,53 +40,53 @@ const Footer: React.FC = () => {
               <div className="w-10 h-10 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                 <span className="material-symbols-outlined text-accent text-xl">storefront</span>
               </div>
-              <h2 className="text-xl font-bold tracking-tight text-silver-100">
+              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-silver-100">
                 ilandan<span className="text-accent">.online</span>
               </h2>
             </div>
-            <p className="text-silver-600 text-sm leading-relaxed max-w-xs">
+            <p className="text-slate-500 dark:text-silver-600 text-sm leading-relaxed max-w-xs">
               Türkiye'nin premium ilan platformu. Emlak, vasıta ve tüm alışveriş kategorilerinde güvenle ilanlarınızı yayınlayın.
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-6 uppercase text-[11px] tracking-[0.2em] text-silver-700">Kurumsal</h4>
+            <h4 className="font-semibold mb-6 uppercase text-[11px] tracking-[0.2em] text-slate-400 dark:text-silver-700">Kurumsal</h4>
             <ul className="space-y-4 text-sm">
-              <li><button onClick={() => setShowAbout(true)} className="text-silver-400 hover:text-silver-100 transition-colors">Hakkımızda</button></li>
-              <li><button onClick={() => setShowContact(true)} className="text-silver-400 hover:text-silver-100 transition-colors">Bize Ulaşın</button></li>
-              <li><button onClick={() => setPolicy(policies.privacy)} className="text-silver-400 hover:text-silver-100 transition-colors">Gizlilik Politikası</button></li>
+              <li><button onClick={() => setShowAbout(true)} className="text-slate-600 dark:text-silver-400 hover:text-accent transition-colors">Hakkımızda</button></li>
+              <li><button onClick={() => setShowContact(true)} className="text-slate-600 dark:text-silver-400 hover:text-accent transition-colors">Bize Ulaşın</button></li>
+              <li><button onClick={() => setPolicy(policies.privacy)} className="text-slate-600 dark:text-silver-400 hover:text-accent transition-colors">Gizlilik Politikası</button></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-6 uppercase text-[11px] tracking-[0.2em] text-silver-700">Yardım & Hukuki</h4>
+            <h4 className="font-semibold mb-6 uppercase text-[11px] tracking-[0.2em] text-slate-400 dark:text-silver-700">Yardım & Hukuki</h4>
             <ul className="space-y-4 text-sm">
-              <li><button onClick={() => setPolicy(policies.terms)} className="text-silver-400 hover:text-silver-100 transition-colors">Kullanım Koşulları</button></li>
-              <li><button onClick={() => setPolicy(policies.cookies)} className="text-silver-400 hover:text-silver-100 transition-colors">Çerez Politikası</button></li>
-              <li><button onClick={() => setShowContact(true)} className="text-silver-400 hover:text-silver-100 transition-colors">Yardım Merkezi</button></li>
+              <li><button onClick={() => setPolicy(policies.terms)} className="text-slate-600 dark:text-silver-400 hover:text-accent transition-colors">Kullanım Koşulları</button></li>
+              <li><button onClick={() => setPolicy(policies.cookies)} className="text-slate-600 dark:text-silver-400 hover:text-accent transition-colors">Çerez Politikası</button></li>
+              <li><button onClick={() => setShowContact(true)} className="text-slate-600 dark:text-silver-400 hover:text-accent transition-colors">Yardım Merkezi</button></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-6 uppercase text-[11px] tracking-[0.2em] text-silver-700">İletişim</h4>
-            <ul className="space-y-4 text-sm text-silver-400">
+            <h4 className="font-semibold mb-6 uppercase text-[11px] tracking-[0.2em] text-slate-400 dark:text-silver-700">İletişim</h4>
+            <ul className="space-y-4 text-sm text-slate-500 dark:text-silver-400">
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-base text-silver-700">mail</span>
+                <span className="material-symbols-outlined text-base text-slate-400 dark:text-silver-700">mail</span>
                 <span>info@ilandan.online</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-base text-silver-700">public</span>
+                <span className="material-symbols-outlined text-base text-slate-400 dark:text-silver-700">public</span>
                 <span>www.ilandan.online</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-[rgba(192,192,192,0.08)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-silver-700 font-medium tracking-wide">
+        <div className="border-t border-slate-200 dark:border-silver-700/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-slate-400 dark:text-silver-700 font-medium tracking-wide">
             © {currentYear} ilandan.online. Tüm hakları saklıdır.
           </p>
-          <div className="flex items-center gap-2 text-xs text-silver-700">
+          <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-silver-700">
             <span className="material-symbols-outlined text-sm">verified</span>
             <span>Güvenli Alışveriş</span>
           </div>

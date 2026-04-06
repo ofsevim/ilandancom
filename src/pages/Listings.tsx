@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -103,7 +103,7 @@ const Listings = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setShowMobileFilters(false)}
-                className="absolute inset-0 bg-navy-950/70 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-50 dark:bg-navy-950/70 backdrop-blur-sm"
               />
               <motion.div
                 initial={{ x: '-100%' }}

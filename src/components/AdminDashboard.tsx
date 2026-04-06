@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { X, Users, FileText, TrendingUp, Clock, Check, Ban, Trash2, Eye, Search } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { adService } from '../services/api';
@@ -161,7 +161,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-2xl flex items-start justify-center z-[150] p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-2xl flex items-start justify-center z-[150] p-4 overflow-y-auto">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -186,7 +186,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   activeTab === 'overview'
                     ? 'bg-accent text-white'
-                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-navy-800'
+                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-slate-50 dark:bg-navy-800'
                 }`}
               >
                 Genel Bakış
@@ -196,7 +196,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   activeTab === 'ads'
                     ? 'bg-accent text-white'
-                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-navy-800'
+                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-slate-50 dark:bg-navy-800'
                 }`}
               >
                 İlanlar
@@ -206,7 +206,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   activeTab === 'users'
                     ? 'bg-accent text-white'
-                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-navy-800'
+                    : 'text-silver-500 dark:text-silver-400 hover:bg-slate-100 dark:hover:bg-slate-50 dark:bg-navy-800'
                 }`}
               >
                 Kullanıcılar
@@ -273,7 +273,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       <div className="text-2xl font-bold text-slate-600 dark:text-silver-400">
                         {stats.totalUsers}
                       </div>
-                      <div className="text-sm text-slate-500 dark:text-silver-500">
+                      <div className="text-sm text-slate-500 dark:text-slate-500 dark:text-slate-500 dark:text-silver-500">
                         Toplam Kullanıcı
                       </div>
                     </div>
@@ -321,7 +321,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           {activeTab === 'ads' && !loading && !error && (
             <div className="space-y-6">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-silver-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-silver-400" size={20} />
                 <input
                   type="text"
                   placeholder="İlan ara..."
@@ -421,7 +421,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           {activeTab === 'users' && !loading && !error && (
             <div className="space-y-6">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-silver-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-silver-400" size={20} />
                 <input
                   type="text"
                   placeholder="Kullanıcı ara..."

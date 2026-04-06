@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -54,17 +54,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
+    <div className="fixed inset-0 bg-slate-50 dark:bg-navy-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: 'spring', damping: 30, stiffness: 500, mass: 0.8 }}
-        className="bg-navy-800 border border-silver-700/20 rounded-2xl shadow-xl max-w-md w-full p-8 lg:p-10 relative"
+        className="bg-slate-50 dark:bg-navy-800 border border-slate-200 dark:border-silver-700/20 rounded-2xl shadow-xl max-w-md w-full p-8 lg:p-10 relative"
       >
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-10 h-10 bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-silver-100 transition-all z-50"
+          className="absolute top-5 right-5 w-10 h-10 bg-white dark:bg-navy-900 hover:bg-navy-950 border border-silver-700/10 rounded-full flex items-center justify-center text-silver-500 hover:text-slate-900 dark:text-silver-100 transition-all z-50"
         >
           <span className="material-symbols-outlined text-xl">close</span>
         </button>
@@ -73,7 +73,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-2xl mx-auto mb-5 flex items-center justify-center">
             <span className="material-symbols-outlined text-3xl text-accent">lock</span>
           </div>
-          <h2 className="text-2xl font-bold text-silver-100 tracking-tight">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-silver-100 tracking-tight">
             {isForgot ? 'Şifreni Sıfırla' : isLogin ? 'Tekrar Hoşgeldiniz' : 'Yeni Hesap Oluştur'}
           </h2>
           <p className="text-silver-500 mt-2 text-sm">
