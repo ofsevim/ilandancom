@@ -10,10 +10,7 @@ import FavoritesModal from './FavoritesModal';
 import ConversationsModal from './ConversationsModal';
 import MessagesModal from './MessagesModal';
 
-interface MobileBottomNavProps {
-}
-
-const MobileBottomNav: React.FC<MobileBottomNavProps> = () => {
+const MobileBottomNav: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useAuth();
